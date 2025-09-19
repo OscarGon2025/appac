@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Membre{% endblock %}
+
+{% block body %}
+    <h1>Page membre protégée</h1>
+    <p>Vous êtes connecté et pouvez voir cette page.</p>
+    <a href="{{ path('app_logout') }}">Se déconnecter</a>
+{% endblock %}

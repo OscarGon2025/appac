@@ -1,0 +1,134 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Site des Plaisanciers{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/templatemo-festava-live.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+
+    <main>
+
+        <!-- HEADER -->
+        <header class="site-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 col-12 d-flex flex-wrap">
+                        <p class="d-flex me-4 mb-0">
+                            <i class="bi-person custom-icon me-2"></i>
+                            <strong class="text-dark">Bienvenue sur le site des plaisanciers</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- NAVBAR -->
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" href="{{ path('app_home') }}">Plaisanciers</a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+{#                    <ul class="navbar-nav align-items-lg-center ms-auto me-lg-5">#}
+{#                        <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}">Accueil</a></li>#}
+{#                        <li class="nav-item"><a class="nav-link" href="{{ path('app_association') }}">L'association</a></li>#}
+{#                        <li class="nav-item"><a class="nav-link" href="{{ path('app_annonces') }}">Annonces</a></li>#}
+{#                        <li class="nav-item"><a class="nav-link" href="{{ path('app_contact') }}">Contactez-nous</a></li>#}
+{#                        <li class="nav-item"><a class="nav-link" href="{{ path('app_sortie') }}">Sortie en mer</a></li>#}
+{#                        <li class="nav-item"><a class="nav-link" href="{{ path('app_navigation') }}">Navigation</a></li>#}
+{#                        <li class="nav-item"><a class="nav-link" href="{{ path('app_actualites') }}">Actualités</a></li>#}
+{#                    </ul>#}
+                    <a href="{{ path('app_login') }}" class="btn custom-btn d-lg-block d-none">Connexion</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- HERO SECTION -->
+        <section class="hero-section" id="section_1">
+            <div class="section-overlay"></div>
+            <div class="container d-flex justify-content-center align-items-center">
+                <div class="row">
+                    <div class="col-12 mt-auto mb-5 text-center">
+                        <h1 class="text-black mb-4">Bienvenue sur le site des plaisanciers</h1>
+                        <p class="text-black mb-4">Découvrez nos activités nautiques, annonces et événements pour nos adhérents.</p>
+                        <a class="btn custom-btn smoothscroll" href="#section_2">En savoir plus</a>
+                    </div>
+                </div>
+            </div>
+            <div class="video-wrap">
+                <video autoplay loop muted class="custom-video">
+                    <source src="{{ asset('video/mer.mp4') }}" type="video/mp4">
+                    Votre navigateur ne supporte pas la vidéo.
+                </video>
+            </div>
+        </section>
+
+        <!-- ABOUT SECTION -->
+        <section class="about-section section-padding" id="section_2">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-12 mb-4 mb-lg-0 d-flex align-items-center">
+                        <div class="services-info">
+                            <h2 class="text-black mb-4">Qui sommes-nous ?</h2>
+                            <p class="text-black">L’association des plaisanciers a pour but de promouvoir la navigation de plaisance et d’organiser des événements pour ses membres.</p>
+                            <h6 class="text-black mt-4">Nos valeurs</h6>
+                            <p class="text-black">Partage, sécurité et passion de la mer.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-12">
+                        <img src="{{ asset('images/association.jpg') }}" class="about-image img-fluid">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTIONS ANNEXES -->
+        {# Ici ajouter les sections "Annonces", "Sortie en mer", "Navigation", "Actualités", etc., avec la même structure #}
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="site-footer-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-12">
+                        <h2 class="text-white mb-lg-0">Association des plaisanciers</h2>
+                    </div>
+                    <div class="col-lg-6 col-12 d-flex justify-content-lg-end align-items-center">
+                        <ul class="social-icon d-flex justify-content-lg-end">
+                            <li class="social-icon-item"><a href="#" class="social-icon-link"><span class="bi-twitter"></span></a></li>
+                            <li class="social-icon-item"><a href="#" class="social-icon-link"><span class="bi-facebook"></span></a></li>
+                            <li class="social-icon-item"><a href="#" class="social-icon-link"><span class="bi-instagram"></span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="site-footer-bottom">
+            <div class="container">
+                <p class="text-white text-center mb-0">© 2025 Association des plaisanciers</p>
+            </div>
+        </div>
+    </footer>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.sticky.js') }}"></script>
+    <script src="{{ asset('js/click-scroll.js') }}"></script>
+    <script src="{{ asset('js/custom.js') }}"></script>
+{% endblock %}
