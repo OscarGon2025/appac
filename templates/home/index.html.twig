@@ -1,20 +1,139 @@
-{% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{#{% extends 'base.html.twig' %}#}
 
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+{#{% block title %}Accueil - Site des Plaisanciers{% endblock %}#}
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+{#{% block body %}#}
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/wamp64/www/appac/src/Controller/HomeController.php</code></li>
-        <li>Your template at <code>C:/wamp64/www/appac/templates/home/index.html.twig</code></li>
-    </ul>
-</div>
-{% endblock %}
+{#    <main>#}
+
+{#        <!-- Header -->#}
+{#        <header class="site-header">#}
+{#            <div class="container">#}
+{#                <div class="row">#}
+{#                    <div class="col-lg-12 col-12 d-flex flex-wrap">#}
+{#                        <p class="d-flex me-4 mb-0">#}
+{#                            <i class="bi-person custom-icon me-2"></i>#}
+{#                            <strong class="text-dark">Bienvenue sur le site des Plaisanciers</strong>#}
+{#                        </p>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </header>#}
+
+{#        <!-- Navbar -->#}
+{#        <nav class="navbar navbar-expand-lg navbar-light bg-light">#}
+{#            <div class="container">#}
+{#                <a class="navbar-brand" href="{{ path('app_home') }}">Plaisanciers</a>#}
+
+{#                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"#}
+{#                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">#}
+{#                    <span class="navbar-toggler-icon"></span>#}
+{#                </button>#}
+
+{#                <div class="collapse navbar-collapse" id="navbarNav">#}
+{#                    <ul class="navbar-nav ms-auto">#}
+{#                        <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}">Accueil</a></li>#}
+{#                        <li class="nav-item"><a class="nav-link" href="{{ path('app_association') }}">L'association</a></li>#}
+{#                        <li class="nav-item"><a class="nav-link" href="{{ path('app_annonces') }}">Annonces</a></li>#}
+{#                        <li class="nav-item"><a class="nav-link" href="{{ path('app_contact') }}">Contactez-nous</a></li>#}
+{#                        <li class="nav-item"><a class="nav-link" href="{{ path('app_sortie_mer') }}">Sortie en mer</a></li>#}
+{#                        <li class="nav-item"><a class="nav-link" href="{{ path('app_navigation') }}">Navigation</a></li>#}
+{#                        <li class="nav-item"><a class="nav-link" href="{{ path('app_actualites') }}">Actualités</a></li>#}
+{#                    </ul>#}
+{#                    <a href="{{ path('app_login') }}" class="btn btn-primary ms-3">Mon compte</a>#}
+{#                </div>#}
+{#            </div>#}
+{#        </nav>#}
+
+{#        <!-- Hero Section -->#}
+{#        <section class="hero-section position-relative" id="section_1">#}
+{#            <div class="section-overlay"></div>#}
+
+{#            <div class="container d-flex justify-content-center align-items-center" style="height: 80vh;">#}
+{#                <div class="row text-center">#}
+{#                    <div class="col-12 mt-auto mb-5">#}
+{#                        <h1 class="text-dark mb-3">Bienvenue chez les Plaisanciers</h1>#}
+{#                        <p class="lead">Partageons la passion de la mer et des bateaux</p>#}
+{#                        <a class="btn btn-primary mt-3" href="{{ path('app_association') }}">Découvrir l'association</a>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+
+{#            <div class="video-wrap">#}
+{#                <video autoplay loop muted class="custom-video" poster="">#}
+{#                    <source src="{{ asset('assets/video/pexels-2022395.mp4') }}" type="video/mp4">#}
+{#                    Votre navigateur ne supporte pas la vidéo.#}
+{#                </video>#}
+{#            </div>#}
+{#        </section>#}
+
+{#        <!-- About / L'association -->#}
+{#        <section class="about-section py-5" id="section_2">#}
+{#            <div class="container">#}
+{#                <div class="row align-items-center">#}
+{#                    <div class="col-lg-6 mb-4 mb-lg-0">#}
+{#                        <h2>L'association</h2>#}
+{#                        <p>Notre association de plaisanciers rassemble les passionnés de la mer, des sorties en bateau, et de la navigation.</p>#}
+{#                        <a href="{{ path('app_association') }}" class="btn btn-outline-primary mt-3">En savoir plus</a>#}
+{#                    </div>#}
+{#                    <div class="col-lg-6">#}
+{#                        <img src="{{ asset('assets/images/pexels-alexander-suhorucov-6457579.jpg') }}" class="img-fluid rounded" alt="Association">#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </section>#}
+
+{#        <!-- Annonces -->#}
+{#        <section class="annonces-section py-5 bg-light" id="section_3">#}
+{#            <div class="container">#}
+{#                <div class="section-title text-center mb-5">#}
+{#                    <h2>Annonces récentes</h2>#}
+{#                </div>#}
+{#                <div class="row">#}
+{#                    <div class="col-md-4 mb-4">#}
+{#                        <div class="card shadow-sm">#}
+{#                            <img src="{{ asset('assets/images/boat1.jpg') }}" class="card-img-top" alt="Annonce 1">#}
+{#                            <div class="card-body">#}
+{#                                <h5 class="card-title">Voilier à vendre</h5>#}
+{#                                <p class="card-text">Superbe voilier de 8m, idéal pour sorties en mer.</p>#}
+{#                                <a href="{{ path('app_annonces') }}" class="btn btn-outline-primary">Voir plus</a>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <!-- Ici pour ajouter d'autres annonces -->#}
+{#                </div>#}
+{#            </div>#}
+{#        </section>#}
+
+{#        <!-- Contact -->#}
+{#        <section class="contact-section py-5" id="section_6">#}
+{#            <div class="container">#}
+{#                <h2 class="text-center mb-4">Contactez-nous</h2>#}
+{#                <form class="row g-3" action="{{ path('app_contact') }}" method="post">#}
+{#                    <div class="col-md-6">#}
+{#                        <input type="text" class="form-control" name="nom" placeholder="Nom" required>#}
+{#                    </div>#}
+{#                    <div class="col-md-6">#}
+{#                        <input type="email" class="form-control" name="email" placeholder="Email" required>#}
+{#                    </div>#}
+{#                    <div class="col-12">#}
+{#                        <textarea class="form-control" name="message" rows="4" placeholder="Message" required></textarea>#}
+{#                    </div>#}
+{#                    <div class="col-12 text-center">#}
+{#                        <button type="submit" class="btn btn-primary">Envoyer</button>#}
+{#                    </div>#}
+{#                </form>#}
+{#            </div>#}
+{#        </section>#}
+
+{#    </main>#}
+
+{#    <!-- Footer -->#}
+{#    <footer class="site-footer bg-dark text-white py-4">#}
+{#        <div class="container text-center">#}
+{#            <p>&copy; {{ "now"|date("Y") }} Association des Plaisanciers. Tous droits réservés.</p>#}
+{#        </div>#}
+{#    </footer>#}
+
+{#{% endblock %}#}
