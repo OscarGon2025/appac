@@ -1,0 +1,60 @@
+/* 1. Couleurs principales */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background-color: #f8f9fa; /* fond légèrement gris */
+    color: #333;
+}
+
+/* 2. Hero / Header */
+#hero {
+    background: url('../assets/images/hero-bg.jpg') no-repeat center center;
+    background-size: cover;
+    color: white;
+    padding: 100px 0;
+    text-align: center;
+}
+
+#hero h1 {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+#hero p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+/* 3. Sections */
+section {
+    padding: 60px 0;
+}
+
+/* 4. Boutons */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* 5. Footer */
+footer {
+    background-color: #343a40;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+
+/* 6. Formulaires */
+form .form-control {
+    margin-bottom: 15px;
+}
+
+/* 7. Navbar fixée */
+.navbar {
+    margin-bottom: 0;
+}
