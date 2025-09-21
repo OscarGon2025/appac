@@ -26,7 +26,7 @@ class ArticleAttachment
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
-    // Nombre físico almacenado (lo rellena Vich)
+    // Vich
     #[ORM\Column(length: 255)]
     private string $fileName;
 
@@ -39,7 +39,7 @@ class ArticleAttachment
     #[ORM\Column(nullable: true)]
     private ?int $size = null;
 
-    // Orden de visualización
+    // Orde de visualisation
     #[ORM\Column(type: 'smallint', options: ['default' => 0])]
     private int $position = 0;
 
@@ -49,7 +49,7 @@ class ArticleAttachment
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $updatedAt;
 
-    // Campo NO mapeado: archivo a subir
+
     #[Vich\UploadableField(
         mapping: 'article_attachments',
         fileNameProperty: 'fileName',
