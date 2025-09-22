@@ -1,0 +1,37 @@
+{# usa el layout de EasyAdmin #}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content %}
+    <div class="container mt-3">
+        <h1 class="mb-3">Tableau de bord</h1>
+
+        <div class="row g-3">
+            <div class="col-md-4">
+                <a class="btn btn-primary w-100"
+                   href="{{ ea_url().setController('App\\\\Controller\\\\Admin\\\\ArticleCrudController').setAction('index') }}">
+                    Gérer les Articles
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-primary w-100"
+                   href="{{ ea_url().setController('App\\\\Controller\\\\Admin\\\\EventCrudController').setAction('index') }}">
+                    Gérer les Événements
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-primary w-100"
+                   href="{{ ea_url().setController('App\\\\Controller\\\\Admin\\\\PageCrudController').setAction('index') }}">
+                    Gérer les Pages
+                </a>
+            </div>
+        </div>
+
+        {# Puedes añadir KPIs más tarde; dejo un ejemplo comentado:
+    <div class="row g-3 mt-3">
+      <div class="col-md-4"><div class="card p-3">Articles publiés: {{ articleCount|default('—') }}</div></div>
+      <div class="col-md-4"><div class="card p-3">Événements à venir: {{ eventUpcoming|default('—') }}</div></div>
+      <div class="col-md-4"><div class="card p-3">Adhésions: {{ memberships|default('—') }}</div></div>
+    </div>
+        #}
+    </div>
+{% endblock %}
