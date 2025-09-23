@@ -49,7 +49,7 @@ final class AppFixtures extends Fixture
             return $faker->randomElement($fallbackStrings);
         };
 
-        // ---------------- Usuarios ----------------
+        // ---------------- Users ----------------
 
         $admin = (new User())
             ->setEmail('admin@appac56.fr')
@@ -72,7 +72,7 @@ final class AppFixtures extends Fixture
             $users[] = $u;
         }
 
-        // ---------------- Páginas ----------------
+        // ---------------- Pages ----------------
 
         foreach (['Qui sommes-nous', 'Sécurité en mer', 'Contact'] as $pTitle) {
             $p = new Page();
@@ -96,7 +96,7 @@ final class AppFixtures extends Fixture
             $em->persist($pl);
         }
 
-        // ---------------- Artículos ----------------
+        // ---------------- Articles ----------------
 
         for ($i = 0; $i < 6; $i++) {
             $title = $faker->sentence(6);
@@ -118,7 +118,7 @@ final class AppFixtures extends Fixture
             $em->persist($a);
         }
 
-        // ---------------- Eventos ----------------
+        // ---------------- Events ----------------
 
         $events = [];
         for ($i = 0; $i < 5; $i++) {
@@ -151,7 +151,7 @@ final class AppFixtures extends Fixture
             $events[] = $e;
         }
 
-        // ---------------- Álbumes + Fotos ----------------
+        // ---------------- Album + Photo ----------------
 
         for ($i = 0; $i < 3; $i++) {
             $album = (new Album())
@@ -178,7 +178,7 @@ final class AppFixtures extends Fixture
             }
         }
 
-        // ---------------- Anuncios clasificados ----------------
+        // ---------------- AD's ----------------
 
         for ($i = 0; $i < 5; $i++) {
             $ad = (new ClassifiedAd())

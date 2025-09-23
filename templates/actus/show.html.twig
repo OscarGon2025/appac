@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block body %}
+    <section class="container py-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('actus_index') }}">Actus</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ article.title }}</li>
+            </ol>
+        </nav>
+
+        <article>
+            <header class="mb-3">
+                <h1 class="mb-1">{{ article.title }}</h1>
+                <div class="text-muted">
+                    Publié le {{ article.publishedAt ? article.publishedAt|date('d/m/Y \\à H:i') : '' }}
+                    {% if article.isMembersOnly %}<span class="badge text-bg-secondary ms-2">Réservé aux membres</span>{% endif %}
+                </div>
+            </header>
+
+            {% if article.cover %}
+                <img class="img-fluid rounded mb-3" src="{{ asset('uploads/covers/' ~ article.cover) }}" alt="{{ article.title }}">
+            {% endif %}
+
+            <div class="content mb-4">
+                {{ article.content|raw }}
+            </div>
+
+            {# Paso 3 añadiremos botón de descarga segura #}
+            {% if article.attachments is defined and article.attachments|length > 0 %}
+                <h2 class="h5">Pièces jointes</h2>
+                <ul class="list-group">
+                    {% for att in article.attachments %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{{ att.title ?? att.originalName }}</span>
+                            <span class="text-muted small">{{ (att.size/1024)|number_format(0, ',', ' ') }} Ko</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </article>
+    </section>
+{% endblock %}

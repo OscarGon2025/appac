@@ -14,8 +14,15 @@ class ArticleRepository extends ServiceEntityRepository
     public function latestPublished(int $limit = 6): array
     {
         return $this->createQueryBuilder('a')
-            ->andWhere('a.status = :s')->setParameter('s', 'published')
-            ->orderBy('a.publishedAt', 'DESC')
-            ->setMaxResults($limit)->getQuery()->getResult();
+            ->andWhere('a.isPublished = :yes')
+            ->andWhere('a.publishedAt <= :now')
+            ->setParameter('yes', true)
+            ->setParameter('now', new \DateTimeImmutable())
+            ->orderBy('a.pinned', 'DESC')
+            ->addOrderBy('a.publishedAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
     }
+
 }

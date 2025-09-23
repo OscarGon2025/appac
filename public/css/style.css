@@ -4,6 +4,7 @@ body {
     line-height: 1.6;
     background-color: #f8f9fa; /* fond légèrement gris */
     color: #333;
+    scroll-behavior: smooth;
 }
 
 /* 2. Hero / Header */
