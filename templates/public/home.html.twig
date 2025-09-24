@@ -104,7 +104,7 @@
     {# Salut Oscar c'est Clément : Ici on ajoutera les sections suivantes "Actualités", etc. #}
 
 
-
+    {# Début Section actus #}
     <section id="actus" class="news-section section-padding">
         <div class="container">
             <div class="row">
@@ -152,11 +152,10 @@
         </div>
     </section>
     {# Fin Section actus #}
-    
-    
-    
-     {# Debut Section Events #}
 
+
+
+     {# Début Section Events #}
     <section id="events-section" class="section-padding bg-light">
         <div class="container">
             <div class="row mb-5">
@@ -219,6 +218,30 @@
         </div>
     </section>
 {# Fin Section Events #}
+
+
+    {# Début Section PartnerLink #}
+    <section id="partenaires" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-4">Nos Partenaires</h2>
+            <div class="row justify-content-center">
+                {% for partner in partners %}
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <a href="{{ partner.url }}" target="_blank" rel="noopener">
+                            {% if partner.logo %}
+                                <img src="{{ asset(partner.logo) }}" alt="{{ partner.label }}" class="img-fluid" style="max-height: 100px;">
+                            {% else %}
+                                <span>{{ partner.label }}</span>
+                            {% endif %}
+                        </a>
+                    </div>
+                {% else %}
+                    <p class="text-center">Aucun partenaire pour le moment.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {# Fin Section PartnerLink #}
 
 
 </main>

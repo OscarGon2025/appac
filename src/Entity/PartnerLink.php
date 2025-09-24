@@ -16,7 +16,6 @@ class PartnerLink
     #[ORM\Column]
     private ?int $id = null;
 
-
     #[ORM\Column(length: 160)]
     private string $label;
 
@@ -65,29 +64,104 @@ class PartnerLink
     }
 
     // Getters / Setters
-    public function getId(): ?int { return $this->id; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    public function getLabel(): string { return $this->label; }
-    public function setLabel(string $label): self { $this->label = $label; return $this; }
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
 
-    public function getUrl(): string { return $this->url; }
-    public function setUrl(string $url): self { $this->url = $url; return $this; }
+    public function setLabel(string $label): self
+    {
+        $this->label = $label;
 
-    public function getType(): ?string { return $this->type; }
-    public function setType(?string $type): self { $this->type = $type; return $this; }
+        return $this;
+    }
 
-    public function getLogo(): ?string { return $this->logo; }
-    public function setLogo(?string $logo): self { $this->logo = $logo; return $this; }
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
 
-    public function getPosition(): int { return $this->position; }
-    public function setPosition(int $position): self { $this->position = $position; return $this; }
+    public function setUrl(string $url): self
+    {
+        $this->url = $url;
 
-    public function isActive(): bool { return $this->isActive; }
-    public function setIsActive(bool $isActive): self { $this->isActive = $isActive; return $this; }
+        return $this;
+    }
 
-    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
-    public function setCreatedAt(\DateTimeImmutable $dt): self { $this->createdAt = $dt; return $this; }
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
 
-    public function getUpdatedAt(): \DateTimeImmutable { return $this->updatedAt; }
-    public function setUpdatedAt(\DateTimeImmutable $dt): self { $this->updatedAt = $dt; return $this; }
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getLogo(): ?string
+    {
+        return $this->logo;
+    }
+
+    public function setLogo(?string $logo): self
+    {
+        $this->logo = $logo;
+
+        return $this;
+    }
+
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): self
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $dt): self
+    {
+        $this->createdAt = $dt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): \DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $dt): self
+    {
+        $this->updatedAt = $dt;
+
+        return $this;
+    }
 }
