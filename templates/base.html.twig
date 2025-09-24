@@ -44,8 +44,50 @@
                     <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
                 </li>
                 <li class="nav-item">
+
                     <a class="nav-link" href="{{ path('app_home') }}#actus">Actus</a>
+
+                    <a class="nav-link" href="{{ path('app_event_index') }}">Événements</a>
+
                 </li>
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link" href="{{ path('app_association') }}">L'association</a>#}
+{#                </li>#}
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link" href="{{ path('app_annonces') }}">Annonces</a>#}
+{#                </li>#}
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link" href="{{ path('app_contact') }}">Contactez-nous</a>#}
+{#                </li>#}
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link" href="{{ path('app_sortie') }}">Sortie en mer</a>#}
+{#                </li>#}
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link" href="{{ path('app_navigation') }}">Navigation</a>#}
+{#                </li>#}
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link" href="{{ path('app_actualites') }}">Actualités</a>#}
+{#                </li>#}
+            </ul>
+
+            <ul class="navbar-nav">
+                {% if app.user %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_account') }}">
+                            Mon compte
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_login') }}">Se connecter</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_register') }}">Créer un compte</a>
+                    </li>
+                {% endif %}
             </ul>
 
             {# À droite: Connexion si anonyme; si connecté, Mon compte + Déconnexion #}

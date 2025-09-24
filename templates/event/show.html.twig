@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block body %}
+    <section class="container py-5">
+        <h1>{{ event.title }}</h1>
+
+        <p><strong>Type :</strong> {{ event.type }}</p>
+        <p><strong>Statut :</strong> {{ event.status }}</p>
+        <p><strong>Date de début :</strong> {{ event.startAt|date('d/m/Y H:i') }}</p>
+        {% if event.endAt %}
+            <p><strong>Date de fin :</strong> {{ event.endAt|date('d/m/Y H:i') }}</p>
+        {% endif %}
+        <p><strong>Description :</strong></p>
+        <p>{{ event.description }}</p>
+
+        <p>
+            <strong>Participants :</strong>
+            {% if event.maxParticipants %}
+                {{ event.maxParticipants - event.spotsLeft() }}/{{ event.maxParticipants }}
+            {% else %}
+                Illimité
+            {% endif %}
+        </p>
+
+        {% if event.locationName %}
+            <p><strong>Lieu :</strong> {{ event.locationName }}</p>
+        {% endif %}
+
+        <a href="{{ path('app_event_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+    </section>
+{% endblock %}

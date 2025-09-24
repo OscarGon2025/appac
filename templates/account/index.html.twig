@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Bienvenue dans votre espace membre</h1>
+
+        <div class="row">
+            <!-- Infos utilisateur -->
+            <div class="col-md-6">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Mes informations</h5>
+                        <p><strong>Email :</strong> {{ app.user.email }}</p>
+                        {% if app.user.firstname is defined %}
+                            <p><strong>Prénom :</strong> {{ app.user.firstname }}</p>
+                        {% endif %}
+                        {% if app.user.lastname is defined %}
+                            <p><strong>Nom :</strong> {{ app.user.lastname }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="col-md-6">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Mes actions</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <a href="{{ path('app_event_index') }}">Voir les événements</a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="{{ path('app_event_new') }}">Créer un événement</a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="{{ path('app_logout') }}">Se déconnecter</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

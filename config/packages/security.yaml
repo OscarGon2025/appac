@@ -113,7 +113,7 @@ security:
 
             logout:
                 path: app_logout
-                target: /
+                target: app_home
 
     access_control:
 
