@@ -1,0 +1,51 @@
+/* ====== Login Dark ====== */
+.page-login .login-hero{
+    position: relative;
+    min-height: 100vh;               /* toute l'ecran  */
+    background: url("../images/image1.jpg") center center/cover no-repeat fixed;
+}
+
+/* overlay */
+.page-login .login-hero::before{
+    content:"";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+}
+.page-login .login-hero > .container{
+    position: relative; z-index: 1;
+}
+
+/* type"glass" */
+.page-login .login-card{
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.18);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #fff;
+}
+
+/* inputs semitransparentes */
+.page-login .login-card .form-control{
+    background: rgba(255,255,255,.15);
+    border-color: rgba(255,255,255,.25);
+    color: #fff;
+}
+.page-login .login-card .form-control::placeholder{
+    color: rgba(255,255,255,.7);
+}
+
+/* labels claras */
+.page-login .login-card .form-label{
+    color: #f1f1f1;
+}
+
+/* checkbox y textos */
+.page-login .form-check-label{ color: #e8e8e8; }
+
+/* ajustar navbar sobre imagen (si la quieres más translúcida) */
+.page-login .navbar{
+    background: rgba(0,0,0,.65) !important;
+}
+
+/* botones del tema se ven bien encima del dark */
