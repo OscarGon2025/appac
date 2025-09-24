@@ -2,20 +2,48 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Form\RegistrationFormType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    #[Route(path: '/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    #[Route('/inscription', name: 'app_register')]
+    public function register(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher)
     {
-        // Affiche le message d'erreur de login s'il y en a un
-        $error = $authenticationUtils->getLastAuthenticationError();
+        $user = new User();
+        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form->handleRequest($request);
 
-        // Affiche le dernier "username" entré par l'utilisateur
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Hash du mot de passe
+            $user->setPassword(
+                $passwordHasher->hashPassword($user, $form->get('password')->getData())
+            );
+
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.');
+
+            return $this->redirectToRoute('app_login'); // route de login
+        }
+
+        return $this->render('security/register.html.twig', [
+            'registrationForm' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/login', name: 'app_login')]
+    public function login(AuthenticationUtils $authenticationUtils)
+    {
+        // récupérer l'erreur si login échoue
+        $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', [
@@ -24,10 +52,11 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/logout', name: 'app_logout')]
+    #[Route('/logout', name: 'app_logout')]
     public function logout(): void
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        // La méthode peut rester vide car Symfony gère la déconnexion automatiquement
+        throw new \Exception();
     }
 
     #[Route('/membre', name: 'app_membre')]
@@ -35,5 +64,4 @@ class SecurityController extends AbstractController
     {
         return $this->render('membre.html.twig');
     }
-
 }

@@ -11,16 +11,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 // Relations (diargrame UML)
-use App\Entity\Article;
-use App\Entity\Event;
-use App\Entity\ClassifiedAd;
-use App\Entity\Photo;
-use App\Entity\OutingRequest;
-use App\Entity\MembershipApplication;
-use App\Entity\Membership;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-
 #[ORM\Table(name: '`user`')]
 #[UniqueEntity(fields: ['email'])]
 #[ORM\HasLifecycleCallbacks]
@@ -33,10 +25,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
-
 
     #[ORM\Column(type: 'json')]
     private array $roles = [];
@@ -95,8 +85,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Membership::class, cascade: ['persist'])]
     private Collection $memberships;
 
-
-
     // ---------------------- Constructor ----------------------
 
     public function __construct()
@@ -125,12 +113,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles ?? [];
         $roles[] = 'ROLE_USER';
+
         return array_values(array_unique($roles));
     }
 
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+
         return $this;
     }
 
@@ -142,6 +132,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $hashedPassword): self
     {
         $this->password = $hashedPassword;
+
         return $this;
     }
 
@@ -152,39 +143,118 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     // ---------------------- Getters/Setters base ----------------------
 
-    public function getId(): ?int { return $this->id; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    public function getEmail(): ?string { return $this->email; }
-    public function setEmail(string $email): self { $this->email = mb_strtolower($email); return $this; }
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
 
-    public function getFirstName(): string { return $this->firstName; }
-    public function setFirstName(string $firstName): self { $this->firstName = $firstName; return $this; }
+    public function setEmail(string $email): self
+    {
+        $this->email = mb_strtolower($email);
 
-    public function getLastName(): string { return $this->lastName; }
-    public function setLastName(string $lastName): self { $this->lastName = $lastName; return $this; }
+        return $this;
+    }
+
+    public function getFirstName(): string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): self
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): self
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
 
     public function getFullName(): string
     {
-        $full = trim($this->firstName . ' ' . $this->lastName);
-        return $full !== '' ? $full : (string) $this->email;
+        $full = trim($this->firstName.' '.$this->lastName);
+
+        return '' !== $full ? $full : (string) $this->email;
     }
 
-    public function getPhone(): ?string { return $this->phone; }
-    public function setPhone(?string $phone): self { $this->phone = $phone; return $this; }
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
 
-    public function getAvatar(): ?string { return $this->avatar; }
-    public function setAvatar(?string $avatar): self { $this->avatar = $avatar; return $this; }
+    public function setPhone(?string $phone): self
+    {
+        $this->phone = $phone;
 
-    public function isNewsletterOptIn(): bool { return $this->newsletterOptIn; }
-    public function setNewsletterOptIn(bool $newsletterOptIn): self { $this->newsletterOptIn = $newsletterOptIn; return $this; }
+        return $this;
+    }
 
-    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self { $this->createdAt = $createdAt; return $this; }
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
 
-    public function getUpdatedAt(): \DateTimeImmutable { return $this->updatedAt; }
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self { $this->updatedAt = $updatedAt; return $this; }
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
 
-    public function __toString(): string { return $this->getFullName(); }
+        return $this;
+    }
+
+    public function isNewsletterOptIn(): bool
+    {
+        return $this->newsletterOptIn;
+    }
+
+    public function setNewsletterOptIn(bool $newsletterOptIn): self
+    {
+        $this->newsletterOptIn = $newsletterOptIn;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): \DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getFullName();
+    }
 
     // ---------------------- Lifecycle ----------------------
 
@@ -205,7 +275,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     // ---------------------- Relation: Article.author → User ----------------------
 
     /** @return Collection<int, Article> */
-    public function getArticles(): Collection { return $this->articles; }
+    public function getArticles(): Collection
+    {
+        return $this->articles;
+    }
 
     public function addArticle(Article $article): self
     {
@@ -213,6 +286,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->articles->add($article);
             $article->setAuthor($this);
         }
+
         return $this;
     }
 
@@ -221,6 +295,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->articles->removeElement($article) && $article->getAuthor() === $this) {
             $article->setAuthor(null);
         }
+
         return $this;
     }
 
@@ -228,7 +303,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     // relation: Event.createdBy → User ----------------------
 
     /** @return Collection<int, Event> */
-    public function getEventsCreated(): Collection { return $this->eventsCreated; }
+    public function getEventsCreated(): Collection
+    {
+        return $this->eventsCreated;
+    }
 
     public function addEventCreated(Event $event): self
     {
@@ -236,6 +314,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->eventsCreated->add($event);
             $event->setCreatedBy($this);
         }
+
         return $this;
     }
 
@@ -244,13 +323,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->eventsCreated->removeElement($event) && $event->getCreatedBy() === $this) {
             $event->setCreatedBy(null);
         }
+
         return $this;
     }
 
     // ---------------------- Relation : ClassifiedAd.owner → User ----------------------
 
     /** @return Collection<int, ClassifiedAd> */
-    public function getClassifiedAds(): Collection { return $this->classifiedAds; }
+    public function getClassifiedAds(): Collection
+    {
+        return $this->classifiedAds;
+    }
 
     public function addClassifiedAd(ClassifiedAd $ad): self
     {
@@ -258,6 +341,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->classifiedAds->add($ad);
             $ad->setOwner($this);
         }
+
         return $this;
     }
 
@@ -266,13 +350,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->classifiedAds->removeElement($ad) && $ad->getOwner() === $this) {
             $ad->setOwner(null);
         }
+
         return $this;
     }
 
     // ---------------------- Relation : Photo.owner → User ----------------------
 
     /** @return Collection<int, Photo> */
-    public function getPhotos(): Collection { return $this->photos; }
+    public function getPhotos(): Collection
+    {
+        return $this->photos;
+    }
 
     public function addPhoto(Photo $photo): self
     {
@@ -280,6 +368,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->photos->add($photo);
             $photo->setOwner($this);
         }
+
         return $this;
     }
 
@@ -288,13 +377,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->photos->removeElement($photo) && $photo->getOwner() === $this) {
             $photo->setOwner(null);
         }
+
         return $this;
     }
 
     // ---------------------- Relation: OutingRequest.user → User (nullable) ----------------------
 
     /** @return Collection<int, OutingRequest> */
-    public function getOutingRequests(): Collection { return $this->outingRequests; }
+    public function getOutingRequests(): Collection
+    {
+        return $this->outingRequests;
+    }
 
     public function addOutingRequest(OutingRequest $req): self
     {
@@ -302,6 +395,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->outingRequests->add($req);
             $req->setUser($this);
         }
+
         return $this;
     }
 
@@ -310,13 +404,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->outingRequests->removeElement($req) && $req->getUser() === $this) {
             $req->setUser(null);
         }
+
         return $this;
     }
 
     // ---------------------- Relation: MembershipApplication.processedBy → User (nullable) ----------------------
 
     /** @return Collection<int, MembershipApplication> */
-    public function getProcessedApplications(): Collection { return $this->processedApplications; }
+    public function getProcessedApplications(): Collection
+    {
+        return $this->processedApplications;
+    }
 
     public function addProcessedApplication(MembershipApplication $app): self
     {
@@ -324,6 +422,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->processedApplications->add($app);
             $app->setProcessedBy($this);
         }
+
         return $this;
     }
 
@@ -332,13 +431,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->processedApplications->removeElement($app) && $app->getProcessedBy() === $this) {
             $app->setProcessedBy(null);
         }
+
         return $this;
     }
 
     // ---------------------- Relation : Membership.user → User ----------------------
 
     /** @return Collection<int, Membership> */
-    public function getMemberships(): Collection { return $this->memberships; }
+    public function getMemberships(): Collection
+    {
+        return $this->memberships;
+    }
 
     public function addMembership(Membership $m): self
     {
@@ -346,12 +449,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->memberships->add($m);
             $m->setUser($this);
         }
+
         return $this;
     }
 
     public function removeMembership(Membership $m): self
     {
         $this->memberships->removeElement($m);
+
         return $this;
     }
 }

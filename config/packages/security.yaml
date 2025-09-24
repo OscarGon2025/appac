@@ -103,7 +103,7 @@ security:
                 enable_csrf: true
             logout:
                 path: app_logout
-                target: /
+                target: app_home
 
     access_control:
         # Page membre protégée
