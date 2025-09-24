@@ -4,6 +4,7 @@ body {
     line-height: 1.6;
     background-color: #f8f9fa; /* fond légèrement gris */
     color: #333;
+    scroll-behavior: smooth;
 }
 
 /* 2. Hero / Header */
@@ -57,4 +58,13 @@ form .form-control {
 /* 7. Navbar fixée */
 .navbar {
     margin-bottom: 0;
+}
+
+/* 7. correction login */
+.page-login .hero-section{min-height:0;padding-top:2rem;padding-bottom:0;background:transparent;}
+.page-login .contact-section.section-padding{padding-top:2rem;padding-bottom:3rem;}
+
+/* Navbar noir dans login */
+.page-login .navbar {
+    background-color: #000 !important;
 }

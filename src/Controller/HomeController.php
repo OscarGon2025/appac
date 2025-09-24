@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+
+use App\Repository\ArticleRepository;
 use App\Entity\Event;
 use App\Repository\EventRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,24 +13,29 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class HomeController extends AbstractController
 {
-    #[Route('/', name: 'app_home')]
-    public function index(EventRepository $eventRepository): Response
-    {
-        // Pour récupérer les évènements publiés, à venir et triés par date
-        $events = $eventRepository->createQueryBuilder('e')
-            ->where('e.status = :status')
-            ->andWhere('e.startAt >= :now')
-            ->setParameter('status', 'PUBLISHED')
-            ->setParameter('now', new \DateTimeImmutable())
-            ->orderBy('e.startAt', 'ASC')
-            ->setMaxResults(6) // c'est la limite d’évènements affichés
-            ->getQuery()
-            ->getResult();
+// — Unifier la logique dans une seule action pour "/" — //
+#[Route('/', name: 'app_home', methods: ['GET'])]
+public function index(ArticleRepository $articles, EventRepository $events): Response
+{
+    // — Derniers articles publiés
+    $latest = $articles->latestPublished(6);
 
-        return $this->render('public/home.html.twig', [
-            'events' => $events,
-        ]);
-    }
+    // — Prochains événements publiés (triés par date)
+    $qb = $events->createQueryBuilder('e')
+        ->where('e.status = :status')
+        ->andWhere('e.startAt >= :now')
+        ->setParameter('status', PublishStatus::PUBLISHED)
+        ->setParameter('now', new \DateTimeImmutable())
+        ->orderBy('e.startAt', 'ASC')
+        ->setMaxResults(6);
+
+    return $this->render('public/home.html.twig', [
+        // — Données fusionnées
+        'actus'  => $latest,
+        'events' => $qb->getQuery()->getResult(),
+    ]);
+}
+
 
     #[Route('/evenements/{slug}', name: 'app_event_show')]
     public function show(string $slug, EventRepository $eventRepository): Response
