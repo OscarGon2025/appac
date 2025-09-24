@@ -23,11 +23,12 @@
     <style>html{scroll-behavior:smooth}</style>
 </head>
 
-{# body_class pour chaque view: {% set body_class = 'page-login' %} #}
-<body class="{{ body_class|default('') }}">
+{# Normalizamos body_class para que siempre exista #}
+{% set body_class = body_class|default('') %}
+
+<body class="{{ body_class }}">
 
 <nav class="navbar navbar-expand-lg {{ body_class == 'page-login' ? 'navbar-dark bg-dark shadow-sm' : '' }}">
-
     <div class="container">
         <a class="navbar-brand" href="{{ path('app_home') }}">
             Site des Plaisanciers
@@ -44,38 +45,17 @@
                     <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
                 </li>
                 <li class="nav-item">
-
                     <a class="nav-link" href="{{ path('app_home') }}#actus">Actus</a>
-
                     <a class="nav-link" href="{{ path('app_event_index') }}">Événements</a>
-
                 </li>
-{#                <li class="nav-item">#}
-{#                    <a class="nav-link" href="{{ path('app_association') }}">L'association</a>#}
-{#                </li>#}
-{#                <li class="nav-item">#}
-{#                    <a class="nav-link" href="{{ path('app_annonces') }}">Annonces</a>#}
-{#                </li>#}
-{#                <li class="nav-item">#}
-{#                    <a class="nav-link" href="{{ path('app_contact') }}">Contactez-nous</a>#}
-{#                </li>#}
-{#                <li class="nav-item">#}
-{#                    <a class="nav-link" href="{{ path('app_sortie') }}">Sortie en mer</a>#}
-{#                </li>#}
-{#                <li class="nav-item">#}
-{#                    <a class="nav-link" href="{{ path('app_navigation') }}">Navigation</a>#}
-{#                </li>#}
-{#                <li class="nav-item">#}
-{#                    <a class="nav-link" href="{{ path('app_actualites') }}">Actualités</a>#}
-{#                </li>#}
+                {# Más enlaces cuando estén listos #}
+                {# <li class="nav-item"><a class="nav-link" href="{{ path('app_association') }}">L'association</a></li> #}
             </ul>
 
             <ul class="navbar-nav">
                 {% if app.user %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_account') }}">
-                            Mon compte
-                        </a>
+                        <a class="nav-link" href="{{ path('app_account') }}">Mon compte</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>
@@ -90,7 +70,7 @@
                 {% endif %}
             </ul>
 
-            {# À droite: Connexion si anonyme; si connecté, Mon compte + Déconnexion #}
+            {# Botones a la derecha #}
             {% if app.user %}
                 <div class="d-flex gap-2">
                     <a href="{{ path('app_home') }}#actus" class="btn btn-outline-dark">Mon compte</a>
