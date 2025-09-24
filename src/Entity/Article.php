@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ORM\Table(name: 'article')]
@@ -24,7 +25,10 @@ class Article
     #[ORM\Column(length: 255)]
     private string $title;
 
+
+    // --------   Slug    -------
     #[ORM\Column(length: 255, unique: true)]
+    #[Gedmo\Slug(fields: ['title'], updatable: false)] // no se regenera al editar el título
     private string $slug;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -70,6 +74,10 @@ class Article
         $this->attachments = new ArrayCollection();
     }
 
+
+
+
+
     // ---------- Lifecycle ----------
     #[ORM\PrePersist]
     public function onPrePersist(): void
@@ -77,7 +85,7 @@ class Article
         $now = new \DateTimeImmutable();
         $this->createdAt = $now;
         $this->updatedAt = $now;
-        $this->ensureSlug();
+
 
         if ($this->isPublished && null === $this->publishedAt) {
             $this->publishedAt = $now;
@@ -88,7 +96,7 @@ class Article
     public function onPreUpdate(): void
     {
         $this->updatedAt = new \DateTimeImmutable();
-        $this->ensureSlug();
+
 
         if ($this->isPublished && null === $this->publishedAt) {
             $this->publishedAt = new \DateTimeImmutable();
