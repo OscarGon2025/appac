@@ -85,6 +85,9 @@
                         <p class="mb-4">À bientôt&nbsp;⛵</p>
                     </div>
 
+
+    {# Début Section actus #}
+
                     <div class="text-center">
                         <a href="{{ path('app_home') }}#actus" class="btn custom-btn px-4">Découvrir nos actus</a>
                     </div>
@@ -94,6 +97,7 @@
     </section>
 
     {# --- Actus --- #}
+
     <section id="actus" class="news-section section-padding">
         <div class="container">
             <div class="row">
@@ -125,7 +129,14 @@
         </div>
     </section>
 
+    {# Fin Section actus #}
+
+
+
+     {# Début Section Events #}
+
     {# --- Événements --- #}
+
     <section id="events-section" class="section-padding bg-light">
         <div class="container">
             <div class="row mb-5">
@@ -182,4 +193,56 @@
             </div>
         </div>
     </section>
+
+{# Fin Section Events #}
+
+
+    {# Début Section PartnerLink #}
+    <section id="partenaires" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-4">Nos Partenaires</h2>
+            <div class="row justify-content-center">
+                {% for partner in partners %}
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <a href="{{ partner.url }}" target="_blank" rel="noopener">
+                            {% if partner.logo %}
+                                <img src="{{ asset(partner.logo) }}" alt="{{ partner.label }}" class="img-fluid" style="max-height: 100px;">
+                            {% else %}
+                                <span>{{ partner.label }}</span>
+                            {% endif %}
+                        </a>
+                    </div>
+                {% else %}
+                    <p class="text-center">Aucun partenaire pour le moment.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {# Fin Section PartnerLink #}
+
+
+</main>
+
+<footer class="site-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <p class="copyright-text">© 2025 Association des Plaisanciers d'Arzal</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- JAVASCRIPT FILES -->
+<script src="{{ asset('js/jquery.min.js') }}"></script>
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('js/jquery.sticky.js') }}"></script>
+<script src="{{ asset('js/click-scroll.js') }}"></script>
+<script src="{{ asset('js/custom.js') }}"></script>
+
+</body>
+
+</html>
+
 {% endblock %}
+
