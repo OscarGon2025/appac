@@ -1,4 +1,5 @@
 /* ====== Login Dark ====== */
+
 .page-login .login-hero{
     position: relative;
     min-height: 100vh;               /* toute l'ecran  */
@@ -49,3 +50,41 @@
 }
 
 /* botones del tema se ven bien encima del dark */
+
+
+/* ===== About (Qui sommes-nous ?) ===== */
+
+
+.about-section{
+
+
+    background:
+        linear-gradient(180deg, rgba(9,24,43,.85), rgba(12,37,66,.85)),
+        url("../images/image2.jpg") center/cover no-repeat;
+    color: #fff;
+}
+
+.about-section .bi{
+    font-size: 1.1rem;
+    line-height: 1.2;
+    opacity: .9;
+}
+
+/* Ajustes de legibilidad */
+.about-section .lead{ color: rgba(255,255,255,.9); }
+.about-section .opacity-85{ color: rgba(255,255,255,.85); }
+
+/* Links dentro de la sección */
+.about-section a:not(.btn){
+    color: #fff;
+    text-decoration: underline dotted;
+}
+.about-section a:not(.btn):hover{ color: #e6f0ff; }
+
+/* Botón del tema sobre fondo oscuro */
+.about-section .btn.custom-btn{
+    box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+
+/* Espaciado vertical (si quieres un poco más compacto) */
+/* .about-section.section-padding{ padding-top: 60px; padding-bottom: 60px; } */

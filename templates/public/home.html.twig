@@ -1,93 +1,43 @@
+{# templates/public/home.html.twig #}
+{% extends 'base.html.twig' %}
 
-<!doctype html>
-<html lang="en">
+{% block title %}Association des Plaisanciers d'Arzal{% endblock %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% block body %}
 
-    <meta name="description" content="">
-    <meta name="author" content="">
 
-    <title>Association des Plaisanciers d'Arzal</title>
+    {#  Heeader pour Api Meteo, ecluses et marees #}
+{#    <header class="site-header">#}
+{#        <div class="container">#}
+{#            <div class="row">#}
+{#                <div class="col-lg-12 col-12 d-flex flex-wrap">#}
+{#                    <p class="d-flex me-4 mb-0">#}
+{#                        <i class="bi-person custom-icon me-2"></i>#}
+{#                        <strong class="text-dark">Bienvenue sur le site de l'Association des Plaisanciers d'Arzal</strong>#}
+{#                    </p>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </header>#}
 
-    <!-- CSS FILES -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;400;700&display=swap" rel="stylesheet">
-    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/bootstrap-icons.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/templatemo-festava-live.css') }}" rel="stylesheet">
-</head>
 
-<body>
-
-<header class="site-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 col-12 d-flex flex-wrap">
-                <p class="d-flex me-4 mb-0">
-                    <i class="bi-person custom-icon me-2"></i>
-                    <strong class="text-dark">Bienvenue sur le site de l'Association des Plaisanciers d'Arzal</strong>
-                </p>
-            </div>
-        </div>
-    </div>
-</header>
-
-<nav class="navbar navbar-expand-lg">
-    <div class="container">
-        <a class="navbar-brand" href="{{ path('app_home') }}">Plaisanciers APPAC</a>
-
-        <a href="{{ path('app_login') }}" class="btn custom-btn d-lg-none ms-auto me-4">Mon compte</a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav align-items-lg-center ms-auto me-lg-5">
-                <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}">Accueil</a></li>
-
-                <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}#actus">Actus</a></li>
-
-                <li class="nav-item"><a class="nav-link" href="{{ path('app_event_index') }}">Événements</a></li>
-
-{#                <li class="nav-item"><a class="nav-link" href="{{ path('app_association') }}">L'association</a></li>#}
-{#                <li class="nav-item"><a class="nav-link" href="{{ path('app_annonces') }}">Annonces</a></li>#}
-{#                <li class="nav-item"><a class="nav-link" href="{{ path('app_contact') }}">Contactez-nous</a></li>#}
-{#                <li class="nav-item"><a class="nav-link" href="{{ path('app_sortie_mer') }}">Sortie en mer</a></li>#}
-{#                <li class="nav-item"><a class="nav-link" href="{{ path('app_navigation') }}">Navigation</a></li>#}
-            </ul>
-
-            <a href="{{ path('app_login') }}" class="btn custom-btn d-lg-block d-none">Mon compte</a>
-        </div>
-    </div>
-</nav>
-
-<main>
+    {# --- Hero con vídeo --- #}
     <section class="hero-section" id="section_1">
         <div class="section-overlay"></div>
         <div class="container d-flex justify-content-center align-items-center">
             <div class="row">
                 <div class="col-12 mt-auto mb-5 text-center">
-                    <small>Association des Plaisanciers d'Arzal</small>
+                    <small>ASSOCIATION DES PLAISANCIERS D'ARZAL</small>
                     <h1 class="text-white mb-5">Bienvenue sur notre site !</h1>
-                    <a class="btn custom-btn smoothscroll" href="#section_2">Découvrir</a>
+                    <a class="btn custom-btn smoothscroll" href="#about">Découvrir</a>
                 </div>
 
                 <div class="col-lg-12 col-12 mt-auto d-flex flex-column flex-lg-row text-center">
                     <div class="date-wrap">
-                        <h5 class="text-white">
-                            <i class="custom-icon bi-clock me-2"></i>
-                            Prochain événement : 12 Octobre 2025
-                        </h5>
+                        <h5 class="text-white"><i class="custom-icon bi-clock me-2"></i>Prochain événement : 12 Octobre 2025</h5>
                     </div>
-
                     <div class="location-wrap mx-auto py-3 py-lg-0">
-                        <h5 class="text-white">
-                            <i class="custom-icon bi-geo-alt me-2"></i>
-                            Port de plaisance d'Arzal dans le Morbihan
-                        </h5>
+                        <h5 class="text-white"><i class="custom-icon bi-geo-alt me-2"></i>Port de plaisance d'Arzal dans le Morbihan</h5>
                     </div>
                 </div>
             </div>
@@ -101,17 +51,53 @@
         </div>
     </section>
 
-    {# Salut Oscar c'est Clément : Ici on ajoutera les sections suivantes "Actualités", etc. #}
+    {# --- Qui sommes-nous ? --- #}
+    <section id="about" class="about-section section-padding text-white">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-8 col-lg-9">
+                    <div class="text-center mb-4">
+                        <h2 class="display-6 fw-bold mb-3">Qui sommes-nous&nbsp;?</h2>
+                        <p class="lead opacity-75 mb-0">
+                            Ami(e)s plaisanciers du Port d’Arzal-Camoel, bienvenue sur le site de l’association <strong>APPAC</strong>.
+                        </p>
+                    </div>
 
+                    <hr class="border-light opacity-25 my-4">
 
+                    <div class="fs-5 opacity-85">
+                        <p class="mb-3">…Laissez naviguer votre curiosité à la découverte&nbsp;:</p>
+                        <ul class="list-unstyled ps-0 mb-4">
+                            <li class="d-flex align-items-start gap-2 mb-2">
+                                <i class="bi bi-life-preserver"></i>
+                                <span>Nos engagements et les démarches pour la défense des intérêts des plaisanciers</span>
+                            </li>
+                            <li class="d-flex align-items-start gap-2">
+                                <i class="bi bi-emoji-smile"></i>
+                                <span>Nos activités festives et diverses autour du plaisir de la pratique de la plaisance</span>
+                            </li>
+                        </ul>
 
+                        <p class="mb-1">
+                            Alors, <em>Cap sur «&nbsp;Qui sommes-nous&nbsp;? / Présentation de l’APPAC&nbsp;»</em> et, si vous appréciez aussi la convivialité,
+                            <strong>n’hésitez donc pas à nous rejoindre&nbsp;!</strong>
+                        </p>
+                        <p class="mb-4">À bientôt&nbsp;⛵</p>
+                    </div>
+
+                    <div class="text-center">
+                        <a href="{{ path('app_home') }}#actus" class="btn custom-btn px-4">Découvrir nos actus</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# --- Actus --- #}
     <section id="actus" class="news-section section-padding">
         <div class="container">
             <div class="row">
-
-                <div class="col-12 text-center">
-                    <h2 class="mb-4">Derniers articles</h2>
-                </div>
+                <div class="col-12 text-center"><h2 class="mb-4">Derniers articles</h2></div>
 
                 {% for a in actus %}
                     <div class="col-lg-4 col-md-6 mb-4">
@@ -119,44 +105,27 @@
                             {% if a.cover %}
                                 <img src="{{ asset('uploads/covers/' ~ a.cover) }}" class="custom-block-image img-fluid" alt="{{ a.title }}">
                             {% endif %}
-
                             <div class="custom-block">
                                 <h3 class="h5">
-                                    <a href="{{ path('actus_show', { slug: a.slug }) }}" class="custom-btn">
-                                        {{ a.title }}
-                                    </a>
+                                    <a href="{{ path('actus_show', { slug: a.slug }) }}" class="custom-btn">{{ a.title }}</a>
                                     {% if a.pinned %}<span class="badge text-bg-warning ms-1">À la une</span>{% endif %}
                                     {% if a.isMembersOnly %}<span class="badge text-bg-secondary ms-1">Membres</span>{% endif %}
                                 </h3>
-
-                                <p class="text-muted mb-2">
-                                    {{ a.publishedAt ? a.publishedAt|date('d/m/Y H:i') : '' }}
-                                </p>
-
+                                <p class="text-muted mb-2">{{ a.publishedAt ? a.publishedAt|date('d/m/Y H:i') : '' }}</p>
                                 {% set excerpt = a.content|striptags %}
-                                <p class="mb-3">
-                                    {{ excerpt|length > 160 ? excerpt|slice(0,160) ~ '…' : excerpt }}
-                                </p>
-
+                                <p class="mb-3">{{ excerpt|length > 160 ? excerpt|slice(0,160) ~ '…' : excerpt }}</p>
                                 <a class="btn custom-btn" href="{{ path('actus_show', { slug: a.slug }) }}">Lire</a>
                             </div>
                         </article>
                     </div>
                 {% else %}
-                    <div class="col-12 text-center">
-                        <p>Aucun article pour le moment.</p>
-                    </div>
+                    <div class="col-12 text-center"><p>Aucun article pour le moment.</p></div>
                 {% endfor %}
-
             </div>
         </div>
     </section>
-    {# Fin Section actus #}
-    
-    
-    
-     {# Debut Section Events #}
 
+    {# --- Événements --- #}
     <section id="events-section" class="section-padding bg-light">
         <div class="container">
             <div class="row mb-5">
@@ -174,9 +143,7 @@
                                 <h5 class="card-title">{{ event.title }}</h5>
                                 <p class="card-text mb-1">
                                     <strong>Date :</strong> {{ event.startAt|date('d/m/Y H:i') }}
-                                    {% if event.endAt %}
-                                        - {{ event.endAt|date('d/m/Y H:i') }}
-                                    {% endif %}
+                                    {% if event.endAt %}- {{ event.endAt|date('d/m/Y H:i') }}{% endif %}
                                 </p>
                                 {% if event.locationName %}
                                     <p class="card-text mb-1"><strong>Lieu :</strong> {{ event.locationName }}</p>
@@ -201,8 +168,7 @@
                                         <div class="progress-bar {% if percent < 50 %}bg-success{% elseif percent < 80 %}bg-warning{% else %}bg-danger{% endif %}"
                                              role="progressbar"
                                              style="width: {{ percent }}%;"
-                                             aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100">
-                                        </div>
+                                             aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 {% endif %}
 
@@ -211,35 +177,9 @@
                         </div>
                     </div>
                 {% else %}
-                    <div class="col-12 text-center">
-                        <p class="text-muted">Aucun événement à venir pour le moment.</p>
-                    </div>
+                    <div class="col-12 text-center"><p class="text-muted">Aucun événement à venir pour le moment.</p></div>
                 {% endfor %}
             </div>
         </div>
     </section>
-{# Fin Section Events #}
-
-
-</main>
-
-<footer class="site-footer">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <p class="copyright-text">© 2025 Association des Plaisanciers d'Arzal</p>
-            </div>
-        </div>
-    </div>
-</footer>
-
-<!-- JAVASCRIPT FILES -->
-<script src="{{ asset('js/jquery.min.js') }}"></script>
-<script src="{{ asset('js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('js/jquery.sticky.js') }}"></script>
-<script src="{{ asset('js/click-scroll.js') }}"></script>
-<script src="{{ asset('js/custom.js') }}"></script>
-
-</body>
-
-</html>
+{% endblock %}
