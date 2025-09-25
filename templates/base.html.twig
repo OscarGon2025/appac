@@ -23,6 +23,45 @@
     <style>html{scroll-behavior:smooth}</style>
 </head>
 
+{# Bloc de header  Marees, Meteo, Ecluses#}
+
+<header class="site-header bg-warning py-2">
+    <div class="container">
+        <div class="row align-items-center g-2">
+            <div class="col-12 col-lg d-flex flex-wrap">
+                <p class="d-flex me-4 mb-0">
+                    <i class="bi-person custom-icon me-2"></i>
+                    <strong class="text-dark">Bienvenue sur le site de l’Association des Plaisanciers d’Arzal</strong>
+                </p>
+            </div>
+
+            {# Bloc météo & marées #}
+            <div class="col-12 col-lg-auto text-dark small">
+                {% if header.weather is defined %}
+                    <span class="me-3">
+            <i class="bi bi-thermometer-half"></i>
+            {{ header.weather.temp }}°C, {{ header.weather.desc }}
+          </span>
+                    <span class="me-3">
+            <i class="bi bi-wind"></i>
+            {{ header.weather.wind }} km/h
+          </span>
+                {% endif %}
+
+                {% if header.tide is defined %}
+                    <span class="me-3">
+            <i class="bi bi-water"></i>
+            Prochaine marée : {{ header.tide.nextType }} à {{ header.tide.nextTime|date('H:i') }}
+          </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
 {# Normalizamos body_class para que siempre exista #}
 {% set body_class = body_class|default('') %}
 
@@ -41,39 +80,37 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav align-items-lg-center ms-auto me-lg-5">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_home') }}#actus">Actus</a>
-                    <a class="nav-link" href="{{ path('app_event_index') }}">Événements</a>
-                </li>
+                <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}#about">Qui sommes-nous ?</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}#actus">Actus</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}#events-section">Événements</a></li>
+
                 {# Más enlaces cuando estén listos #}
                 {# <li class="nav-item"><a class="nav-link" href="{{ path('app_association') }}">L'association</a></li> #}
             </ul>
 
-            <ul class="navbar-nav">
-                {% if app.user %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_account') }}">Mon compte</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_login') }}">Se connecter</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_register') }}">Créer un compte</a>
-                    </li>
-                {% endif %}
-            </ul>
+{#            <ul class="navbar-nav">#}
+{#                {% if app.user %}#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{{ path('app_account') }}">Mon compte</a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>#}
+{#                    </li>#}
+{#                {% else %}#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{{ path('app_login') }}">Se connecter</a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{{ path('app_register') }}">Créer un compte</a>#}
+{#                    </li>#}
+{#                {% endif %}#}
+{#            </ul>#}
 
             {# Botones a la derecha #}
             {% if app.user %}
                 <div class="d-flex gap-2">
-                    <a href="{{ path('app_home') }}#actus" class="btn btn-outline-dark">Mon compte</a>
+                    <a href="{{ path('app_home') }}#actus" class="btn btn-outline-light">Mon compte</a>
                     <a href="{{ path('app_logout') }}" class="btn custom-btn">Déconnexion</a>
                 </div>
             {% else %}
