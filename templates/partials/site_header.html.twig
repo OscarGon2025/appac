@@ -1,0 +1,53 @@
+{# Bannière globale (toutes pages) #}
+<header class="site-header bg-warning py-2 small">
+    <div class="container">
+        <div class="row align-items-center g-2">
+            <div class="col-12 col-lg d-flex flex-wrap">
+                <p class="d-flex me-4 mb-0">
+                    <i class="custom-icon bi-geo-alt me-2"></i>
+                    <strong class="text-dark">Arzal</strong>
+                </p>
+            </div>
+
+            <div class="col-12 col-lg-auto text-dark d-flex flex-wrap gap-3 align-items-center">
+
+                {# — Météo #}
+                {% if header.weather %}
+                    <span>
+            <i class="bi bi-thermometer-half"></i>
+            {{ header.weather.temp }}°C
+          </span>
+                    <span>
+            <i class="bi bi-wind"></i>
+            {{ header.weather.wind }} km/h
+            {% if header.weather.dir is not null %} ({{ header.weather.dir }}°){% endif %}
+          </span>
+                {% endif %}
+
+                {# — Marées (indicatif) #}
+                {% if header.tide %}
+                    <span>
+            <i class="bi bi-water"></i>
+            Prochaine marée :
+            <strong>{{ header.tide.type }}</strong>
+            à {{ header.tide.time|date('H:i') }}
+          </span>
+                {% endif %}
+
+                {# — Écluses: lien officiel #}
+                <a class="btn btn-sm btn-outline-dark"
+                   href="https://passeportecluse-arzal-camoel.com/"
+                   target="_blank" rel="noopener">
+                    Voir horaires des écluses
+                </a>
+                {# Avertissement discret sur marées indicatives #}
+                <div class="col text-dark-50 small mt-1">
+                    <em>Données marées à titre indicatif (non officielles / non adaptées à la navigation).</em>
+                </div>
+            </div>
+        </div>
+
+
+      
+    </div>
+</header>

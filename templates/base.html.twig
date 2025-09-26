@@ -1,3 +1,4 @@
+{# templates/base.html.twig #}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -13,68 +14,48 @@
     {# Vos overrides #}
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
 
-    {# Fonts #}
+    {# Polices #}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;400;700&display=swap" rel="stylesheet">
-
-    {% block stylesheets %}{% endblock %}
-
-    <style>html{scroll-behavior:smooth}</style>
 </head>
 
-{# Bloc de header  Marees, Meteo, Ecluses#}
-
-<header class="site-header bg-warning py-2">
-    <div class="container">
-        <div class="row align-items-center g-2">
-            <div class="col-12 col-lg d-flex flex-wrap">
-                <p class="d-flex me-4 mb-0">
-                    <i class="bi-person custom-icon me-2"></i>
-                    <strong class="text-dark">Bienvenue sur le site de l’Association des Plaisanciers d’Arzal</strong>
-                </p>
-            </div>
-
-            {# Bloc météo & marées #}
-            <div class="col-12 col-lg-auto text-dark small">
-                {% if header.weather is defined %}
-                    <span class="me-3">
-            <i class="bi bi-thermometer-half"></i>
-            {{ header.weather.temp }}°C, {{ header.weather.desc }}
-          </span>
-                    <span class="me-3">
-            <i class="bi bi-wind"></i>
-            {{ header.weather.wind }} km/h
-          </span>
-                {% endif %}
-
-                {% if header.tide is defined %}
-                    <span class="me-3">
-            <i class="bi bi-water"></i>
-            Prochaine marée : {{ header.tide.nextType }} à {{ header.tide.nextTime|date('H:i') }}
-          </span>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</header>
-
-
-
-
-{# Normalizamos body_class para que siempre exista #}
+{# Classe optionnelle sur <body> (ex: 'page-login') #}
 {% set body_class = body_class|default('') %}
 
 <body class="{{ body_class }}">
 
-<nav class="navbar navbar-expand-lg {{ body_class == 'page-login' ? 'navbar-dark bg-dark shadow-sm' : '' }}">
+{# =========================================================
+       BARRE HAUTE (météo / marées / lien écluses)
+       - Rendu via un contrôleur : route 'site_header'
+       - Apparaît sur toutes les pages
+       ========================================================= #}
+{{ render(path('site_header')) }}
+
+{# =========================================================
+       NAVBAR PRINCIPALE
+       - Transparente si la page enfant le demande
+         (voir bloc 'navbar_transparent' plus bas)
+       - Alternative: forcer un thème sombre pour page-login
+       ========================================================= #}
+{# --- Options de page injectées par les vues enfants --- #}
+
+{% set navbar_is_transparent = navbar_is_transparent|default(false) %}
+
+<nav class="navbar navbar-expand-lg
+    {{ navbar_is_transparent ? 'navbar-transparent' : 'navbar-opaque navbar-dark' }}">
+    ...
+</nav>
+
+<nav class="navbar navbar-expand-lg festava-navbar
+                {{ navbar_is_transparent ? 'is-transparent top-0 start-0 w-100' : '' }}
+                {{ body_class == 'page-login' ? 'navbar-dark bg-dark shadow-sm' : '' }}"
+                {{ body_class == 'app_event_index' ? 'navbar-dark bg-dark shadow-sm' : '' }}">
     <div class="container">
-        <a class="navbar-brand" href="{{ path('app_home') }}">
-            Site des Plaisanciers
-        </a>
+        <a class="navbar-brand" href="{{ path('app_home') }}">Site des Plaisanciers</a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Basculer la navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -84,30 +65,10 @@
                 <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}#about">Qui sommes-nous ?</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}#actus">Actus</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}#events-section">Événements</a></li>
-
-                {# Más enlaces cuando estén listos #}
-                {# <li class="nav-item"><a class="nav-link" href="{{ path('app_association') }}">L'association</a></li> #}
+                <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}#partenaires">Partenaires</a></li>
             </ul>
 
-{#            <ul class="navbar-nav">#}
-{#                {% if app.user %}#}
-{#                    <li class="nav-item">#}
-{#                        <a class="nav-link" href="{{ path('app_account') }}">Mon compte</a>#}
-{#                    </li>#}
-{#                    <li class="nav-item">#}
-{#                        <a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>#}
-{#                    </li>#}
-{#                {% else %}#}
-{#                    <li class="nav-item">#}
-{#                        <a class="nav-link" href="{{ path('app_login') }}">Se connecter</a>#}
-{#                    </li>#}
-{#                    <li class="nav-item">#}
-{#                        <a class="nav-link" href="{{ path('app_register') }}">Créer un compte</a>#}
-{#                    </li>#}
-{#                {% endif %}#}
-{#            </ul>#}
-
-            {# Botones a la derecha #}
+            {# Boutons à droite #}
             {% if app.user %}
                 <div class="d-flex gap-2">
                     <a href="{{ path('app_home') }}#actus" class="btn btn-outline-light">Mon compte</a>
@@ -120,11 +81,16 @@
     </div>
 </nav>
 
+{# =========================================================
+       CONTENU DES PAGES ENFANTS
+       ========================================================= #}
 <main>
     {% block body %}{% endblock %}
 </main>
 
-{# JS du thème #}
+{# =========================================================
+       JS (ordre recommandé par le thème)
+       ========================================================= #}
 <script src="{{ asset('js/jquery.min.js') }}"></script>
 <script src="{{ asset('js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('js/jquery.sticky.js') }}"></script>

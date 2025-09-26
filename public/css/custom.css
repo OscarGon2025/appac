@@ -1,90 +1,19 @@
-/* ====== Login Dark ====== */
-
-.page-login .login-hero{
-    position: relative;
-    min-height: 100vh;               /* toute l'ecran  */
-    background: url("../images/image1.jpg") center center/cover no-repeat fixed;
+/* --- Navbar transparente (sur hero) --- */
+.navbar.navbar-transparent{
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
-/* overlay */
-.page-login .login-hero::before{
-    content:"";
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,.45);
-}
-.page-login .login-hero > .container{
-    position: relative; z-index: 1;
+/* --- Navbar opaque (scroll ou pages internes) --- */
+.navbar.navbar-opaque{
+    background: #0b0b0b !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,.22) !important;
 }
 
-/* type"glass" */
-.page-login .login-card{
-    background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.18);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    color: #fff;
-}
+/* lisibilité du burger sur fond sombre */
+.navbar.navbar-opaque .navbar-toggler{ border-color: rgba(255,255,255,.25); }
+.navbar.navbar-opaque .navbar-toggler-icon{ filter: invert(1) grayscale(100%); }
 
-/* inputs semitransparentes */
-.page-login .login-card .form-control{
-    background: rgba(255,255,255,.15);
-    border-color: rgba(255,255,255,.25);
-    color: #fff;
-}
-.page-login .login-card .form-control::placeholder{
-    color: rgba(255,255,255,.7);
-}
-
-/* labels claras */
-.page-login .login-card .form-label{
-    color: #f1f1f1;
-}
-
-/* checkbox y textos */
-.page-login .form-check-label{ color: #e8e8e8; }
-
-/* ajustar navbar sobre imagen (si la quieres más translúcida) */
-.page-login .navbar{
-    background: rgba(0,0,0,.65) !important;
-}
-
-/* botones del tema se ven bien encima del dark */
-
-
-/* ===== About (Qui sommes-nous ?) ===== */
-
-
-.about-section{
-
-
-    background:
-        linear-gradient(180deg, rgba(9,24,43,.85), rgba(12,37,66,.85)),
-        url("../images/image2.jpg") center/cover no-repeat;
-    color: #fff;
-}
-
-.about-section .bi{
-    font-size: 1.1rem;
-    line-height: 1.2;
-    opacity: .9;
-}
-
-/* Ajustes de legibilidad */
-.about-section .lead{ color: rgba(255,255,255,.9); }
-.about-section .opacity-85{ color: rgba(255,255,255,.85); }
-
-/* Links dentro de la sección */
-.about-section a:not(.btn){
-    color: #fff;
-    text-decoration: underline dotted;
-}
-.about-section a:not(.btn):hover{ color: #e6f0ff; }
-
-/* Botón del tema sobre fondo oscuro */
-.about-section .btn.custom-btn{
-    box-shadow: 0 8px 24px rgba(0,0,0,.25);
-}
-
-/* Espaciado vertical (si quieres un poco más compacto) */
-/* .about-section.section-padding{ padding-top: 60px; padding-bottom: 60px; } */
+/* optionnel : état actif (accent Festava) */
+.navbar .nav-link.active,
+.navbar .nav-link:hover{ color:#ff7a00 !important; }
