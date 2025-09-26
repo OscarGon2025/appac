@@ -7,14 +7,16 @@ use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Mime\Email;
 
 class SecurityController extends AbstractController
 {
     #[Route('/inscription', name: 'app_register')]
-    public function register(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher)
+    public function register(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, MailerInterface $mailer)
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -26,8 +28,25 @@ class SecurityController extends AbstractController
                 $passwordHasher->hashPassword($user, $form->get('password')->getData())
             );
 
+            // Compte non approuvé par défaut
+            $user->setIsApproved(false);
+
             $em->persist($user);
             $em->flush();
+
+            // Envoi mail à l’admin pour valider
+            $email = (new Email())
+                ->from('no-reply@mon-site.com')
+                ->to('admin@mon-site.com')
+                ->subject('Nouvelle inscription à valider')
+                ->html(sprintf(
+                    'Un nouvel utilisateur s’est inscrit : %s (%s).<br>
+                    Veuillez valider son compte via l’admin.',
+                    $user->getFullName(),
+                    $user->getEmail()
+                ));
+
+            $mailer->send($email);
 
             $this->addFlash('success', 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.');
 

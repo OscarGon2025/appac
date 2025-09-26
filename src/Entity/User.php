@@ -55,6 +55,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private \DateTimeImmutable $updatedAt;
 
+    //    Ajout du champ $isApproved pour l'approbation d'un user lors de la création de son compte
+    #[ORM\Column(type: 'boolean')]
+    private bool $isApproved = false;
+
     // ---------------------- Relations (diagrama) ----------------------
 
     /** @var Collection<int, Article> */
@@ -459,4 +463,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function isApproved(): bool
+    {
+        return $this->isApproved;
+    }
+
+    public function setIsApproved(bool $isApproved): self
+    {
+        $this->isApproved = $isApproved;
+
+        return $this;
+    }
+
 }
