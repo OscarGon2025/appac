@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{# La barra NO debe ser transparente aquí #}
+
 {% set navbar_is_transparent = false %}
 
 {% block title %}Événements{% endblock %}
@@ -28,10 +28,10 @@
                         <div class="col-xl-4 col-lg-4 col-md-6 mb-4">
                             <article class="custom-block-wrap h-100">
 
-                                {# --- Fondo neutro con icono (no usamos event.cover) --- #}
+                                {# --- Fond neutre avec icône (nous n’utilisons pas event.cover) --- #}
                                 <div class="custom-block-image d-flex align-items-center justify-content-center"
                                      style="aspect-ratio: 16/9; background:#eef2f6;">
-                                    {# Puedes variar el icono según el tipo #}
+                                    {# Vous pouvez varier l’icône selon le type #}
                                     {% set typeIcon =
                                         event.type == 'REGATTA' ? 'bi-flag' :
                                         event.type == 'MEETING' ? 'bi-people' :
@@ -106,7 +106,7 @@
                 </div>
             {% endif %}
 
-            {# Bouton admin/opcional #}
+            {# Bouton admin / optionnel #}
             <div class="text-center mt-4">
                 <a href="{{ path('app_event_new') }}" class="btn btn-success">Créer un nouvel événement</a>
             </div>

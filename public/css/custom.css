@@ -1,19 +1,308 @@
-/* --- Navbar transparente (sur hero) --- */
-.navbar.navbar-transparent{
-    background: transparent !important;
-    box-shadow: none !important;
+/* =============================
+   APPAC – Surcharges sur Festava
+   ============================= */
+
+/* ---------- Connexion (mode sombre / effet verre) ---------- */
+.page-login .login-hero {
+    position: relative;
+    min-height: 100vh; /* plein écran */
+    background: url("../images/image1.jpg") center center/cover no-repeat fixed;
+}
+.page-login .login-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, .45);
+}
+.page-login .login-hero > .container { position: relative; z-index: 1; }
+.page-login .login-card {
+    background: rgba(255, 255, 255, .08);
+    border: 1px solid rgba(255, 255, 255, .18);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #fff;
+}
+.page-login .login-card .form-control {
+    background: rgba(255, 255, 255, .15);
+    border-color: rgba(255, 255, 255, .25);
+    color: #fff;
+}
+.page-login .login-card .form-control::placeholder { color: rgba(255, 255, 255, .7); }
+.page-login .login-card .form-label { color: #f1f1f1; }
+.page-login .form-check-label { color: #e8e8e8; }
+
+/* ---------- Héros : fond sombre de secours sous la navbar transparente ---------- */
+.hero-section { background-color: #0b0b0b; } /* si la vidéo tarde/échoue */
+.hero-section .section-overlay { background: rgba(0, 0, 0, .35); }
+
+/* ---------- À propos (dégradé + image et texte clair) ---------- */
+.about-section {
+    background:
+        linear-gradient(180deg, rgba(9, 24, 43, .85), rgba(12, 37, 66, .85)),
+        url("../images/image2.jpg") center/cover no-repeat;
+    color: #fff;
+}
+.about-section .bi { font-size: 1.1rem; line-height: 1.2; opacity: .9; color: #fff; }
+.about-section .lead { color: rgba(255, 255, 255, .9); }
+.about-section .opacity-85 { color: rgba(255, 255, 255, .85); }
+.about-section a:not(.btn) { color: #fff; text-decoration: underline dotted; }
+.about-section a:not(.btn):hover { color: #e6f0ff; }
+.about-section .btn.custom-btn { box-shadow: 0 8px 24px rgba(0, 0, 0, .25); }
+
+
+/* ----------  MON COMPTE ---------- */
+/* Page compte : cohérence visuelle avec le thème */
+#account .card-title .bi { opacity: .9; }
+#account dl dt { color: #6c757d; font-weight: 600; }        /* libellés plus discrets */
+#account .btn.custom-btn { box-shadow: 0 6px 16px rgba(0,0,0,.15); }
+
+
+/* --- Fil d’Ariane ARTICLES --- */
+.breadcrumb {
+    --bs-breadcrumb-divider: "›";
+    margin-bottom: 0;
+}
+.breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(0,0,0,.35);
+}
+.breadcrumb .breadcrumb-item a {
+    color: #6c757d;
+    text-decoration: none;
+}
+.breadcrumb .breadcrumb-item a:hover {
+    color: #ff7a00; /* accent du site */
+    text-decoration: none;
+}
+.breadcrumb .breadcrumb-item.active {
+    color: #212529;
+    font-weight: 600;
 }
 
-/* --- Navbar opaque (scroll ou pages internes) --- */
-.navbar.navbar-opaque{
-    background: #0b0b0b !important;
-    box-shadow: 0 8px 24px rgba(0,0,0,.22) !important;
+
+/* ---------- En-tête supérieur (météo/marées/écluses) ---------- */
+/* (Pas fixe ; seulement un polissage visuel) */
+.site-header .bi { opacity: .9; }
+.site-header .btn.btn-outline-dark { padding: .15rem .6rem; }
+@media (max-width: 992px) {
+    .site-header .row > [class*="col-"] { text-align: center; }
+    .site-header .d-flex.flex-wrap.gap-3 { justify-content: center; }
 }
 
-/* lisibilité du burger sur fond sombre */
-.navbar.navbar-opaque .navbar-toggler{ border-color: rgba(255,255,255,.25); }
-.navbar.navbar-opaque .navbar-toggler-icon{ filter: invert(1) grayscale(100%); }
+/* Supprimer tout espace entre le bandeau et la navbar */
+#site-top > .site-header { margin-bottom: 0; }
+#site-top > .festava-navbar { margin-top: 0; }
 
-/* optionnel : état actif (accent Festava) */
+/* ---------- Navbar ---------- */
+/* Seule la navbar est sticky (pas l’en-tête) */
+.festava-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1040;
+}
+
+/* État initial : transparent sur l’accueil (quand tu mets is-transparent) */
+.has-transparent-nav .festava-navbar.is-transparent {
+    background: transparent;
+    box-shadow: none;
+}
+
+/* État solide (au scroll ou sur les pages enfants) */
+.festava-navbar.nav-solid {
+    background-color: #000000; /* noir solide */
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    transition: background-color .2s ease, box-shadow .2s ease;
+}
+
+/* Actif / survol du menu */
 .navbar .nav-link.active,
-.navbar .nav-link:hover{ color:#ff7a00 !important; }
+.navbar .nav-link:hover {
+    color: #ff7a00 !important; /* accent Festava */
+}
+
+/* Icône hamburger visible sur fonds clairs/transparents */
+.navbar-dark .navbar-toggler { border: 0; }
+.navbar-dark .navbar-toggler-icon {
+    background-image: var(--bs-navbar-toggler-icon-bg);
+    filter: drop-shadow(0 0 2px rgba(0,0,0,.6));
+}
+
+/* (Optionnel) panneau mobile si tu utilises le collapse standard */
+@media (max-width: 991.98px) {
+    .festava-navbar { position: sticky; } /* garde le sticky sur mobile */
+    .festava-navbar .navbar-collapse.collapse { display: none !important; }
+    .festava-navbar .navbar-collapse.collapse.show {
+        display: block !important;
+        position: absolute;
+        top: 100%; left: 0; right: 0;
+        background: rgba(0,0,0,.95);
+        padding: .75rem 1rem;
+        border-top: 1px solid rgba(255,255,255,.15);
+        box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    }
+    .festava-navbar .navbar-collapse .navbar-nav .nav-link {
+        color: #fff;
+        padding: .75rem 0;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .festava-navbar .navbar-collapse .navbar-nav .nav-link:last-child { border-bottom: 0; }
+    .festava-navbar .navbar-collapse .btn { width: 100%; margin-top: .5rem; }
+}
+
+/* ---------- Pied de page ---------- */
+.site-footer .footer-link { color: rgba(255,255,255,.7); text-decoration: none; }
+.site-footer .footer-link:hover { color: #fff; text-decoration: underline; }
+.site-footer input.form-control {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255,255,255,.25);
+}
+.site-footer input.form-control::placeholder { color: rgba(255,255,255,.6); }
+.site-footer .back-to-top {
+    position: absolute;
+    right: 16px; bottom: 16px;
+    display: none;
+    border-radius: 50%;
+    padding: .5rem .6rem;
+    z-index: 1040;
+}
+
+/* ---------- Préférences de mouvement (accessibilité) ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .festava-navbar.nav-solid { transition: none; }
+    html { scroll-behavior: auto; }
+}
+
+
+/* ===== Afficher/masquer le bandeau (site-header) selon l’appareil ===== */
+
+/* Desktop ≥992px : le bandeau s’affiche normalement */
+@media (min-width: 992px) {
+    .site-header {
+        display: block !important;
+    }
+}
+
+/* Mobile et tablette <992px : masquer le bandeau et supprimer les espaces */
+@media (max-width: 991.98px) {
+    /*.site-header {*/
+    /*    display: none !important;*/
+    /*}*/
+
+    /* Si l’en-tête laissait une marge/un padding en haut, on l’annule pour que la navbar soit collée */
+    .site-header + .festava-navbar,
+    .site-header + .navbar,
+    #site-top > .festava-navbar,
+    #site-top > .navbar {
+        margin-top: 0 !important;
+    }
+}
+
+/* S’assurer que SEULE la navbar est fixe (si tu utilises déjà sticky-top, rien ne change) */
+#site-top {
+    position: static !important;   /* on ne fixe pas le conteneur */
+}
+
+/* Ligne unique dans l’en-tête mobile : ne pas couper et permettre le défilement horizontal */
+.site-header-line {
+    white-space: nowrap;
+    gap: .5rem;              /* petit espacement entre chips */
+    -ms-overflow-style: none;    /* masquer la barre de défilement sur IE/Edge legacy */
+    scrollbar-width: none;       /* masquer la barre de défilement sur Firefox */
+}
+.site-header-line::-webkit-scrollbar { display: none; } /* masquer la barre de défilement sur WebKit */
+
+/* Alignement propre des icônes */
+.site-header-line .bi { line-height: 1; opacity: .9; }
+
+/* Bouton compact sur la même ligne */
+.site-header .btn.btn-outline-dark { padding: .15rem .6rem; }
+
+.site-header-line > span + span::before {
+    content: "•";
+    opacity: .55;
+    margin: 0 .5rem 0 0;
+}
+
+
+/* ===== En-tête mobile adaptable sur 1 ligne ===== */
+.site-header-row { gap: .25rem; }
+.site-header-scroll {
+    flex: 1 1 auto;            /* occupe tout l’espace disponible */
+    white-space: nowrap;       /* 1 seule ligne */
+    gap: .75rem;               /* espacement entre chips */
+    -ms-overflow-style: none;  /* masque les scrollbars legacy */
+    scrollbar-width: none;     /* masque les scrollbars Firefox */
+}
+.site-header-scroll::-webkit-scrollbar { display: none; }
+
+.chip { color: #1f1f1f; }
+.site-header .bi { line-height: 1; opacity: .9; }
+
+/* Bouton fixé à droite */
+.site-header-cta { flex: 0 0 auto; white-space: nowrap; padding: .15rem .6rem; }
+
+/* —— Dégradation progressive sur petits écrans —— */
+/* 1) Masquer d’abord la direction du vent */
+@media (max-width: 520px) {
+    .chip--winddir { display: none; }
+}
+/* 2) Le bouton passe en icône seule et le ruban gagne de l’espace */
+@media (max-width: 460px) {
+    .site-header-cta .btn-text { display: none; }
+    .site-header-cta i { margin-right: 0 !important; }
+}
+/* 3) Si c’est toujours étroit, masquer la marée (le bouton reste visible) */
+@media (max-width: 410px) {
+    .chip--tide { display: none; }
+}
+/* 4) Ultra petit : masquer le vent et garder ville + température */
+@media (max-width: 360px) {
+    .chip--wind { display: none; }
+}
+
+
+/* Contactez-nous */
+.leaflet-map { height: 480px; }
+@media (min-width: 992px) { .leaflet-map { height: 480px; } }
+
+/* Supprimer la bordure de la carte pour un vrai full-bleed */
+#contact .container-fluid .leaflet-map { display:block; }
+
+/* Cartes de contact */
+#contact .card .card-title { font-weight: 600; }
+
+
+
+/*  --------v--FORMULAIRE SORTIE - - - - */
+
+
+
+.card-pane { border-radius: 1rem; border-color: #eaedf2; }
+.card-pane .card-header { border-bottom: 1px solid #f0f2f6; }
+
+
+.form-control.form-control-lg { padding-top: .7rem; padding-bottom: .7rem; }
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+    border-color: #86b7fe;
+}
+
+
+.input-group-text { background: #f8fafc; border-color: #e5e7eb; }
+.input-group .form-control, .input-group .form-select { border-left: 0; }
+.input-group .form-control:focus, .input-group .form-select:focus { border-left: 0; }
+
+
+.form-switch-lg .form-check-input { width: 3rem; height: 1.5rem; }
+.form-switch-lg .form-check-input:checked { background-color: #0d6efd; border-color: #0d6efd; }
+
+
+.sticky-top { z-index: 2; }
+
+
+
+/* LOGO */
+
+:root { --brand-h: 62px; }
+.navbar .brand-logo { height: var(--brand-h); width: auto; display: block; transition: opacity .15s ease; }
+

@@ -1,53 +1,43 @@
-{# Bannière globale (toutes pages) #}
-<header class="site-header bg-warning py-2 small">
-    <div class="container">
-        <div class="row align-items-center g-2">
-            <div class="col-12 col-lg d-flex flex-wrap">
-                <p class="d-flex me-4 mb-0">
-                    <i class="custom-icon bi-geo-alt me-2"></i>
-                    <strong class="text-dark">Arzal</strong>
-                </p>
-            </div>
+{# ------- MOBILE / TABLET (< lg) ------- #}
+<header class="site-header bg-warning small d-lg-none">
+    <div class="container py-1">
 
-            <div class="col-12 col-lg-auto text-dark d-flex flex-wrap gap-3 align-items-center">
+        <div class="site-header-row d-flex align-items-center">
 
-                {# — Météo #}
+            <div class="site-header-scroll d-flex align-items-center flex-nowrap overflow-auto me-2">
+        <span class="chip d-inline-flex align-items-center">
+          <i class="custom-icon bi-geo-alt me-2"></i>
+          <strong class="text-dark">Arzal</strong>
+        </span>
+
                 {% if header.weather %}
-                    <span>
-            <i class="bi bi-thermometer-half"></i>
-            {{ header.weather.temp }}°C
-          </span>
-                    <span>
-            <i class="bi bi-wind"></i>
-            {{ header.weather.wind }} km/h
-            {% if header.weather.dir is not null %} ({{ header.weather.dir }}°){% endif %}
+                    <span class="chip chip--temp"><i class="bi bi-thermometer-half me-1"></i>{{ header.weather.temp }}°C</span>
+                    <span class="chip chip--wind">
+            <i class="bi bi-wind me-1"></i>{{ header.weather.wind }} km/h
+            {% if header.weather.dir is not null %}
+                <span class="chip--winddir">({{ header.weather.dir }}°)</span>
+            {% endif %}
           </span>
                 {% endif %}
 
-                {# — Marées (indicatif) #}
                 {% if header.tide %}
-                    <span>
-            <i class="bi bi-water"></i>
-            Prochaine marée :
-            <strong>{{ header.tide.type }}</strong>
-            à {{ header.tide.time|date('H:i') }}
+                    <span class="chip chip--tide">
+            <i class="bi bi-water me-1"></i>
+            <span class="d-none d-sm-inline">Marée :</span>
+            <strong class="ms-1">{{ header.tide.type }}</strong>
+            <span class="ms-1">{{ header.tide.time|date('H:i') }}</span>
           </span>
                 {% endif %}
-
-                {# — Écluses: lien officiel #}
-                <a class="btn btn-sm btn-outline-dark"
-                   href="https://passeportecluse-arzal-camoel.com/"
-                   target="_blank" rel="noopener">
-                    Voir horaires des écluses
-                </a>
-                {# Avertissement discret sur marées indicatives #}
-                <div class="col text-dark-50 small mt-1">
-                    <em>Données marées à titre indicatif (non officielles / non adaptées à la navigation).</em>
-                </div>
             </div>
+
+
+            <a class="btn btn-sm btn-outline-dark site-header-cta"
+               href="https://passeportecluse-arzal-camoel.com/"
+               target="_blank" rel="noopener" title="Voir horaires des écluses">
+                <i class="bi bi-clock-history me-1"></i>
+                <span class="btn-text">Horaires des écluses</span>
+            </a>
         </div>
 
-
-      
     </div>
 </header>
