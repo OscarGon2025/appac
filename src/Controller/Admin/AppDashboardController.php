@@ -81,5 +81,9 @@ final class AppDashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Site');
         yield MenuItem::linkToRoute('Voir le site', 'fas fa-globe', 'app_home');
+
+        yield MenuItem::section('Utilisateurs');
+        yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-users', \App\Entity\User::class);
+
     }
 }

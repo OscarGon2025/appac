@@ -24,13 +24,11 @@ final class AppFixtures extends Fixture
         $faker     = Faker::create('fr_FR');
         $slugger   = new AsciiSlugger();
 
-        // IMPORTANTE: para Faker usa string de timezone
+        // Timezone helpers
         $tzString  = 'Europe/Paris';
-        // Para constructores de PHP, usa objeto
         $tzObj     = new \DateTimeZone($tzString);
 
         // ---------------- Helpers ----------------
-
         $set = function(object $obj, string $setter, mixed $value): void {
             if (method_exists($obj, $setter)) {
                 $obj->{$setter}($value);
@@ -50,7 +48,6 @@ final class AppFixtures extends Fixture
         };
 
         // ---------------- Users ----------------
-
         $admin = (new User())
             ->setEmail('admin@appac56.fr')
             ->setFirstName('Admin')
@@ -73,7 +70,6 @@ final class AppFixtures extends Fixture
         }
 
         // ---------------- Pages ----------------
-
         foreach (['Qui sommes-nous', 'Sécurité en mer', 'Contact'] as $pTitle) {
             $p = new Page();
             $pSlug = strtolower($slugger->slug($pTitle)->toString());
@@ -87,7 +83,6 @@ final class AppFixtures extends Fixture
         }
 
         // ---------------- Partner links ----------------
-
         foreach (['Météo France' => 'https://meteofrance.com', 'SHOM' => 'https://shom.fr'] as $label => $url) {
             $pl = (new PartnerLink())
                 ->setLabel($label)
@@ -97,29 +92,27 @@ final class AppFixtures extends Fixture
         }
 
         // ---------------- Articles ----------------
-
         for ($i = 0; $i < 6; $i++) {
             $title = $faker->sentence(6);
             $a = new Article();
 
-            $set($a, 'setTitle', $title);
-            $set($a, 'setSlug', strtolower($slugger->slug($title)->toString()));
-            $set($a, 'setBody', $faker->paragraphs(5, true));
-            $set($a, 'setContent', $faker->paragraphs(5, true));
-            $set($a, 'setCover', null);
-            $set($a, 'setIsPublished', $faker->boolean(80));
-            $set($a, 'setIsMembersOnly', $faker->boolean(20));
-            $set($a, 'setPinned', $faker->boolean(15));
+            $a->setTitle($title);
+            $a->setSlug(strtolower($slugger->slug($title)->toString()));
+            $a->setContent($faker->paragraphs(5, true));
+            $a->setCover(null);
+            $a->setIsPublished($faker->boolean(80));
+            $a->setIsMembersOnly($faker->boolean(20));
+            $a->setPinned($faker->boolean(15));
 
             $publishedMutable = $faker->optional()->dateTimeBetween('-30 days', 'now', $tzString);
-            $set($a, 'setPublishedAt', $toImmutable($publishedMutable));
+            $a->setPublishedAt($toImmutable($publishedMutable));
 
-            $set($a, 'setAuthor', $faker->randomElement($users));
+            $a->setAuthor($faker->randomElement($users));
+
             $em->persist($a);
         }
 
         // ---------------- Events ----------------
-
         $events = [];
         for ($i = 0; $i < 5; $i++) {
             $startMutable = $faker->dateTimeBetween('-10 days', '+20 days', $tzString);
@@ -152,7 +145,6 @@ final class AppFixtures extends Fixture
         }
 
         // ---------------- Album + Photo ----------------
-
         for ($i = 0; $i < 3; $i++) {
             $album = (new Album())
                 ->setTitle('Album ' . $faker->city())
@@ -178,8 +170,7 @@ final class AppFixtures extends Fixture
             }
         }
 
-        // ---------------- AD's ----------------
-
+        // ---------------- Classified Ads ----------------
         for ($i = 0; $i < 5; $i++) {
             $ad = (new ClassifiedAd())
                 ->setOwner($faker->randomElement($users))
@@ -201,7 +192,6 @@ final class AppFixtures extends Fixture
         }
 
         // ---------------- Memberships & Applications ----------------
-
         $year = (int)(new \DateTimeImmutable('now', $tzObj))->format('Y');
 
         foreach (array_slice($users, 1) as $u) {
@@ -230,8 +220,7 @@ final class AppFixtures extends Fixture
             }
         }
 
-        // ---------------- OutingRequest ----------------
-
+        // ---------------- Outing Requests ----------------
         foreach ($events as $e) {
             $n = mt_rand(1, 5);
             for ($k = 0; $k < $n; $k++) {

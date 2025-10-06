@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
@@ -25,10 +24,9 @@ class Article
     #[ORM\Column(length: 255)]
     private string $title;
 
-
-    // --------   Slug    -------
+    // --------   Slug (auto generado)   -------
+    #[Gedmo\Slug(fields: ['title'], updatable: false)]
     #[ORM\Column(length: 255, unique: true)]
-    #[Gedmo\Slug(fields: ['title'], updatable: false)] // no se regenera al editar el título
     private string $slug;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -74,10 +72,6 @@ class Article
         $this->attachments = new ArrayCollection();
     }
 
-
-
-
-
     // ---------- Lifecycle ----------
     #[ORM\PrePersist]
     public function onPrePersist(): void
@@ -85,7 +79,6 @@ class Article
         $now = new \DateTimeImmutable();
         $this->createdAt = $now;
         $this->updatedAt = $now;
-
 
         if ($this->isPublished && null === $this->publishedAt) {
             $this->publishedAt = $now;
@@ -97,17 +90,8 @@ class Article
     {
         $this->updatedAt = new \DateTimeImmutable();
 
-
         if ($this->isPublished && null === $this->publishedAt) {
             $this->publishedAt = new \DateTimeImmutable();
-        }
-    }
-
-    private function ensureSlug(): void
-    {
-        if (empty($this->slug) && !empty($this->title)) {
-            $slugger = new AsciiSlugger();
-            $this->slug = strtolower($slugger->slug($this->title)->toString());
         }
     }
 
@@ -125,7 +109,6 @@ class Article
     public function setTitle(string $title): self
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -137,7 +120,6 @@ class Article
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
-
         return $this;
     }
 
@@ -149,7 +131,6 @@ class Article
     public function setContent(string $content): self
     {
         $this->content = $content;
-
         return $this;
     }
 
@@ -161,7 +142,6 @@ class Article
     public function setCover(?string $cover): self
     {
         $this->cover = $cover;
-
         return $this;
     }
 
@@ -173,7 +153,6 @@ class Article
     public function setIsPublished(bool $isPublished): self
     {
         $this->isPublished = $isPublished;
-
         return $this;
     }
 
@@ -185,7 +164,6 @@ class Article
     public function setIsMembersOnly(bool $isMembersOnly): self
     {
         $this->isMembersOnly = $isMembersOnly;
-
         return $this;
     }
 
@@ -197,7 +175,6 @@ class Article
     public function setPinned(bool $pinned): self
     {
         $this->pinned = $pinned;
-
         return $this;
     }
 
@@ -209,7 +186,6 @@ class Article
     public function setPublishedAt(?\DateTimeImmutable $publishedAt): self
     {
         $this->publishedAt = $publishedAt;
-
         return $this;
     }
 
@@ -221,7 +197,6 @@ class Article
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -233,7 +208,6 @@ class Article
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
     }
 
@@ -245,7 +219,6 @@ class Article
     public function setAuthor(?User $author): self
     {
         $this->author = $author;
-
         return $this;
     }
 

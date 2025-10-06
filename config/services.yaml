@@ -1,9 +1,8 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+# config/services.yaml
 parameters:
+    recaptcha_site: '%env(RECAPTCHA_SITE_KEY)%'
+    recaptcha_secret: '%env(RECAPTCHA_SECRET_KEY)%'
+
     # Arzal coordinates
     app.weather_lat: 47.52
     app.weather_lon: -2.30
@@ -25,15 +24,14 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
-    # Controllers as services (optional but common)
+    # Controllers as services
     App\Controller\:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
-#
-#    # Bind pour HeaderController (injection de scalaires)
-#    App\Controller\HeaderController:
-#        bind:
-#            $weatherLat: '%app.weather_lat%'
-#            $weatherLon: '%app.weather_lon%'
-#            $tideLat:    '%app.tide_lat%'
-#            $tideLon:    '%app.tide_lon%'
+
+    # App\Controller\HeaderController:
+    #   bind:
+    #     $weatherLat: '%app.weather_lat%'
+    #     $weatherLon: '%app.weather_lon%'
+    #     $tideLat: '%app.tide_lat%'
+    #     $tideLon: '%app.tide_lon%'

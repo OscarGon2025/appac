@@ -1,5 +1,10 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
+
+    # Cela expose la clé reCAPTCHA aux templates Twig
+    globals:
+        recaptcha_site: '%recaptcha_site%'
+
     file_name_pattern: '*.twig'
     strict_variables: '%kernel.debug%'
 
