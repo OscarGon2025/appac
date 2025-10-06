@@ -15,6 +15,7 @@ class UserChecker implements UserCheckerInterface
         }
 
         if (!$user->isApproved()) {
+            // Bloque la connexion avec un message
             throw new CustomUserMessageAuthenticationException('Votre compte doit être validé par un administrateur avant de vous connecter.');
         }
     }
