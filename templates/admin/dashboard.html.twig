@@ -35,3 +35,13 @@
         #}
     </div>
 {% endblock %}
+
+{#Notification avec message flash pour confirmer qu'un utilisateur a bien été apprové par l'admin#}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ label }} mt-2">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+

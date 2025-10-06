@@ -1,0 +1,29 @@
+framework:
+    rate_limiter:
+        registration:
+            policy: 'fixed_window'
+            limit: 5           # nombre maximum de soumissions
+            interval: '1 hour' # par heure
+            cache_pool: 'cache.app'
+
+        login:
+            policy: 'fixed_window'
+            limit: 5
+            interval: '1 minute'
+
+        contact_form:
+            policy: 'fixed_window'
+            limit: 5              # max 5 requêtes
+            interval: '1 minute'  # par minute
+            storage_service: 'cache.app'
+
+        registration_form:
+            policy: 'fixed_window'
+            limit: 3              # max 3 inscriptions
+            interval: '10 minutes' # par IP
+            storage_service: 'cache.app'
+
+        register:
+            policy: 'fixed_window'
+            limit: 5          # max 5 tentatives
+            interval: '1 hour' # par heure

@@ -4,11 +4,17 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+
+    recaptcha_site: '%env(RECAPTCHA_SITE_KEY)%'
+    recaptcha_secret: '%env(RECAPTCHA_SECRET_KEY)%'
+
+
     # Arzal coordinates
     app.weather_lat: 47.52
     app.weather_lon: -2.30
     app.tide_lat: 47.45
     app.tide_lon: -2.50
+
 
 services:
     _defaults:
@@ -24,6 +30,16 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
+
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+twig:
+    default_path: '%kernel.project_dir%/templates'
+
+    globals:
+        recaptcha_site: '%recaptcha_site%'
 
     # Controllers as services (optional but common)
     App\Controller\:
