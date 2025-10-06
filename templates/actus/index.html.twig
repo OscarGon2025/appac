@@ -2,33 +2,128 @@
 {% block title %}Actus{% endblock %}
 
 {% block body %}
-    <section class="container py-4">
-        <h1 class="mb-4">Derniers articles</h1>
+    <section class="container-lg px-4 py-5 pt-lg-5 mt-5" id="actus-index" aria-labelledby="actus-title">
 
-        <div class="row g-4">
+    <header class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-4">
+            <div>
+                <h1 id="actus-title" class="display-6 fw-bold mb-1">Derniers articles</h1>
+                <p class="text-muted mb-0">Actualités de l’association et infos utiles pour les plaisanciers</p>
+            </div>
+
+            {# Barre d’actions (optionnelle, pure UI) #}
+            <form class="d-flex gap-2 align-items-center" role="search" aria-label="Filtrer les actus" onsubmit="return false">
+                <div class="input-group">
+                    <span class="input-group-text" id="search-addon"><i class="bi bi-search"></i></span>
+                    <input type="search" class="form-control" id="actus-search" placeholder="Rechercher un article…" aria-describedby="search-addon">
+                </div>
+                <select class="form-select" id="actus-filter" aria-label="Filtrer par type">
+                    <option value="">Tous</option>
+                    <option value="pinned">À la une</option>
+                    <option value="members">Réservé aux membres</option>
+                    <option value="recent">Publié récemment</option>
+                </select>
+            </form>
+        </header>
+
+        <div class="row g-4" id="actus-grid">
             {% for a in articles %}
-                <div class="col-md-4">
-                    <article class="card h-100">
+                {# Prépare un extrait propre #}
+                {% set excerpt = a.content|striptags %}
+                {% set excerpt = excerpt|length > 180 ? excerpt|slice(0,180) ~ '…' : excerpt %}
+
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <article class="custom-block-wrap h-100 card border-0 shadow-sm actus-item"
+                             data-pinned="{{ a.pinned ? '1' : '0' }}"
+                             data-members="{{ a.isMembersOnly ? '1' : '0' }}"
+                             data-recent="{{ a.publishedAt is not null and a.publishedAt|date('U') > ('now'|date_modify('-30 days')|date('U')) ? '1' : '0' }}"
+                             itemscope itemtype="https://schema.org/Article">
+                        {# ---- Image de couverture ou fond neutre avec icône ---- #}
                         {% if a.cover %}
-                            <img src="{{ asset('uploads/covers/' ~ a.cover) }}" class="card-img-top" alt="{{ a.title }}">
+                            <a href="{{ path('actus_show', { slug: a.slug }) }}" class="ratio ratio-16x9 d-block">
+                                <img
+                                    src="{{ asset('uploads/covers/' ~ a.cover) }}"
+                                    class="object-fit-cover rounded-top"
+                                    alt="{{ a.title }}"
+                                    loading="lazy"
+                                    itemprop="image">
+                            </a>
+                        {% else %}
+                            <a href="{{ path('actus_show', { slug: a.slug }) }}"
+                               class="ratio ratio-16x9 d-flex align-items-center justify-content-center rounded-top text-decoration-none"
+                               style="background:#eef2f6;">
+                                <i class="bi bi-newspaper" style="font-size:2rem; color:#94a3b8;"></i>
+                            </a>
                         {% endif %}
-                        <div class="card-body d-flex flex-column">
-                            <h2 class="h5 card-title">
-                                <a href="{{ path('actus_show', { slug: a.slug }) }}">{{ a.title }}</a>
-                                {% if a.pinned %}<span class="badge text-bg-warning ms-1">À la une</span>{% endif %}
-                                {% if a.isMembersOnly %}<span class="badge text-bg-secondary ms-1">Membres</span>{% endif %}
+
+                        <div class="custom-block card-body d-flex flex-column">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                {% if a.pinned %}<span class="badge text-bg-warning">À la une</span>{% endif %}
+                                {% if a.isMembersOnly %}<span class="badge text-bg-secondary">Membres</span>{% endif %}
+                            </div>
+
+                            <h2 class="h5 card-title mb-2" itemprop="headline">
+                                <a href="{{ path('actus_show', { slug: a.slug }) }}" class="stretched-link text-decoration-none">{{ a.title }}</a>
                             </h2>
-                            <p class="text-muted mb-2">{{ a.publishedAt ? a.publishedAt|date('d/m/Y H:i') : '' }}</p>
-                            <p class="card-text">{{ a.content|striptags|u.truncate(160, '…') }}</p>
+
+                            <p class="text-muted small mb-2">
+                                {% if a.publishedAt %}
+                                    <i class="bi bi-calendar-event me-1" aria-hidden="true"></i>
+                                    <time datetime="{{ a.publishedAt|date('c') }}" itemprop="datePublished">
+                                        {{ a.publishedAt|date('d/m/Y H:i') }}
+                                    </time>
+                                {% endif %}
+                            </p>
+
+                            <p class="card-text mb-3" itemprop="description">{{ excerpt }}</p>
+
                             <div class="mt-auto">
-                                <a class="btn btn-primary btn-sm" href="{{ path('actus_show', { slug: a.slug }) }}">Lire</a>
+                                <a class="btn btn-primary btn-sm" href="{{ path('actus_show', { slug: a.slug }) }}" aria-label="Lire l’article « {{ a.title }} »">Lire</a>
                             </div>
                         </div>
                     </article>
                 </div>
             {% else %}
-                <p>Aucun article pour le moment.</p>
+                {# État vide élégant #}
+                <div class="col-12">
+                    <div class="text-center py-5 border rounded-3 bg-light">
+                        <p class="mb-1 fs-5">Aucun article pour le moment.</p>
+                        <p class="text-muted mb-0">Revenez bientôt, de nouvelles actus arrivent ⛵</p>
+                    </div>
+                </div>
             {% endfor %}
         </div>
+
+        {# Pagination (facultative) : si on a un pager, insère-le ici #}
+        {# <nav class="mt-4" aria-label="Pagination des actus">{{ knp_pagination_render(articles) }}</nav> #}
     </section>
+
+    {# --- JS léger pour le filtre côté client (optionnel) --- #}
+    <script>
+        (function () {
+            const q = document.getElementById('actus-search');
+            const f = document.getElementById('actus-filter');
+            const cards = Array.from(document.querySelectorAll('#actus-grid .actus-item'));
+
+            function normalize(s){ return (s || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+
+            function apply() {
+                const term = normalize(q?.value || '');
+                const filter = f?.value || '';
+                cards.forEach(card => {
+                    const title = normalize(card.querySelector('.card-title')?.innerText);
+                    const text  = normalize(card.querySelector('.card-text')?.innerText);
+                    const matchTerm = !term || title.includes(term) || text.includes(term);
+
+                    let matchFilter = true;
+                    if (filter === 'pinned')   matchFilter = card.dataset.pinned === '1';
+                    if (filter === 'members')  matchFilter = card.dataset.members === '1';
+                    if (filter === 'recent')   matchFilter = card.dataset.recent === '1';
+
+                    card.parentElement.style.display = (matchTerm && matchFilter) ? '' : 'none';
+                });
+            }
+            q?.addEventListener('input', apply, { passive: true });
+            f?.addEventListener('change', apply);
+        })();
+    </script>
 {% endblock %}

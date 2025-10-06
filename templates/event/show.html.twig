@@ -1,33 +1,196 @@
+{# templates/event/show.html.twig #}
 {% extends 'base.html.twig' %}
+
+
+{% set navbar_is_transparent = false %}
 
 {% block title %}{{ event.title }}{% endblock %}
 
+
+{% set has_coords = (event.locationLat is defined and event.locationLng is defined and event.locationLat and event.locationLng) %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% if has_coords %}
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+            crossorigin=""
+        />
+        <style>
+            #event-map { height: 320px; }
+            @media (min-width: 992px){ #event-map { height: 380px; } }
+        </style>
+    {% endif %}
+{% endblock %}
+
 {% block body %}
-    <section class="container py-5">
-        <h1>{{ event.title }}</h1>
+    <section class="container-lg section-padding">
+        {# Breadcrumb #}
+        <nav aria-label="Fil d'Ariane" class="mb-3">
+            <ol class="breadcrumb bg-transparent px-0 py-2 border-bottom">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('app_event_index') }}" class="text-decoration-none">Événements</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">{{ event.title }}</li>
+            </ol>
+        </nav>
 
-        <p><strong>Type :</strong> {{ event.type }}</p>
-        <p><strong>Statut :</strong> {{ event.status }}</p>
-        <p><strong>Date de début :</strong> {{ event.startAt|date('d/m/Y H:i') }}</p>
-        {% if event.endAt %}
-            <p><strong>Date de fin :</strong> {{ event.endAt|date('d/m/Y H:i') }}</p>
-        {% endif %}
-        <p><strong>Description :</strong></p>
-        <p>{{ event.description }}</p>
+        <div class="row g-4">
+            {# ---------- MAIN ---------- #}
+            <div class="col-lg-8">
+                <header class="mb-3">
+                    <h1 class="display-6 fw-bold mb-2">{{ event.title }}</h1>
 
-        <p>
-            <strong>Participants :</strong>
-            {% if event.maxParticipants %}
-                {{ event.maxParticipants - event.spotsLeft() }}/{{ event.maxParticipants }}
-            {% else %}
-                Illimité
-            {% endif %}
-        </p>
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        {% if event.type %}
+                            <span class="badge text-bg-primary">
+              <i class="bi bi-flag me-1"></i>{{ event.type }}
+            </span>
+                        {% endif %}
 
-        {% if event.locationName %}
-            <p><strong>Lieu :</strong> {{ event.locationName }}</p>
-        {% endif %}
+                        {% if event.status %}
+                            {% set status_class =
+                                event.status == 'PUBLISHED' ? 'text-bg-success' :
+                                (event.status == 'DRAFT' ? 'text-bg-secondary' :
+                                (event.status == 'CANCELED' ? 'text-bg-danger' : 'text-bg-dark')) %}
+                            <span class="badge {{ status_class }}">
+              <i class="bi bi-info-circle me-1"></i>{{ event.status }}
+            </span>
+                        {% endif %}
+                    </div>
+                </header>
 
-        <a href="{{ path('app_event_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+                {% if event.description %}
+                    <article class="fs-5">
+                        {{ event.description|nl2br }}
+                    </article>
+                {% endif %}
+
+
+                {% if has_coords %}
+                    <div class="card shadow-sm mt-4 d-lg-none">
+                        <div class="card-body p-0">
+                            <div id="event-map" data-lat="{{ event.locationLat }}" data-lng="{{ event.locationLng }}" data-zoom="15"></div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            {# ---------- SIDEBAR ---------- #}
+            <aside class="col-lg-4">
+                <div class="position-sticky" style="top: 6rem;">
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <h2 class="h6 text-uppercase text-muted mb-3">Informations</h2>
+
+                            <ul class="list-unstyled mb-3">
+                                <li class="mb-2">
+                                    <i class="bi bi-calendar-event me-2"></i>
+                                    <strong>Début :</strong>
+                                    {{ event.startAt ? event.startAt|date('d/m/Y H:i') : '—' }}
+                                </li>
+
+                                {% if event.endAt %}
+                                    <li class="mb-2">
+                                        <i class="bi bi-calendar-check me-2"></i>
+                                        <strong>Fin :</strong>
+                                        {{ event.endAt|date('d/m/Y H:i') }}
+                                    </li>
+                                {% endif %}
+
+                                {% if event.locationName %}
+                                    <li class="mb-2">
+                                        <i class="bi bi-geo-alt me-2"></i>
+                                        <strong>Lieu :</strong> {{ event.locationName }}
+                                    </li>
+                                {% endif %}
+                            </ul>
+
+                            {# Capacité / progression #}
+                            {% if event.maxParticipants %}
+                                {% set spots_left = event.spotsLeft() %}
+                                {% set taken = event.maxParticipants - spots_left %}
+                                {% set percent = event.maxParticipants > 0
+                                    ? ((taken / event.maxParticipants) * 100)|round(0, 'ceil')
+                                    : 0 %}
+                                <div class="mb-2">
+                                    <strong>Participants :</strong>
+                                    {{ taken }}/{{ event.maxParticipants }}
+                                </div>
+                                <div class="progress mb-3" style="height:10px;">
+                                    <div
+                                        class="progress-bar {% if percent < 50 %}bg-success{% elseif percent < 80 %}bg-warning{% else %}bg-danger{% endif %}"
+                                        role="progressbar"
+                                        style="width: {{ percent }}%;"
+                                        aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="mb-3">
+                                    <strong>Participants :</strong> Illimité
+                                </div>
+                            {% endif %}
+
+                            <div class="d-grid gap-2">
+                                <a href="{{ path('app_event_index') }}" class="btn btn-outline-dark">
+                                    <i class="bi bi-chevron-left me-1"></i>Retour à la liste
+                                </a>
+
+
+                                {% if is_granted('ROLE_EDITOR') %}
+                                    <a href="{{ path('app_event_edit', {id: event.id}) }}" class="btn btn-outline-secondary">
+                                        <i class="bi bi-pencil me-1"></i>Éditer
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {% if has_coords %}
+                        <div class="card shadow-sm d-none d-lg-block">
+                            <div class="card-body p-0">
+                                <div id="event-map" data-lat="{{ event.locationLat }}" data-lng="{{ event.locationLng }}" data-zoom="15"></div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </aside>
+        </div>
     </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if has_coords %}
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+                crossorigin=""></script>
+        <script>
+            (function () {
+                var el = document.getElementById('event-map');
+                if (!el || typeof L === 'undefined') return;
+
+                var lat = parseFloat(el.dataset.lat);
+                var lng = parseFloat(el.dataset.lng);
+                var zoom = parseInt(el.dataset.zoom || '15', 10);
+
+                var map = L.map(el, { scrollWheelZoom: false }).setView([lat, lng], zoom);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; OpenStreetMap'
+                }).addTo(map);
+
+                var marker = L.marker([lat, lng]).addTo(map);
+                marker.bindPopup({{ (event.locationName ?? 'Lieu')|json_encode|raw }});
+
+
+                setTimeout(function(){ map.invalidateSize(); }, 250);
+                window.addEventListener('resize', function(){ map.invalidateSize(); });
+            })();
+        </script>
+    {% endif %}
 {% endblock %}
