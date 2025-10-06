@@ -54,6 +54,7 @@ class AccountController extends AbstractController
 
         $form->handleRequest($request);
 
+
         if ($form->isSubmitted() && $form->isValid()) {
             $plainPassword = $form->get('plainPassword')->getData();
             $user->setPassword($hasher->hashPassword($user, $plainPassword));

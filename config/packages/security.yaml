@@ -145,11 +145,13 @@ security:
         ROLE_ADMIN: ROLE_EDITOR
 
     firewalls:
+
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
         main:
+            pattern: ^/
             lazy: true
             provider: app_user_provider
             user_checker: App\Security\UserChecker
@@ -163,14 +165,27 @@ security:
 
             remember_me:
                 secret: '%kernel.secret%'
-                lifetime: 2592000
+
+                lifetime: 2592000 #30 jours#
+
                 path: /
                 name: REMEMBERME
+                # always_remember: true # (optionnel)
 
             logout:
                 path: app_logout
                 target: app_home
 
     access_control:
+
         # Seuls les membres approuvés peuvent accéder aux pages /membre
         - { path: ^/membre, roles: ROLE_MEMBER }
+
+        # Routes publiques
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/logout, roles: PUBLIC_ACCESS }
+        - { path: ^/register, roles: PUBLIC_ACCESS }        # ok
+        - { path: ^/reset-password, roles: PUBLIC_ACCESS }  # ok
+        - { path: ^/membre, roles: ROLE_MEMBER }            # ok
+        - { path: ^/, roles: PUBLIC_ACCESS }                # ok
+
