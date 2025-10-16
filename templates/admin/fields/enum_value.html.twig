@@ -1,0 +1,12 @@
+{# templates/admin/fields/enum_badge.html.twig #}
+{% set v = field.value is not null ? attribute(field.value, 'value') : null %}
+{% if v %}
+    <span class="badge
+    {% if v == 'APPROVED' %} text-bg-success
+    {% elseif v == 'PENDING' %} text-bg-warning
+    {% elseif v == 'REJECTED' %} text-bg-danger
+    {% elseif v == 'ARCHIVED' %} text-bg-secondary
+    {% else %} text-bg-light
+    {% endif %}
+  ">{{ v }}</span>
+{% endif %}

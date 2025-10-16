@@ -59,4 +59,17 @@ class Membership
 
     public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
     public function setCreatedAt(\DateTimeImmutable $dt): self { $this->createdAt = $dt; return $this; }
+
+    // --- Helpers sólo para la UI del backoffice ---
+    public function getStatusLabel(): string
+    {
+        return $this->getStatus()->label(); // asumiendo que getStatus() devuelve MembershipStatus
+    }
+
+    public function getStatusBadge(): string
+    {
+        $s = $this->getStatus();
+        return sprintf('<span class="badge text-bg-%s">%s</span>', $s->badge(), $s->label());
+    }
+
 }

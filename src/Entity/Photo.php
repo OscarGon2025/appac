@@ -5,46 +5,59 @@ namespace App\Entity;
 use App\Enum\MediaVisibility;
 use App\Repository\PhotoRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PhotoRepository::class)]
 #[ORM\Table(name: 'photos')]
 #[ORM\HasLifecycleCallbacks]
+#[Vich\Uploadable] // ✅ ahora la entidad es manejada por Vich
 class Photo
 {
     #[ORM\Id] #[ORM\GeneratedValue] #[ORM\Column]
     private ?int $id = null;
 
-    // Propietaire (User::$photos du cote inverse)
+    // Propietario (User::$photos del lado inverso)
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $owner = null;
 
-    // fichier physuique (ruta/nom de fichier en BD)
+    /**
+     * Nombre de archivo persistido en BD.
+     * Vich escribirá aquí el nombre final guardado en disco.
+     */
     #[ORM\Column(length: 255)]
     private string $fileName;
 
-    // Metadonnes
+    /**
+     * Campo NO persistido usado por Vich para manejar la subida.
+     * Cambia "classified_ad_photo" si tu mapping en vich_uploader.yaml se llama distinto.
+     */
+    #[Vich\UploadableField(mapping: 'classified_ad_photo', fileNameProperty: 'fileName')]
+    private ?File $imageFile = null;
+
+    // Metadatos
     #[ORM\Column(length: 180, nullable: true)]
     private ?string $title = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    //  visibility (public ou membres)
+    // Visibilidad (public o membres)
     #[ORM\Column(enumType: MediaVisibility::class)]
     private MediaVisibility $visibility = MediaVisibility::PUBLIC;
 
-    // optionel: apartenir a un álbum (Album::$photos c'est du cote inverse)
+    // Opcional: pertenecer a un álbum (Album::$photos es el lado inverso)
     #[ORM\ManyToOne(targetEntity: Album::class, inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Album $album = null;
 
-    // Optionel: Photo asocie au ad
+    // Opcional: foto asociada a un anuncio
     #[ORM\ManyToOne(targetEntity: ClassifiedAd::class, inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?ClassifiedAd $classifiedAd = null;
 
-    // dates EXIF / telecharge
+    // Fechas EXIF / subida
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $takenAt = null;
 
@@ -82,6 +95,25 @@ class Photo
 
     public function getFileName(): string { return $this->fileName; }
     public function setFileName(string $fileName): self { $this->fileName = $fileName; return $this; }
+
+    /**
+     * Campo de subida manejado por Vich.
+     * Establecer este campo hace que Vich mueva el archivo y actualice fileName.
+     */
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // necesitado por Doctrine para detectar un cambio y disparar los listeners
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
 
     public function getTitle(): ?string { return $this->title; }
     public function setTitle(?string $title): self { $this->title = $title; return $this; }
