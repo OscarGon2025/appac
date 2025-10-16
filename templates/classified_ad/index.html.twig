@@ -28,7 +28,7 @@
         {% endif %}
 
         {# =======================
-     Filtros
+     Filtres
      ======================= #}
         <form method="get" class="row g-3 align-items-end mb-4" role="search" aria-label="Filtres petites annonces">
             <div class="col-12 col-md-4">
@@ -100,23 +100,39 @@
         </div>
 
         {# =======================
-     Grid de anuncios
+     Grid des annonces
      ======================= #}
         <div class="row">
             {% for ad in ads %}
                 <div class="col-lg-4 col-md-6 mb-4">
                     <article class="card h-100 shadow-sm">
-                        {# Miniatura: primera foto si existe #}
-                        {% if ad.photos|length > 0 %}
+
+                        {# ------- Miniature sûre (VichUploader + fallback) ------- #}
+                        {% set thumb = asset('images/placeholders/classified_no_image.png') %}
+                        {% if ad.photos is defined and ad.photos|length > 0 %}
                             {% set first = ad.photos|first %}
-                            {% if first.imageName %}
-                                <img
-                                    src="{{ asset('uploads/classifieds/' ~ first.imageName) | imagine_filter('ad_thumb') }}"
-                                    class="card-img-top"
-                                    alt="{{ ad.title }}"
-                                    loading="lazy">
+                            {% if first %}
+                                {# Ajusta 'imageFile' al nombre real del campo uploadable en tu entidad Photo #}
+                                {% set vichUrl = vich_uploader_asset(first, 'imageFile') ?? null %}
+
+                                {% if vichUrl %}
+                                    {% set thumb = vichUrl %}
+                                {% else %}
+                                    {# Fallback a propiedades comunes si no usas Vich en Photo #}
+                                    {% set fileName = attribute(first, 'fileName') ?? attribute(first, 'filename') ?? attribute(first, 'name') ?? null %}
+                                    {% if fileName %}
+                                        {% set thumb = asset('uploads/classifieds/' ~ fileName) %}
+                                    {% endif %}
+                                {% endif %}
                             {% endif %}
                         {% endif %}
+
+                        <img
+                            src="{{ thumb | imagine_filter('ad_thumb') }}"
+                            class="card-img-top"
+                            alt="{{ ad.title }}"
+                            loading="lazy"
+                        >
 
                         <div class="card-body d-flex flex-column">
                             <h3 class="h5 card-title mb-2">{{ ad.title }}</h3>
@@ -133,7 +149,11 @@
 
                             <div class="d-flex align-items-center justify-content-between mt-auto pt-2">
               <span class="fw-semibold fs-5">
-                {% if ad.price is not null %}{{ ad.price|number_format(0, ',', ' ') }} €{% else %}-{% endif %}
+                {% if ad.price is not null %}
+                    {{ ad.price|number_format(0, ',', ' ') }} €
+                {% else %}
+                    -
+                {% endif %}
               </span>
 
                                 <a class="btn btn-outline-primary btn-sm" href="{{ path('app_classified_show', { id: ad.id }) }}">
@@ -153,7 +173,7 @@
         </div>
 
         {# =======================
-     Paginación
+     Pagination
      ======================= #}
         {% if pages > 1 %}
             {% set currentQuery = app.request.query.all %}
