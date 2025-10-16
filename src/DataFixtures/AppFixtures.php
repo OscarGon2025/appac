@@ -39,6 +39,7 @@ final class AppFixtures extends Fixture
             return $dt ? \DateTimeImmutable::createFromMutable($dt) : null;
         };
 
+
         $enumPick = function(string $enumFqcn, array $fallbackStrings) use ($faker) {
             if (class_exists($enumFqcn) && method_exists($enumFqcn, 'cases')) {
                 $cases = $enumFqcn::cases();
@@ -198,7 +199,15 @@ final class AppFixtures extends Fixture
             $m = (new Membership())
                 ->setUser($u)
                 ->setYear($year);
-            $m->setStatus($enumPick(MembershipStatus::class, ['PENDING','PAID','EXPIRED']));
+
+            // FR: Ne PAS mettre "PAID" (état de paiement). Utiliser le statut de membership.
+            $picked = $enumPick(MembershipStatus::class, ['PENDING','ACTIVE','EXPIRED']);
+            $m->setStatus(
+                \is_object($picked)
+                    ? $picked
+                    : (MembershipStatus::tryFromMixed($picked) ?? MembershipStatus::ACTIVE)
+            );
+
             $em->persist($m);
 
             if ($faker->boolean(30)) {
@@ -209,7 +218,8 @@ final class AppFixtures extends Fixture
                     ->setTargetYear($year + 1)
                     ->setMessage($faker->optional()->sentence());
 
-                $app->setStatus($enumPick(ApplicationStatus::class, ['PENDING','APPROVED','REJECTED']));
+                $appStatus = $enumPick(ApplicationStatus::class, ['PENDING','APPROVED','REJECTED','ON_HOLD']);
+                $app->setStatus(\is_object($appStatus) ? $appStatus : ApplicationStatus::PENDING);
 
                 if ($faker->boolean(50)) {
                     $app->setProcessedBy($admin);

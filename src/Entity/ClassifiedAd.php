@@ -119,6 +119,16 @@ class ClassifiedAd
     public function getUpdatedAt(): \DateTimeImmutable { return $this->updatedAt; }
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): self { $this->updatedAt = $updatedAt; return $this; }
 
+
+    // ajout de getter
+
+
+    public function getStatusLabel(): string
+    {
+        return $this->status?->value ?? '';
+    }
+
+
     /** @return Collection<int, Photo> */
     public function getPhotos(): Collection { return $this->photos; }
 

@@ -1,9 +1,7 @@
-{# templates/account/index.html.twig (ou mon_compte.html.twig) #}
+{# templates/account/index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{# Sur les pages enfants, la barre de navigation doit être opaque (non transparente) #}
 {% set navbar_is_transparent = false %}
-
 {% block title %}Mon compte{% endblock %}
 
 {% block body %}
@@ -16,9 +14,11 @@
             </div>
 
             <div class="row gx-4 gy-4">
-                {# Informations utilisateur #}
+                {# ======================
+         Mes informations
+         ====================== #}
                 <div class="col-md-6">
-                    <div class="card shadow-sm h-100">
+                    <div class="card shadow-sm h-100 border-0">
                         <div class="card-body">
                             <h5 class="card-title d-flex align-items-center gap-2 mb-3">
                                 <i class="bi bi-person-circle"></i> Mes informations
@@ -42,28 +42,45 @@
                     </div>
                 </div>
 
-                {# Actions #}
+                {# ======================
+         Mes actions
+         ====================== #}
                 <div class="col-md-6">
-                    <div class="card shadow-sm h-100">
+                    <div class="card shadow-sm h-100 border-0">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title d-flex align-items-center gap-2 mb-3">
                                 <i class="bi bi-lightning-charge"></i> Mes actions
                             </h5>
 
                             <div class="d-grid gap-2">
+
+                                {# --- Annonces (nuevo) --- #}
+                                <a href="{{ path('account_ad_index') }}" class="btn btn-outline-primary">
+                                    <i class="bi bi-megaphone me-1"></i> Mes annonces
+                                </a>
+                                <a href="{{ path('account_ad_new') }}" class="btn btn-success">
+                                    <i class="bi bi-plus-lg me-1"></i> Déposer une annonce
+                                </a>
+
+                                <hr class="my-2">
+
+                                {# --- Événements (tus acciones existentes) --- #}
                                 <a href="{{ path('app_event_index') }}" class="btn btn-outline-dark">
                                     <i class="bi bi-calendar-event me-1"></i> Voir les événements
                                 </a>
                                 <a href="{{ path('app_event_new') }}" class="btn custom-btn">
                                     <i class="bi bi-plus-circle me-1"></i> Créer un événement
                                 </a>
+
+                                <hr class="my-2">
+
                                 <a href="{{ path('app_logout') }}" class="btn btn-outline-danger">
                                     <i class="bi bi-box-arrow-right me-1"></i> Se déconnecter
                                 </a>
                             </div>
 
-                            {# au cas ou on a besoin "coller" les boutons en bas sur les écrans hauts #}
-                            {# <div class="mt-auto"></div> #}
+                            {# Empuja el contenido hacia arriba si la pantalla es alta #}
+                            <div class="mt-auto"></div>
                         </div>
                     </div>
                 </div>

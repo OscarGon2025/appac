@@ -1,0 +1,16 @@
+{% set currentYear = "now"|date("Y") %}
+
+{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+
+    {% if not app.user.hasActiveMembershipForYear(currentYear) %}
+        <a href="{{ path('app_adhesion') }}" class="btn btn-primary">
+            S’abonner
+        </a>
+    {% else %}
+        <span class="badge bg-success">Adhésion {{ currentYear }} active</span>
+    {% endif %}
+{% else %}
+    <a href="{{ path('app_login') }}" class="btn btn-outline-primary">
+        Connexion
+    </a>
+{% endif %}

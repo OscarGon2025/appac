@@ -90,3 +90,60 @@
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
 })();
+
+
+// registration  Formulaire
+
+document.addEventListener("DOMContentLoaded", () => {
+    const pwd1 = document.getElementById("registration_form_password_first");
+    const pwd2 = document.getElementById("registration_form_password_second");
+
+    // --- Toggle Afficher/Masquer ---
+    const attachToggle = (inputId, btnId) => {
+        const input = document.getElementById(inputId);
+        const btn   = document.getElementById(btnId);
+        if (!input || !btn) return;
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            const isPwd = input.type === "password";
+            input.type = isPwd ? "text" : "password";
+            btn.setAttribute("aria-pressed", String(isPwd));
+            btn.querySelector("[data-eye]").textContent = isPwd ? "Masquer" : "Afficher";
+        });
+    };
+
+    attachToggle("registration_form_password_first",  "pw-toggle-1");
+    attachToggle("registration_form_password_second", "pw-toggle-2");
+
+    // --- complexite mdp---
+    const meter = document.getElementById("pw-meter");
+    const meterFill = document.getElementById("pw-meter-fill");
+    const meterText = document.getElementById("pw-meter-text");
+
+    const score = (v) => {
+        let s = 0;
+        if (!v) return 0;
+        if (v.length >= 8) s++;
+        if (/[a-z]/.test(v) && /[A-Z]/.test(v)) s++;
+        if (/\d/.test(v)) s++;
+        if (/[^A-Za-z0-9]/.test(v)) s++;
+        return s; // 0..4
+    };
+
+    const labels = ["Très faible", "Faible", "Moyenne", "Bonne", "Excellente"];
+
+    const render = (val) => {
+        const sc = score(val);
+        const pct = (sc / 4) * 100;
+        if (meter && meterFill && meterText) {
+            meter.style.opacity = val ? "1" : "0";
+            meterFill.style.width = pct + "%";
+            meterText.textContent = labels[sc];
+        }
+    };
+
+    if (pwd1) {
+        pwd1.addEventListener("input", (e) => render(e.target.value));
+        render(pwd1.value);
+    }
+});

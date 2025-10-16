@@ -1,20 +1,88 @@
+{# templates/registration/register.html.twig #}
 {#{% extends 'base.html.twig' %}#}
 
-{#{% block title %}Hello RegistrationController!{% endblock %}#}
+{#{% block title %}Créer un compte{% endblock %}#}
 
 {#{% block body %}#}
-{#<style>#}
-{#    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }#}
-{#    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }#}
-{#</style>#}
+{#    <section class="container min-vh-100 d-flex align-items-center justify-content-center py-5">#}
+{#        <div class="col-12 col-md-9 col-lg-6 col-xl-5">#}
+{#            <div class="card shadow-lg rounded-4 border-0">#}
+{#                <div class="card-body p-4 p-sm-5">#}
+{#                    <h1 class="h3 fw-bold text-center mb-1">Créer un compte</h1>#}
+{#                    <p class="text-muted text-center mb-4">Rejoignez l’APPAC en quelques secondes</p>#}
 
-{#<div class="example-wrapper">#}
-{#    <h1>Hello {{ controller_name }}! ✅</h1>#}
+{#                    #}{# Mensajes flash (por si los usas) #}
+{#                    {% for label, messages in app.flashes %}#}
+{#                        {% for message in messages %}#}
+{#                            <div class="alert alert-{{ label }} mb-3" role="alert">{{ message }}</div>#}
+{#                        {% endfor %}#}
+{#                    {% endfor %}#}
 
-{#    This friendly message is coming from:#}
-{#    <ul>#}
-{#        <li>Your controller at <code>C:/wamp64/www/appac/src/Controller/RegistrationController.php</code></li>#}
-{#        <li>Your template at <code>C:/wamp64/www/appac/templates/registration/index.html.twig</code></li>#}
-{#    </ul>#}
-{#</div>#}
+{#                    {{ form_start(registrationForm, { attr: { novalidate: 'novalidate' } }) }}#}
+
+{#                    #}{# Email #}
+{#                    <div class="mb-3">#}
+{#                        {{ form_label(registrationForm.email, 'Adresse e-mail', { label_attr: { class: 'form-label fw-semibold' } }) }}#}
+{#                        <div class="input-group">#}
+{#                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>#}
+{#                            {{ form_widget(registrationForm.email, {#}
+{#                                attr: { class: 'form-control form-control-lg', placeholder: 'votre@email.fr' }#}
+{#                            }) }}#}
+{#                        </div>#}
+{#                        {{ form_errors(registrationForm.email) }}#}
+{#                    </div>#}
+
+{#                    #}{# Mot de passe con mostrar/ocultar #}
+{#                    <div class="mb-3">#}
+{#                        {{ form_label(registrationForm.password, 'Mot de passe', { label_attr: { class: 'form-label fw-semibold' } }) }}#}
+{#                        <div class="input-group">#}
+{#                            <span class="input-group-text"><i class="bi bi-lock"></i></span>#}
+{#                            {{ form_widget(registrationForm.password, {#}
+{#                                attr: { class: 'form-control form-control-lg', placeholder: '••••••••', autocomplete: 'new-password', id: 'password-field' }#}
+{#                            }) }}#}
+{#                            <button class="btn btn-outline-secondary" type="button" id="toggle-password" aria-label="Afficher/Masquer le mot de passe">#}
+{#                                <i class="bi bi-eye"></i>#}
+{#                            </button>#}
+{#                        </div>#}
+{#                        <div class="form-text">8 caractères minimum, avec lettres et chiffres de préférence.</div>#}
+{#                        {{ form_errors(registrationForm.password) }}#}
+{#                    </div>#}
+
+{#                    #}{# Resto de campos ocultos (CSRF, etc.) #}
+{#                    {{ form_rest(registrationForm) }}#}
+
+{#                    <button class="btn btn-primary btn-lg w-100 mt-2">#}
+{#                        Créer mon compte#}
+{#                    </button>#}
+{#                    {{ form_end(registrationForm) }}#}
+
+{#                    <hr class="my-4">#}
+
+{#                    <div class="text-center">#}
+{#                        <small class="text-muted">Déjà inscrit ?</small>#}
+{#                        <a href="{{ path('app_login') }}" class="ms-1 fw-semibold">Se connecter</a>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+
+{#            <p class="text-center text-muted mt-3 mb-0" style="font-size:.9rem">#}
+{#                En créant un compte, vous acceptez nos <a href="#" class="text-decoration-underline">conditions d’utilisation</a>.#}
+{#            </p>#}
+{#        </div>#}
+{#    </section>#}
+
+{#    #}{# Pequeño script para alternar la visibilidad del password #}
+{#    <script>#}
+{#        (function () {#}
+{#            const btn = document.getElementById('toggle-password');#}
+{#            const input = document.getElementById('password-field');#}
+{#            if (!btn || !input) return;#}
+
+{#            btn.addEventListener('click', function () {#}
+{#                const isText = input.getAttribute('type') === 'text';#}
+{#                input.setAttribute('type', isText ? 'password' : 'text');#}
+{#                this.innerHTML = isText ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';#}
+{#            });#}
+{#        })();#}
+{#    </script>#}
 {#{% endblock %}#}
