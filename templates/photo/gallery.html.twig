@@ -1,0 +1,173 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Galerie photo{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet">
+
+    <style>
+        /* Disposition générale */
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        /* Bloc vignette */
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease-in-out;
+            aspect-ratio: 220 / 180;
+            background-color: #ffffff;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+
+        /* Lien autour de l’image */
+        .gallery-item a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Image */
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        /* Légende (titre de la photo) */
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            text-align: center;
+            font-size: 0.9rem;
+            padding: 0.4rem 0.6rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 576px) {
+            .gallery-item {
+                aspect-ratio: 1 / 1; /* format carré sur mobile */
+            }
+        }
+
+        /* Filtre album */
+        .album-filter {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .album-filter select {
+            padding: 0.4rem 0.6rem;
+            font-size: 1rem;
+        }
+    </style>
+{% endblock %}
+
+
+{% block body %}
+    <section class="container my-5">
+        <h1 class="mb-4 text-center">Galerie photo</h1>
+
+        {# Messages flash #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+
+        {# Filtre par album #}
+        {% if albums|length > 0 %}
+            <div class="mb-4 text-center">
+                <form method="get" id="albumFilterForm">
+                    <label for="albumSelect">Filtrer par album :</label>
+                    <select id="albumSelect" name="album" onchange="document.getElementById('albumFilterForm').submit()">
+                        <option value="">Tous les albums</option>
+                        {% for album in albums %}
+                            <option value="{{ album.id }}"
+                                    {% if selectedAlbum is not empty and selectedAlbum == album.id %}selected{% endif %}>
+                                {{ album.title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+        {% endif %}
+
+        <div class="gallery-container">
+            {% set hasPhotos = false %}
+            {% for photo in photos %}
+                {% set hasPhotos = true %}
+                <div class="gallery-item">
+                    <a href="{{ asset('uploads/photos/' ~ photo.fileName) }}"
+                       data-lightbox="galerie"
+                       data-title="{{ photo.title ?: 'Photo' }}{% if photo.description %} - {{ photo.description }}{% endif %}">
+
+                        {# Affichage des images dans la galerie #}
+                        {% set imagePath = vich_uploader_asset(photo, 'imageFile') ?: asset('uploads/photos/' ~ photo.fileName) %}
+
+                        {% if imagePath %}
+                            <img src="{{ imagePath | imagine_filter('thumbnail_small') }}"
+                                 alt=""
+                                 loading="lazy">
+                        {% else %}
+                            <div class="text-center text-muted" style="height:180px; line-height:180px; background:#f0f0f0;">
+                                Image indisponible
+                            </div>
+                        {% endif %}
+
+
+
+                        {% if photo.title %}
+                            <div class="gallery-caption">
+                                {{ photo.title }}
+                            </div>
+                        {% endif %}
+                    </a>
+                </div>
+            {% endfor %}
+
+            {% if not hasPhotos %}
+                <p class="text-center text-muted mt-4">Aucune photo publique n’a encore été ajoutée.</p>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {# Lightbox2 JS #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+    <script>
+        lightbox.option({
+            resizeDuration: 200,
+            wrapAround: true,
+            fadeDuration: 150,
+            imageFadeDuration: 150,
+            albumLabel: "Photo %1 sur %2"
+        });
+    </script>
+{% endblock %}

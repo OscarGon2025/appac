@@ -2,8 +2,14 @@
 
 namespace App\Form;
 
+use App\Entity\Album;
 use App\Entity\Photo;
+use App\Enum\MediaVisibility;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Vich\UploaderBundle\Form\Type\VichImageType;
@@ -14,11 +20,40 @@ class PhotoType extends AbstractType
     {
         $builder
             ->add('imageFile', VichImageType::class, [
-                'label'         => 'Photo',
-                'required'      => false,
-                'download_uri'  => false,
-                'allow_delete'  => false,
-                'imagine_pattern' => 'ad_thumb',
+                'label' => 'Photo (fichier image)',
+                'required' => true,
+                'allow_delete' => false,
+                'download_uri' => false,
+                'image_uri' => false,
+                'attr' => [
+                    'accept' => 'image/*',
+                ],
+            ])
+            ->add('title', TextType::class, [
+                'label' => 'Titre',
+                'required' => false,
+                'attr' => ['placeholder' => 'Titre de la photo'],
+            ])
+            ->add('description', TextareaType::class, [
+                'label' => 'Description',
+                'required' => false,
+                'attr' => ['rows' => 3, 'placeholder' => 'Description ou légende'],
+            ])
+            ->add('visibility', ChoiceType::class, [
+                'label' => 'Visibilité',
+                'choices' => [
+                    'Publique' => MediaVisibility::PUBLIC,
+                    'Réservée aux membres' => MediaVisibility::MEMBERS,
+                ],
+                'expanded' => true, // boutons radio
+            ])
+
+            ->add('album', EntityType::class, [
+                'class' => Album::class,
+                'choice_label' => 'title',
+                'label' => 'Sélectionnez un album (optionnel) :',
+                'placeholder' => 'Aucun album',
+                'required' => false,
             ]);
 
     }

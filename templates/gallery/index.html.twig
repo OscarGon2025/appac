@@ -1,0 +1,41 @@
+{#{% extends 'base.html.twig' %}#}
+{#{% block title %}Galerie photo{% endblock %}#}
+
+{#{% block stylesheets %}#}
+{#    {{ parent() }}#}
+{#    <link href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" rel="stylesheet">#}
+{#{% endblock %}#}
+
+{#{% block body %}#}
+{#    <section class="container py-5">#}
+{#        <h1 class="mb-4 text-center">Galerie photo</h1>#}
+{#        <div class="row g-3">#}
+{#            {% for photo in photos %}#}
+{#                <div class="col-6 col-md-4 col-lg-3">#}
+{#                    <a href="{{ asset('uploads/photos/' ~ photo.filename) }}" class="glightbox" data-gallery="gallery1" data-title="{{ photo.caption }}">#}
+{#                        <img src="{{ asset('uploads/photos/' ~ photo.filename) | imagine_filter('thumbnail_small') }}" alt="{{ photo.caption }}" class="img-fluid rounded shadow-sm">#}
+{#                    </a>#}
+{#                </div>#}
+{#            {% else %}#}
+{#                <p class="text-center">Aucune photo pour le moment.</p>#}
+{#            {% endfor %}#}
+{#        </div>#}
+{#    </section>#}
+{#{% endblock %}#}
+
+
+{#{% for photo in photos %}#}
+{#    <div class="gallery-item">#}
+{#        <a href="{{ asset('uploads/photos/' ~ photo.fileName) }}" data-lightbox="gallery" data-title="{{ photo.title }}">#}
+{#            <img src="{{ asset('uploads/photos/' ~ photo.fileName) | imagine_filter('thumbnail_small') }}" alt="{{ photo.title }}">#}
+{#        </a>#}
+{#        <p>{{ photo.title }}</p>#}
+{#    </div>#}
+{#{% endfor %}#}
+
+
+{#{% block javascripts %}#}
+{#    {{ parent() }}#}
+{#    <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>#}
+{#    <script>const lightbox = GLightbox({selector: '.glightbox'});</script>#}
+{#{% endblock %}#}

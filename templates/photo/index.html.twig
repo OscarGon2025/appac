@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Galerie photo{% endblock %}
+
+{% block body %}
+    <section class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Galerie photo</h1>
+            {% if is_granted('ROLE_USER') %}
+                <a href="{{ path('app_photos_new') }}" class="btn btn-primary">📸 Ajouter une photo</a>
+            {% endif %}
+        </div>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+
+        {% if photos is empty %}
+            <p>Aucune photo pour le moment.</p>
+        {% else %}
+            <div class="row g-3">
+                {% for photo in photos %}
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <a href="{{ asset('uploads/photos/' ~ photo.fileName) }}" data-lightbox="gallery" data-title="{{ photo.title }}">
+                            <img src="{{ asset('uploads/photos/' ~ photo.fileName) | imagine_filter('thumb_300x200') }}"
+                                 alt="{{ photo.title }}" class="img-fluid rounded shadow-sm">
+                        </a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <form method="post" action="{{ path('app_photos_delete', {id: photo.id}) }}" onsubmit="return confirm('Supprimer cette photo ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ photo.id) }}">
+                                <button class="btn btn-sm btn-danger mt-2 w-100">Supprimer</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {# Librairie lightbox (CDN) #}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+{% endblock %}

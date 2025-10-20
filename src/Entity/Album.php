@@ -57,25 +57,76 @@ class Album
 
     // -------- Getters / Setters --------
 
-    public function getId(): ?int { return $this->id; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    public function getTitle(): string { return $this->title; }
-    public function setTitle(string $title): self { $this->title = $title; return $this; }
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
 
-    public function getDescription(): ?string { return $this->description; }
-    public function setDescription(?string $description): self { $this->description = $description; return $this; }
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
 
-    public function getCover(): ?string { return $this->cover; }
-    public function setCover(?string $cover): self { $this->cover = $cover; return $this; }
+        return $this;
+    }
 
-    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
-    public function setCreatedAt(\DateTimeImmutable $dt): self { $this->createdAt = $dt; return $this; }
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
 
-    public function getUpdatedAt(): \DateTimeImmutable { return $this->updatedAt; }
-    public function setUpdatedAt(\DateTimeImmutable $dt): self { $this->updatedAt = $dt; return $this; }
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getCover(): ?string
+    {
+        return $this->cover;
+    }
+
+    public function setCover(?string $cover): self
+    {
+        $this->cover = $cover;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $dt): self
+    {
+        $this->createdAt = $dt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): \DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $dt): self
+    {
+        $this->updatedAt = $dt;
+
+        return $this;
+    }
 
     /** @return Collection<int, Photo> */
-    public function getPhotos(): Collection { return $this->photos; }
+    public function getPhotos(): Collection
+    {
+        return $this->photos;
+    }
 
     public function addPhoto(Photo $photo): self
     {
@@ -83,6 +134,7 @@ class Album
             $this->photos->add($photo);
             $photo->setAlbum($this); // sincro du cote propietaire
         }
+
         return $this;
     }
 
@@ -91,6 +143,7 @@ class Album
         if ($this->photos->removeElement($photo) && $photo->getAlbum() === $this) {
             $photo->setAlbum(null);
         }
+
         return $this;
     }
 }

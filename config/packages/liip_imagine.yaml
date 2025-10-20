@@ -1,14 +1,57 @@
-# Documentation on how to configure the bundle can be found at: https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html
-liip_imagine:
-    # valid drivers options include "gd" or "gmagick" or "imagick"
-    driver: "gd"
+##Documentation on how to configure the bundle can be found at: https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html
 
+liip_imagine:
+    # Driver pour le traitement des images
+    driver: "gd"  # ou "imagick" si le serveur le supporte : plus rapide et précis
+
+    # Résolveur de cache — où les miniatures sont enregistrées
+    resolvers:
+        default:
+            web_path:
+                web_root: '%kernel.project_dir%/public'
+                cache_prefix: 'media/cache'
+
+    # Configuration des filtres
     filter_sets:
-        ad_thumb:
-            quality: 82
+        cache: ~  # requis par LiipImagine
+
+        # ✅ Vignette pour la galerie
+        thumbnail_small:
+            quality: 80
             filters:
-                thumbnail: { size: [400, 300], mode: inset }
-        ad_large:
+                # Recadre proprement sans bandes ni déformation
+                thumbnail:
+                    size: [220, 180]
+                    mode: outbound
+                    allow_upscale: false
+                # Ajoute un fond transparent pour éviter toute bordure visible
+                background:
+                    size: [220, 180]
+                    position: center
+                    color: '#ffffff'  # transparent
+
+        # ✅ Taille moyenne pour pages de détails ou listes
+        thumbnail_medium:
             quality: 85
             filters:
-                thumbnail: { size: [1200, 800], mode: inset }
+                thumbnail:
+                    size: [400, 300]
+                    mode: outbound
+                    allow_upscale: true
+                background:
+                    size: [400, 300]
+                    position: center
+                    color: '#ffffff'
+
+        # ✅ Grande taille (par ex. pour affichage en Lightbox)
+        thumbnail_large:
+            quality: 90
+            filters:
+                thumbnail:
+                    size: [800, 600]
+                    mode: outbound
+                    allow_upscale: true
+                background:
+                    size: [800, 600]
+                    position: center
+                    color: '#ffffff'

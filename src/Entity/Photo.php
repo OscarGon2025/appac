@@ -11,23 +11,20 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: PhotoRepository::class)]
 #[ORM\Table(name: 'photos')]
 #[ORM\HasLifecycleCallbacks]
-#[Vich\Uploadable] // ✅ ahora la entidad es manejada por Vich
+#[Vich\Uploadable]
 class Photo
 {
     #[ORM\Id] #[ORM\GeneratedValue] #[ORM\Column]
     private ?int $id = null;
 
-    // Propietario (User::$photos del lado inverso)
+    // Propietaire (User::$photos du cote inverse)
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $owner = null;
 
-    /**
-     * Nombre de archivo persistido en BD.
-     * Vich escribirá aquí el nombre final guardado en disco.
-     */
-    #[ORM\Column(length: 255)]
-    private string $fileName;
+    // fichier physuique (ruta/nom de fichier en BD)
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $fileName = null;
 
     /**
      * Campo NO persistido usado por Vich para manejar la subida.
@@ -86,15 +83,63 @@ class Photo
         return $this->title ?: $this->fileName ?: 'Photo';
     }
 
+    #[Vich\UploadableField(mapping: 'photos', fileNameProperty: 'fileName')]
+    private ?File $imageFile = null;
+
     // -------- Getters / Setters --------
 
-    public function getId(): ?int { return $this->id; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    public function getOwner(): ?User { return $this->owner; }
-    public function setOwner(?User $owner): self { $this->owner = $owner; return $this; }
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
 
-    public function getFileName(): string { return $this->fileName; }
-    public function setFileName(string $fileName): self { $this->fileName = $fileName; return $this; }
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    public function getFileName(): ?string
+    {
+        return $this->fileName;
+    }
+
+    public function setFileName(?string $fileName): self
+    {
+        $this->fileName = $fileName;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
 
     /**
      * Campo de subida manejado por Vich.
@@ -117,25 +162,90 @@ class Photo
 
     public function getTitle(): ?string { return $this->title; }
     public function setTitle(?string $title): self { $this->title = $title; return $this; }
+    public function getVisibility(): MediaVisibility
+    {
+        return $this->visibility;
+    }
 
-    public function getDescription(): ?string { return $this->description; }
-    public function setDescription(?string $description): self { $this->description = $description; return $this; }
+    public function setVisibility(MediaVisibility $visibility): self
+    {
+        $this->visibility = $visibility;
 
-    public function getVisibility(): MediaVisibility { return $this->visibility; }
-    public function setVisibility(MediaVisibility $visibility): self { $this->visibility = $visibility; return $this; }
+        return $this;
+    }
 
-    public function getAlbum(): ?Album { return $this->album; }
-    public function setAlbum(?Album $album): self { $this->album = $album; return $this; }
+    public function getAlbum(): ?Album
+    {
+        return $this->album;
+    }
 
-    public function getClassifiedAd(): ?ClassifiedAd { return $this->classifiedAd; }
-    public function setClassifiedAd(?ClassifiedAd $ad): self { $this->classifiedAd = $ad; return $this; }
+    public function setAlbum(?Album $album): self
+    {
+        $this->album = $album;
 
-    public function getTakenAt(): ?\DateTimeImmutable { return $this->takenAt; }
-    public function setTakenAt(?\DateTimeImmutable $takenAt): self { $this->takenAt = $takenAt; return $this; }
+        return $this;
+    }
 
-    public function getUploadedAt(): \DateTimeImmutable { return $this->uploadedAt; }
-    public function setUploadedAt(\DateTimeImmutable $uploadedAt): self { $this->uploadedAt = $uploadedAt; return $this; }
+    public function getClassifiedAd(): ?ClassifiedAd
+    {
+        return $this->classifiedAd;
+    }
 
-    public function getUpdatedAt(): \DateTimeImmutable { return $this->updatedAt; }
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self { $this->updatedAt = $updatedAt; return $this; }
+    public function setClassifiedAd(?ClassifiedAd $ad): self
+    {
+        $this->classifiedAd = $ad;
+
+        return $this;
+    }
+
+    public function getTakenAt(): ?\DateTimeImmutable
+    {
+        return $this->takenAt;
+    }
+
+    public function setTakenAt(?\DateTimeImmutable $takenAt): self
+    {
+        $this->takenAt = $takenAt;
+
+        return $this;
+    }
+
+    public function getUploadedAt(): \DateTimeImmutable
+    {
+        return $this->uploadedAt;
+    }
+
+    public function setUploadedAt(\DateTimeImmutable $uploadedAt): self
+    {
+        $this->uploadedAt = $uploadedAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): \DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // ça force Doctrine à déclencher l'événement PreUpdate
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
 }

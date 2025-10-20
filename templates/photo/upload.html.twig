@@ -1,0 +1,76 @@
+{#{% extends 'base.html.twig' %}#}
+
+{#{% block title %}Ajouter une photo{% endblock %}#}
+
+{#{% block body %}#}
+{#    <section class="container py-5">#}
+{#        <h1>Ajouter une photo</h1>#}
+
+{#        {% for label, messages in app.flashes %}#}
+{#            {% for message in messages %}#}
+{#                <div class="alert alert-{{ label }}">{{ message }}</div>#}
+{#            {% endfor %}#}
+{#        {% endfor %}#}
+
+{#        {{ form_start(form) }}#}
+{#        {{ form_row(form.imageFile) }}#}
+{#        {{ form_row(form.title) }}#}
+{#        {{ form_row(form.description) }}#}
+{#        {{ form_row(form.visibility) }}#}
+
+{#        <button class="btn btn-success mt-3">Enregistrer</button>#}
+{#        {{ form_end(form) }}#}
+{#    </section>#}
+{#{% endblock %}#}
+
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une photo{% endblock %}
+
+{% block body %}
+    <section class="container my-5">
+        <h1 class="mb-4 text-center">Ajouter une photo</h1>
+
+        {# Messages flash #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} mb-3">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+
+        {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+
+        <div class="mb-3">
+            {{ form_label(form.imageFile) }}
+            {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.imageFile) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.title) }}
+            {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Titre de la photo'}}) }}
+            {{ form_errors(form.title) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 3, 'placeholder': 'Description ou légende'}}) }}
+            {{ form_errors(form.description) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.visibility) }}
+            <div>
+                {{ form_widget(form.visibility) }}
+            </div>
+            {{ form_errors(form.visibility) }}
+        </div>
+
+        <div class="d-grid mt-3">
+            <button type="submit" class="btn btn-primary btn-block">Ajouter la photo</button>
+        </div>
+
+        {{ form_end(form) }}
+    </section>
+{% endblock %}
