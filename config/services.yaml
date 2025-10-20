@@ -10,6 +10,12 @@ parameters:
     app.tide_lon: -2.50
 
 services:
+    App\EventSubscriber\PhotoThumbnailSubscriber:
+        arguments:
+            $cacheManager: '@liip_imagine.cache.manager'
+        tags:
+            - { name: 'kernel.event_subscriber' }
+
     _defaults:
         autowire: true
         autoconfigure: true

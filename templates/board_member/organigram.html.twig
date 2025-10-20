@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Organigramme{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .organigramme {
+            display: flex;
+            /*flex-direction: row;*/
+            flex-wrap: wrap;
+            justify-content: center;
+            /*align-items: center;*/
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+
+        .board-member {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 220px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 1rem;
+            background-color: #f7f7f7;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .board-member:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .board-member img {
+            width: 160px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 0.75rem;
+        }
+
+        .board-member .name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #222;
+        }
+
+        .board-member .role {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .board-member {
+                width: 180px;
+            }
+
+            .board-member img {
+                width: 140px;
+                height: 140px;
+            }
+        }
+
+
+    </style>
+{% endblock %}
+
+{% block body %}
+    <section class="container my-5">
+        <h1 class="mb-4 text-center">Organigramme</h1>
+
+        <div class="organigramme">
+            {% for member in members %}
+                <div class="board-member">
+                    {% if member.photoName %}
+                        <img src="{{ vich_uploader_asset(member, 'photoFile') }}" alt="{{ member.name }}">
+                    {% else %}
+                        <img src="{{ asset('images/default_user.png') }}" alt="Photo par défaut">
+                    {% endif %}
+                    <div class="name">{{ member.surname }} {{ member.name }}</div>
+                    <div class="role">{{ member.role }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

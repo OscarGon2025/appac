@@ -50,6 +50,84 @@
 .about-section .btn.custom-btn { box-shadow: 0 8px 24px rgba(0, 0, 0, .25); }
 
 
+/*!* --------- Galerie photo --------- *!*/
+
+/*.gallery-container {*/
+/*    display: grid;*/
+/*    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));*/
+/*    gap: 1rem;*/
+/*    padding: 1rem;*/
+/*}*/
+
+/*!* Bloc vignette *!*/
+/*.gallery-item {*/
+/*    position: relative;*/
+/*    overflow: hidden;*/
+/*    border-radius: 12px;*/
+/*    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);*/
+/*    transition: transform 0.2s ease-in-out;*/
+/*    aspect-ratio: 220 / 180;*/
+/*    background-color: #ffffff;*/
+/*}*/
+
+/*.gallery-item:hover {*/
+/*    transform: scale(1.03);*/
+/*}*/
+
+/*!* Lien autour de l’image *!*/
+/*.gallery-item a {*/
+/*    display: block;*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    position: relative;*/
+/*}*/
+
+/*!* Image *!*/
+/*.gallery-item img {*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    object-fit: cover;*/
+/*    object-position: center;*/
+/*    display: block;*/
+/*}*/
+
+/*!* Légende (titre de la photo) *!*/
+/*.gallery-caption {*/
+/*    position: absolute;*/
+/*    bottom: 0;*/
+/*    left: 0;*/
+/*    width: 100%;*/
+/*    background: rgba(0, 0, 0, 0.6);*/
+/*    color: #fff;*/
+/*    text-align: center;*/
+/*    font-size: 0.9rem;*/
+/*    padding: 0.4rem 0.6rem;*/
+/*    white-space: nowrap;*/
+/*    overflow: hidden;*/
+/*    text-overflow: ellipsis;*/
+/*    border-bottom-left-radius: 12px;*/
+/*    border-bottom-right-radius: 12px;*/
+/*}*/
+
+/*!* Responsive *!*/
+/*@media (max-width: 576px) {*/
+/*    .gallery-item {*/
+/*        aspect-ratio: 1 / 1; !* format carré sur mobile *!*/
+/*    }*/
+/*}*/
+
+/*!* Filtre album *!*/
+/*.album-filter {*/
+/*    margin-bottom: 1.5rem;*/
+/*    text-align: center;*/
+/*}*/
+
+/*.album-filter select {*/
+/*    padding: 0.4rem 0.6rem;*/
+/*    font-size: 1rem;*/
+/*}*/
+
+
 /* ----------  MON COMPTE ---------- */
 /* Page compte : cohérence visuelle avec le thème */
 #account .card-title .bi { opacity: .9; }

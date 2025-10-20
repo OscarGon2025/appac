@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\User;
+use Karser\Recaptcha3Bundle\Form\Recaptcha3Type;
+use Karser\Recaptcha3Bundle\Validator\Constraints\Recaptcha3;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -12,8 +14,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Karser\Recaptcha3Bundle\Form\Recaptcha3Type;
-use Karser\Recaptcha3Bundle\Validator\Constraints\Recaptcha3;
 
 class RegistrationFormType extends AbstractType
 {
@@ -35,11 +35,13 @@ class RegistrationFormType extends AbstractType
                 ],
             ])
             ->add('captcha', Recaptcha3Type::class, [
-                'action_name' => 'register', // doit correspondre à l'action côté Google reCAPTCHA
+                'mapped' => false, // Règle le problème de l'inscription inexistante
+                'action_name' => 'register', // Doit correspondre à l'action côté Google reCAPTCHA
                 'constraints' => [
                     new Recaptcha3(),
                 ],
             ])
+
             ->add('submit', SubmitType::class, [
                 'label' => 'Créer mon compte',
             ]);

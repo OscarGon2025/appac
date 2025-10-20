@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Article;
+use App\Entity\BoardMember;
 use App\Entity\Event;
 use App\Entity\Page;
 use App\Entity\Album;
@@ -84,6 +85,9 @@ final class AppDashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Utilisateurs');
         yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-users', \App\Entity\User::class);
+
+        yield MenuItem::section('Trombinoscope');
+        yield MenuItem::linkToCrud('Trombinoscope', 'fa fa-users', BoardMember::class);
 
     }
 }
