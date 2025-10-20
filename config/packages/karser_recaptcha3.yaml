@@ -1,5 +1,5 @@
 karser_recaptcha3:
     site_key: '%env(RECAPTCHA_SITE_KEY)%'
     secret_key: '%env(RECAPTCHA_SECRET_KEY)%'
-    enabled: true
+    enabled: false
     score_threshold: 0.5   # Score minimum pour considérer la requête comme humaine (pour éviter les ia)

@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Régler votre cotisation 2025{% endblock %}
+
+{% block body %}
+    <section class="container px-4 py-5 pt-lg-5 mt-5">
+        <h1 class="mb-4 text-center">Régler votre cotisation 2025</h1>
+
+        <div class="ratio ratio-16x9 border rounded shadow-sm overflow-hidden">
+            <iframe
+                src="https://www.helloasso.com/associations/appac/evenements/adhesion-a-l-appac-annee-2025/widget"
+                title="Adhésion à l'APPAC 2025"
+                style="border:0; width:100%; height:100%; min-height:800px;"
+                allowpaymentrequest
+                loading="lazy">
+            </iframe>
+        </div>
+
+        <p class="text-muted mt-3 text-center">
+            Le paiement est géré de manière sécurisée par HelloAsso.<br>
+            Dès validation, votre statut d’adhésion sera automatiquement mis à jour.
+        </p>
+    </section>
+{% endblock %}

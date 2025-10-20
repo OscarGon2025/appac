@@ -1,17 +1,152 @@
-{#{% extends 'base.html.twig' %}#}
+{% extends 'base.html.twig' %}
 
-{#{% block title %}Créer un compte{% endblock %}#}
+{% block title %}Créer un compte{% endblock %}
 
-{#{% block body %}#}
-{#    <section class="container py-5">#}
-{#        <h1>Créer un compte</h1>#}
+{% block body %}
+    <section class="container px-4 py-5 pt-lg-5 mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
 
-{#        {{ form_start(registrationForm) }}#}
-{#        {{ form_row(registrationForm.email) }}#}
-{#        {{ form_row(registrationForm.password) }}#}
-{#        <button class="btn btn-primary mt-3">S’inscrire</button>#}
-{#        {{ form_end(registrationForm) }}#}
+                <h1 class="mb-4 text-center">Créer un compte</h1>
 
-{#        <a href="{{ path('app_login') }}" class="d-block mt-2">Déjà inscrit ? Connectez-vous</a>#}
-{#    </section>#}
-{#{% endblock %}#}
+                {# Flash messages #}
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} mb-3">{{ message }}</div>
+                    {% endfor %}
+                {% endfor %}
+
+                {{ form_start(registrationForm) }}
+
+                <div class="mb-3">
+                    {{ form_label(registrationForm.email) }}
+                    {{ form_widget(registrationForm.email, { attr: { class: 'form-control', placeholder: 'Votre email' } }) }}
+                    {{ form_errors(registrationForm.email) }}
+                </div>
+
+                {# Password 1 #}
+                <div class="mb-3">
+                    {{ form_label(registrationForm.password.first) }}
+                    <div class="input-group">
+                        {{ form_widget(registrationForm.password.first, { attr: { class: 'form-control', placeholder: 'Mot de passe' } }) }}
+                        <button id="pw-toggle-1" class="btn btn-outline-secondary" type="button" aria-pressed="false">
+                            <span data-eye>Afficher</span>
+                        </button>
+                    </div>
+                    <small class="form-text text-muted d-block">
+                        8+ caractères, majuscules, minuscules, chiffres, symboles.
+                    </small>
+                    {{ form_errors(registrationForm.password.first) }}
+                </div>
+
+                {# Password 2 #}
+                <div class="mb-3">
+                    {{ form_label(registrationForm.password.second) }}
+                    <div class="input-group">
+                        {{ form_widget(registrationForm.password.second, { attr: { class: 'form-control', placeholder: 'Confirmez le mot de passe' } }) }}
+                        <button id="pw-toggle-2" class="btn btn-outline-secondary" type="button" aria-pressed="false">
+                            <span data-eye>Afficher</span>
+                        </button>
+                    </div>
+                    {{ form_errors(registrationForm.password.second) }}
+                </div>
+
+                {# Barre de complexité #}
+                <div id="pw-meter" class="mt-2"
+                     style="height:8px;background:#eee;border-radius:4px;overflow:hidden;opacity:0;transition:opacity .2s;">
+                    <div id="pw-meter-fill" style="height:100%;width:0%;background:#0d6efd;transition:width .25s"></div>
+                </div>
+                <small id="pw-meter-text" class="text-muted d-block mt-1"></small>
+
+                {# reCAPTCHA v3: solo si el campo existe y recibes la clé #}
+                {% if registrationForm.captcha is defined and recaptcha_site is defined %}
+                    {{ form_widget(registrationForm.captcha) }}
+                    {{ form_errors(registrationForm.captcha) }}
+                {% endif %}
+
+                <div class="d-grid mt-3">
+                    {% if registrationForm.submit is defined %}
+                        {{ form_row(registrationForm.submit) }}
+                    {% else %}
+                        <button type="submit" class="btn btn-primary btn-block">Créer mon compte</button>
+                    {% endif %}
+                </div>
+
+                {# IMPORTANTE: cierra el formulario sin render_rest:false, así incluye _token y ocultos #}
+                {{ form_end(registrationForm) }}
+
+                <p class="text-center mt-3">
+                    Déjà inscrit ? <a href="{{ path('app_login') }}">Connectez-vous</a>
+                </p>
+
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {# reCAPTCHA solo si pasas la clé desde el controller #}
+    {% if recaptcha_site is defined %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site }}"></script>
+        <script>
+            grecaptcha.ready(function () {
+                grecaptcha.execute('{{ recaptcha_site }}', {action: 'register'})
+                    .then(function (token) {
+                        const el = document.querySelector('input[name="registration_form[captcha]"]');
+                        if (el) el.value = token;
+                    })
+                    .catch(function(){ /* evita "Uncaught (in promise) null" en dev */ });
+            });
+        </script>
+    {% endif %}
+
+    <script>
+        // Mostrar/ocultar contraseña
+        function togglePw(btnId, inputSelector) {
+            const btn = document.getElementById(btnId);
+            const input = document.querySelector(inputSelector);
+            if (!btn || !input) return;
+            btn.addEventListener('click', function () {
+                const isText = input.type === 'text';
+                input.type = isText ? 'password' : 'text';
+                this.setAttribute('aria-pressed', (!isText).toString());
+                this.querySelector('[data-eye]').textContent = isText ? 'Afficher' : 'Masquer';
+            });
+        }
+        togglePw('pw-toggle-1', '[name="registration_form[password][first]"]');
+        togglePw('pw-toggle-2', '[name="registration_form[password][second]"]');
+
+        // Barra de complejidad
+        (function(){
+            const input = document.querySelector('[name="registration_form[password][first]"]');
+            const bar   = document.getElementById('pw-meter');
+            const fill  = document.getElementById('pw-meter-fill');
+            const text  = document.getElementById('pw-meter-text');
+            if (!input || !bar || !fill || !text) return;
+
+            function scorePw(pw){
+                let s = 0;
+                if (pw.length >= 8) s += 25;
+                if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) s += 25;
+                if (/\d/.test(pw)) s += 25;
+                if (/[^A-Za-z0-9]/.test(pw)) s += 25;
+                return Math.min(s, 100);
+            }
+
+            input.addEventListener('input', function(){
+                const v = input.value || '';
+                if (v.length === 0) { bar.style.opacity = '0'; text.textContent = ''; fill.style.width = '0%'; return; }
+                bar.style.opacity = '1';
+                const s = scorePw(v);
+                fill.style.width = s + '%';
+                let label = 'Faible';
+                if (s >= 75) label = 'Excellente';
+                else if (s >= 50) label = 'Bonne';
+                else if (s >= 25) label = 'Moyenne';
+                text.textContent = 'Sécurité du mot de passe : ' + label;
+            });
+        })();
+    </script>
+{% endblock %}

@@ -55,6 +55,7 @@ class PhotoType extends AbstractType
                 'placeholder' => 'Aucun album',
                 'required' => false,
             ]);
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void

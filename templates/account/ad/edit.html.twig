@@ -1,0 +1,213 @@
+{% extends 'base.html.twig' %}
+{% set navbar_is_transparent = false %}
+{% block title %}Modifier une annonce — {{ ad.title }}{% endblock %}
+
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{% block body %}
+    <section class="container-lg px-4 py-5 pt-lg-5 mt-5" id="classified-edit" aria-labelledby="classified-edit-title">
+        <nav aria-label="Fil d’Ariane" class="mb-3">
+            <ol class="breadcrumb bg-transparent px-0 mb-0">
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}" class="text-decoration-none">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('account_ad_index') }}" class="text-decoration-none">Mes annonces</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Modifier</li>
+            </ol>
+        </nav>
+
+        <header class="mb-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <div>
+                <h1 id="classified-edit-title" class="display-6 fw-bold mb-1">Modifier mon annonce</h1>
+                <div class="small text-muted">
+                    {% if ad.updatedAt %}<span class="me-3"><i class="bi bi-clock me-1"></i>Modifiée le {{ ad.updatedAt|date('d/m/Y H:i') }}</span>{% endif %}
+                    {% if ad.publishedAt %}<span><i class="bi bi-calendar-event me-1"></i>Publiée le {{ ad.publishedAt|date('d/m/Y') }}</span>{% endif %}
+                </div>
+            </div>
+
+            {% if ad.status %}
+                <span class="badge
+        {% if ad.status.value == 'APPROVED' %}text-bg-success
+        {% elseif ad.status.value == 'PENDING' %}text-bg-warning
+        {% elseif ad.status.value == 'REJECTED' %}text-bg-danger
+        {% elseif ad.status.value == 'ARCHIVED' %}text-bg-secondary
+        {% else %}text-bg-light
+        {% endif %}
+      ">{{ ad.status.value }}</span>
+            {% endif %}
+        </header>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3">
+                        <strong>Informations de l’annonce</strong>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(form, { attr: { class: 'needs-validation', novalidate: 'novalidate' } }) }}
+
+                        <div class="mb-3">
+                            {{ form_label(form.title, null, { label_attr: { class: 'form-label fw-semibold' } }) }}
+                            {{ form_widget(form.title, { attr: { class: 'form-control form-control-lg', placeholder: 'Titre de votre annonce' } }) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.description, null, { label_attr: { class: 'form-label fw-semibold' } }) }}
+                            {{ form_widget(form.description, { attr: { class: 'form-control', rows: 7, placeholder: 'Décrivez l’état, dimensions, accessoires, etc.' } }) }}
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form_label(form.price, null, { label_attr: { class: 'form-label fw-semibold' } }) }}
+                                {{ form_widget(form.price, { attr: { class: 'form-control', inputmode: 'decimal' } }) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_label(form.condition, null, { label_attr: { class: 'form-label fw-semibold' } }) }}
+                                {{ form_widget(form.condition, { attr: { class: 'form-select' } }) }}
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            {{ form_label(form.location, null, { label_attr: { class: 'form-label fw-semibold' } }) }}
+                            {{ form_widget(form.location, { attr: { class: 'form-control', placeholder: 'Ville / zone' } }) }}
+                        </div>
+
+                        {# ====== FOTOS (CollectionType) ====== #}
+                        {% if form.photos is defined %}
+                            <hr class="my-4">
+                            <h2 class="h5 mb-3">Photos</h2>
+
+                            <div id="photos-collection"
+                                 data-prototype="{{ form_widget(form.photos.vars.prototype)|e('html_attr') }}"
+                                 data-index="{{ form.photos|length }}">
+                                {% for photoForm in form.photos %}
+                                    <div class="photo-item border rounded p-3 mb-3 position-relative">
+                                        <div class="mb-2">
+                                            {{ form_row(photoForm.imageFile) }}
+                                        </div>
+
+                                        <button type="button"
+                                                class="btn btn-outline-danger btn-sm remove-photo position-absolute"
+                                                style="top:.5rem;right:.5rem;">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+
+                                        {% if photoForm.vars.data and photoForm.vars.data.fileName %}
+                                            <div class="mt-2">
+                                                <img src="{{ asset('uploads/classifieds/' ~ photoForm.vars.data.fileName) | imagine_filter('ad_thumb') }}"
+                                                     alt="Photo" class="img-fluid rounded shadow-sm">
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <button type="button" id="add-photo" class="btn btn-outline-primary">
+                                <i class="bi bi-plus-lg me-1"></i> Ajouter une photo
+                            </button>
+                        {% endif %}
+
+                        <div class="d-flex flex-wrap gap-2 mt-4">
+                            <button class="btn btn-primary px-4">
+                                <i class="bi bi-check2-circle me-1"></i> Enregistrer
+                            </button>
+                            <a href="{{ path('account_ad_index') }}" class="btn btn-outline-secondary">Annuler</a>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-header bg-white py-3">
+                        <strong>Actions</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <form method="post" action="{{ path('account_ad_archive', { id: ad.id }) }}"
+                                  onsubmit="return confirm('Archiver cette annonce ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('ad_archive_' ~ ad.id) }}">
+                                <button type="submit" class="btn btn-outline-secondary">
+                                    <i class="bi bi-archive me-1"></i> Archiver
+                                </button>
+                            </form>
+
+                            <form method="post" action="{{ path('account_ad_delete', { id: ad.id }) }}"
+                                  onsubmit="return confirm('Supprimer définitivement cette annonce ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('ad_delete_' ~ ad.id) }}">
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash me-1"></i> Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3">
+                        <strong>Conseils</strong>
+                    </div>
+                    <div class="card-body">
+                        <ul class="mb-0 ps-3">
+                            <li>Un titre clair et une description détaillée améliorent la visibilité.</li>
+                            <li>Un prix cohérent accélère les contacts.</li>
+                            <li>Précisez la localisation exacte (port, ville).</li>
+                            <li>Ajoutez plusieurs photos nettes.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        #classified-edit .card-header { border-bottom: 1px solid rgba(0,0,0,.05); }
+        .photo-item { background: #fff; }
+        .photo-item .form-label { font-weight: 600; }
+        .photo-item .vich-image a { display: none; }
+    </style>
+
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            window.addEventListener('DOMContentLoaded', function () {
+                const container = document.getElementById('photos-collection');
+                const addBtn = document.getElementById('add-photo');
+                if (!container || !addBtn) return;
+
+                const prototypeHtml = container.getAttribute('data-prototype');
+                if (!prototypeHtml) { console.warn('[Photos] data-prototype manquant.'); return; }
+
+                function addForm() {
+                    let index = parseInt(container.getAttribute('data-index') || '0', 10);
+                    const html = prototypeHtml.replace(/__name__/g, index);
+                    container.setAttribute('data-index', (index + 1).toString());
+
+                    const wrap = document.createElement('div');
+                    wrap.className = 'photo-item border rounded p-3 mb-3 position-relative';
+                    wrap.innerHTML = html;
+
+                    const remove = document.createElement('button');
+                    remove.type = 'button';
+                    remove.className = 'btn btn-outline-danger btn-sm remove-photo position-absolute';
+                    remove.style.top = '.5rem';
+                    remove.style.right = '.5rem';
+                    remove.innerHTML = '<i class="bi bi-x-lg"></i>';
+                    remove.addEventListener('click', () => wrap.remove());
+
+                    wrap.appendChild(remove);
+                    container.appendChild(wrap);
+                }
+
+                function bindExistingRemovers() {
+                    container.querySelectorAll('.remove-photo').forEach(btn => {
+                        btn.addEventListener('click', () => btn.closest('.photo-item')?.remove());
+                    });
+                }
+
+                addBtn.addEventListener('click', addForm);
+                bindExistingRemovers();
+            });
+        </script>
+    {% endblock %}
+{% endblock %}
