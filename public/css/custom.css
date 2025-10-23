@@ -385,8 +385,6 @@
 .navbar .brand-logo { height: var(--brand-h); width: auto; display: block; transition: opacity .15s ease; }
 
 
-
-/* tarjeta de cada foto */
 .photo-item { background: #fff; }
 .photo-item .form-label { font-weight: 600; }
 .photo-item .vich-image a { display: none; } /* oculta enlace de descarga si sale */

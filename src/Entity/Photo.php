@@ -14,47 +14,50 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable]
 class Photo
 {
-    #[ORM\Id] #[ORM\GeneratedValue] #[ORM\Column]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private ?int $id = null;
 
-    // Propietaire (User::$photos du cote inverse)
+    // Propriétaire (User::$photos côté inverse)
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $owner = null;
 
-    // fichier physuique (ruta/nom de fichier en BD)
+    // Nom de fichier stocké en base
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $fileName = null;
 
     /**
-     * Campo NO persistido usado por Vich para manejar la subida.
-     * Cambia "classified_ad_photo" si tu mapping en vich_uploader.yaml se llama distinto.
+     * Champ de fichier non persisté géré par VichUploader.
+     * ⚠️ Le nom du mapping doit correspondre à celui défini dans config/packages/vich_uploader.yaml
+     * Exemple : mapping: 'photos' ou 'classifieds'
      */
-    #[Vich\UploadableField(mapping: 'classified_ad_photo', fileNameProperty: 'fileName')]
+    #[Vich\UploadableField(mapping: 'photos', fileNameProperty: 'fileName')]
     private ?File $imageFile = null;
 
-    // Metadatos
+    // Métadonnées
     #[ORM\Column(length: 180, nullable: true)]
     private ?string $title = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    // Visibilidad (public o membres)
+    // Visibilité (public ou membres)
     #[ORM\Column(enumType: MediaVisibility::class)]
     private MediaVisibility $visibility = MediaVisibility::PUBLIC;
 
-    // Opcional: pertenecer a un álbum (Album::$photos es el lado inverso)
+    // Lien vers album (Album::$photos côté inverse)
     #[ORM\ManyToOne(targetEntity: Album::class, inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Album $album = null;
 
-    // Opcional: foto asociada a un anuncio
+    // Lien vers annonce (ClassifiedAd::$photos côté inverse)
     #[ORM\ManyToOne(targetEntity: ClassifiedAd::class, inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?ClassifiedAd $classifiedAd = null;
 
-    // Fechas EXIF / subida
+    // Dates EXIF / upload
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $takenAt = null;
 
@@ -68,8 +71,8 @@ class Photo
     {
         $now = new \DateTimeImmutable();
         $this->uploadedAt = $now;
-        $this->updatedAt  = $now;
-        $this->fileName   = '';
+        $this->updatedAt = $now;
+        $this->fileName = '';
     }
 
     #[ORM\PreUpdate]
@@ -82,9 +85,6 @@ class Photo
     {
         return $this->title ?: $this->fileName ?: 'Photo';
     }
-
-    #[Vich\UploadableField(mapping: 'photos', fileNameProperty: 'fileName')]
-    private ?File $imageFile = null;
 
     // -------- Getters / Setters --------
 
@@ -101,7 +101,6 @@ class Photo
     public function setOwner(?User $owner): self
     {
         $this->owner = $owner;
-
         return $this;
     }
 
@@ -113,8 +112,25 @@ class Photo
     public function setFileName(?string $fileName): self
     {
         $this->fileName = $fileName;
-
         return $this;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    /**
+     * Setter utilisé par Vich pour gérer la mise à jour du fichier.
+     */
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // Force Doctrine à déclencher PreUpdate
+            $this->updatedAt = new \DateTimeImmutable();
+        }
     }
 
     public function getTitle(): ?string
@@ -125,7 +141,6 @@ class Photo
     public function setTitle(?string $title): self
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -137,31 +152,9 @@ class Photo
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-
         return $this;
     }
 
-    /**
-     * Campo de subida manejado por Vich.
-     * Establecer este campo hace que Vich mueva el archivo y actualice fileName.
-     */
-    public function setImageFile(?File $imageFile = null): void
-    {
-        $this->imageFile = $imageFile;
-
-        if (null !== $imageFile) {
-            // necesitado por Doctrine para detectar un cambio y disparar los listeners
-            $this->updatedAt = new \DateTimeImmutable();
-        }
-    }
-
-    public function getImageFile(): ?File
-    {
-        return $this->imageFile;
-    }
-
-    public function getTitle(): ?string { return $this->title; }
-    public function setTitle(?string $title): self { $this->title = $title; return $this; }
     public function getVisibility(): MediaVisibility
     {
         return $this->visibility;
@@ -170,7 +163,6 @@ class Photo
     public function setVisibility(MediaVisibility $visibility): self
     {
         $this->visibility = $visibility;
-
         return $this;
     }
 
@@ -182,7 +174,6 @@ class Photo
     public function setAlbum(?Album $album): self
     {
         $this->album = $album;
-
         return $this;
     }
 
@@ -194,7 +185,6 @@ class Photo
     public function setClassifiedAd(?ClassifiedAd $ad): self
     {
         $this->classifiedAd = $ad;
-
         return $this;
     }
 
@@ -206,7 +196,6 @@ class Photo
     public function setTakenAt(?\DateTimeImmutable $takenAt): self
     {
         $this->takenAt = $takenAt;
-
         return $this;
     }
 
@@ -218,7 +207,6 @@ class Photo
     public function setUploadedAt(\DateTimeImmutable $uploadedAt): self
     {
         $this->uploadedAt = $uploadedAt;
-
         return $this;
     }
 
@@ -230,22 +218,6 @@ class Photo
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
-    }
-
-    public function setImageFile(?File $imageFile = null): void
-    {
-        $this->imageFile = $imageFile;
-
-        if (null !== $imageFile) {
-            // ça force Doctrine à déclencher l'événement PreUpdate
-            $this->updatedAt = new \DateTimeImmutable();
-        }
-    }
-
-    public function getImageFile(): ?File
-    {
-        return $this->imageFile;
     }
 }

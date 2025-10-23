@@ -5,7 +5,7 @@
 {% block title %}Mon compte{% endblock %}
 
 {% block body %}
-    <section id="account" class="section-padding bg-white">
+    <section id="account" class="section-padding bg-white px-4 py-5 pt-lg-5 mt-5">
         <div class="container">
             <div class="row">
                 <div class="col-12">
@@ -28,12 +28,12 @@
                                 <dt class="col-sm-4">Email</dt>
                                 <dd class="col-sm-8">{{ app.user.email }}</dd>
 
-                                {% if app.user.firstname is defined %}
+                                {% if app.user.firstname is not empty %}
                                     <dt class="col-sm-4">Prénom</dt>
                                     <dd class="col-sm-8">{{ app.user.firstname }}</dd>
                                 {% endif %}
 
-                                {% if app.user.lastname is defined %}
+                                {% if app.user.lastname is not empty %}
                                     <dt class="col-sm-4">Nom</dt>
                                     <dd class="col-sm-8">{{ app.user.lastname }}</dd>
                                 {% endif %}
@@ -54,7 +54,7 @@
 
                             <div class="d-grid gap-2">
 
-                                {# --- Annonces (nuevo) --- #}
+                                {# --- Annonces --- #}
                                 <a href="{{ path('account_ad_index') }}" class="btn btn-outline-primary">
                                     <i class="bi bi-megaphone me-1"></i> Mes annonces
                                 </a>
@@ -64,22 +64,55 @@
 
                                 <hr class="my-2">
 
-                                {# --- Événements (tus acciones existentes) --- #}
-                                <a href="{{ path('app_event_index') }}" class="btn btn-outline-dark">
-                                    <i class="bi bi-calendar-event me-1"></i> Voir les événements
+                                {# --- Événements (espace membre) --- #}
+                                <a href="{{ path('account_events_index') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-calendar3 me-1"></i> Voir mes événements
                                 </a>
-                                <a href="{{ path('app_event_new') }}" class="btn custom-btn">
+                                <a href="{{ path('account_events_my_outings') }}" class="btn btn-info text-white">
+                                    <i class="bi bi-flag me-1"></i> Mes sorties inscrites
+                                </a>
+
+
+                                <a href="{{ path('account_events_new') }}" class="btn btn-warning text-white">
                                     <i class="bi bi-plus-circle me-1"></i> Créer un événement
                                 </a>
 
                                 <hr class="my-2">
 
+                                {# (Optionnel) Lien admin visible uniquement pour ROLE_ADMIN #}
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <a href="{{ path('admin') }}" class="btn btn-dark">
+                                        <i class="bi bi-speedometer2 me-1"></i> Accéder au back-office
+                                    </a>
+                                    <hr class="my-2">
+                                {% endif %}
+
+                                {# Déconnexion (ajuste si tu usas logout en POST) #}
                                 <a href="{{ path('app_logout') }}" class="btn btn-outline-danger">
                                     <i class="bi bi-box-arrow-right me-1"></i> Se déconnecter
                                 </a>
+                                {# Si tu logout es POST:
+              <form method="post" action="{{ path('app_logout') }}" class="d-grid">
+                <button class="btn btn-outline-danger" type="submit">
+                  <i class="bi bi-box-arrow-right me-1"></i> Se déconnecter
+                </button>
+              </form>
+                                #}
+
+                                {# --- Supprimer mon compte (POST + CSRF + confirm) --- #}
+                                <form method="post"
+                                      action="{{ path('app_account_delete') }}"
+                                      class="d-grid"
+                                      onsubmit="return confirm('Cette action est irréversible. Êtes-vous sûr de vouloir supprimer votre compte ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_account' ~ app.user.id) }}">
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="bi bi-trash me-1"></i> Supprimer mon compte
+                                    </button>
+                                    <small class="text-muted mt-1">Action irréversible</small>
+                                </form>
+
                             </div>
 
-                            {# Empuja el contenido hacia arriba si la pantalla es alta #}
                             <div class="mt-auto"></div>
                         </div>
                     </div>

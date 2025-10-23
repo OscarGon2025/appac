@@ -1,0 +1,107 @@
+{# templates/account/edit.html.twig #}
+{% extends 'base.html.twig' %}
+{% set navbar_is_transparent = false %}
+{% block title %}Modifier mon profil{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {# Asegura el tema Bootstrap del componente de formularios #}
+    {% form_theme form 'bootstrap_5_layout.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <section class="section-padding bg-white px-4 py-5 pt-lg-5 mt-5">
+        <div class="container">
+
+            <a href="{{ path('app_account') }}" class="btn btn-outline-secondary btn-sm mb-3">
+                ← Retour à mon compte
+            </a>
+
+            {# Flashes #}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <h1 class="h4 mb-3">Modifier mon profil</h1>
+
+                            {{ form_start(form, { attr: { novalidate: 'novalidate' } }) }}
+
+                            <div class="row g-3">
+                                {# Campos típicos, sólo si existen en el form #}
+                                {% if form.firstname is defined %}
+                                    <div class="col-md-6">
+                                        {{ form_row(form.firstname, { label: 'Prénom' }) }}
+                                    </div>
+                                {% endif %}
+
+                                {% if form.lastname is defined %}
+                                    <div class="col-md-6">
+                                        {{ form_row(form.lastname, { label: 'Nom' }) }}
+                                    </div>
+                                {% endif %}
+
+                                {% if form.email is defined %}
+                                    <div class="col-12">
+                                        {{ form_row(form.email, { label: 'Email' }) }}
+                                    </div>
+                                {% endif %}
+
+                                {% if form.phone is defined %}
+                                    <div class="col-md-6">
+                                        {{ form_row(form.phone, { label: 'Téléphone' }) }}
+                                    </div>
+                                {% endif %}
+
+                                {% if form.avatarFile is defined %}
+                                    <div class="col-md-6">
+                                        {{ form_row(form.avatarFile, { label: 'Photo de profil' }) }}
+                                    </div>
+                                {% endif %}
+
+                                {# Renderiza el resto de campos que no hayamos listado arriba #}
+                                {{ form_rest(form) }}
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2 mt-4">
+                                <button type="submit" class="btn custom-btn">
+                                    Enregistrer
+                                </button>
+                                <a href="{{ path('app_account') }}" class="btn btn-outline-secondary">
+                                    Annuler
+                                </a>
+                                <a href="{{ path('app_account_change_password') }}" class="btn btn-link ms-auto">
+                                    <i class="bi bi-shield-lock me-1"></i> Changer mon mot de passe
+                                </a>
+                            </div>
+
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <h2 class="h6 text-muted mb-2">Conseils</h2>
+                            <ul class="small mb-0 ps-3">
+                                <li>Vérifiez vos informations avant d’enregistrer.</li>
+                                <li>Utilisez un email que vous consultez régulièrement.</li>
+                                <li>Vous pouvez changer votre mot de passe à tout moment.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+{% endblock %}

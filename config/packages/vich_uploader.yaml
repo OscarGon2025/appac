@@ -1,35 +1,49 @@
 vich_uploader:
+    # Doctrine ORM
     db_driver: orm
+
+    # Les entités utilisent des attributs PHP (#[Vich\Uploadable], #[Vich\UploadableField])
     metadata:
         type: attribute
+
+    # Stockage local sur le système de fichiers
+    storage: file_system
+
+    # Définition des mappings (1 mapping = 1 dossier d’upload + règles)
     mappings:
+
+        # Photos génériques (galerie, photos d’articles, etc.)
         photos:
             uri_prefix: /uploads/photos
             upload_destination: '%kernel.project_dir%/public/uploads/photos'
             namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
-            inject_on_load: true
+            inject_on_load: false         # évite de charger le binaire en mémoire inutilement
             delete_on_update: true
             delete_on_remove: true
 
+        # Photos des membres du bureau (organigramme)
         board_member_photos:
             uri_prefix: /uploads/board_members
             upload_destination: '%kernel.project_dir%/public/uploads/board_members'
             namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
-            inject_on_load: true
+            inject_on_load: false
             delete_on_update: true
             delete_on_remove: true
 
-    metadata:
-        type: attribute
-    mappings:
+        # Photo principale d’une petite annonce (ClassifiedAd)
         classified_ad_photo:
             uri_prefix: /uploads/classifieds
             upload_destination: '%kernel.project_dir%/public/uploads/classifieds'
             namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            inject_on_load: false
+            delete_on_update: true
+            delete_on_remove: true
 
-    #mappings:
-    #    products:
-    #        uri_prefix: /images/products
-    #        upload_destination: '%kernel.project_dir%/public/images/products'
-    #        namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
-
+        # Pièces jointes d’articles (corrige l’erreur “article_attachments” manquant)
+        article_attachments:
+            uri_prefix: /uploads/articles/attachments
+            upload_destination: '%kernel.project_dir%/public/uploads/articles/attachments'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            inject_on_load: false
+            delete_on_update: true
+            delete_on_remove: true

@@ -20,7 +20,7 @@ final class AccountAdController extends AbstractController
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(ClassifiedAdRepository $repo): Response
     {
-        // Sólo mis anuncios (propietario = usuario actual)
+        // 👤 Uniquement mes annonces
         $ads = $repo->createQueryBuilder('a')
             ->andWhere('a.owner = :me')
             ->setParameter('me', $this->getUser())
@@ -37,11 +37,15 @@ final class AccountAdController extends AbstractController
     public function new(Request $request, EntityManagerInterface $em): Response
     {
         $ad = new ClassifiedAd();
+
+        // Propriétaire actuel
         if (method_exists($ad, 'setOwner')) {
             $ad->setOwner($this->getUser());
         }
+
+        // État initial : en attente de validation par un admin
         if (method_exists($ad, 'setStatus')) {
-            $ad->setStatus(AdStatus::PENDING); // pendiente hasta que admin apruebe
+            $ad->setStatus(AdStatus::PENDING);
         }
 
         $form = $this->createForm(ClassifiedAdType::class, $ad);
@@ -63,9 +67,10 @@ final class AccountAdController extends AbstractController
     #[Route('/{id<\d+>}/modifier', name: 'edit', methods: ['GET','POST'])]
     public function edit(Request $request, ClassifiedAd $ad, EntityManagerInterface $em): Response
     {
+        // Autorisation : seul le propriétaire (ou rôle supérieur via voter) peut modifier
         $this->denyAccessUnlessGranted('AD_EDIT', $ad);
 
-        // Si está aprobada publicada, puedes decidir bloquear ciertos campos o forzar PENDING:
+        // Option : si besoin, repasser en PENDING lors d’une modification
         // $ad->setStatus(AdStatus::PENDING);
 
         $form = $this->createForm(ClassifiedAdType::class, $ad);
@@ -87,13 +92,16 @@ final class AccountAdController extends AbstractController
     public function archive(Request $request, ClassifiedAd $ad, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('AD_EDIT', $ad);
-        $this->isCsrfTokenValid('ad_archive_'.$ad->getId(), $request->request->get('_token')) ?: $this->createAccessDeniedException();
+
+        if (!$this->isCsrfTokenValid('ad_archive_'.$ad->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+        }
 
         if (method_exists($ad, 'setStatus')) {
             $ad->setStatus(AdStatus::ARCHIVED);
         }
-        $em->flush();
 
+        $em->flush();
         $this->addFlash('info', 'Annonce archivée.');
         return $this->redirectToRoute('account_ad_index');
     }
@@ -102,7 +110,10 @@ final class AccountAdController extends AbstractController
     public function delete(Request $request, ClassifiedAd $ad, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('AD_DELETE', $ad);
-        $this->isCsrfTokenValid('ad_delete_'.$ad->getId(), $request->request->get('_token')) ?: $this->createAccessDeniedException();
+
+        if (!$this->isCsrfTokenValid('ad_delete_'.$ad->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+        }
 
         $em->remove($ad);
         $em->flush();

@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
+use App\Entity\Article;
 use App\Repository\ArticleAttachmentRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ArticleAttachmentRepository::class)]
 #[ORM\Table(name: 'article_attachment')]
@@ -18,38 +20,47 @@ class ArticleAttachment
     #[ORM\Column]
     private ?int $id = null;
 
-
+    // Pièce jointe rattachée à un Article
     #[ORM\ManyToOne(inversedBy: 'attachments')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Article $article = null;
 
+    // Titre affiché (optionnel)
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
-    // Vich
-    #[ORM\Column(length: 255)]
-    private string $fileName;
+    // Nom de fichier persistant en base (nullable pour permettre la création avant upload)
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $fileName = null;
 
+    // Nom d’origine envoyé par l’utilisateur (optionnel)
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $originalName = null;
 
+    // Type MIME (optionnel)
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $mimeType = null;
 
+    //  Taille en octets (optionnel)
     #[ORM\Column(nullable: true)]
     private ?int $size = null;
 
-    // Orde de visualisation
+    // Ordre d’affichage
     #[ORM\Column(type: 'smallint', options: ['default' => 0])]
     private int $position = 0;
 
+    // Audit
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $updatedAt;
 
-
+    /**
+     * Champ non persisté géré par VichUploader.
+     * mapping      : doit correspondre au nom défini dans vich_uploader.yaml
+     * fileName...  : colonnes cibles où Vich enregistre les méta-données
+     */
     #[Vich\UploadableField(
         mapping: 'article_attachments',
         fileNameProperty: 'fileName',
@@ -57,6 +68,12 @@ class ArticleAttachment
         mimeType: 'mimeType',
         originalName: 'originalName'
     )]
+
+    #[Assert\NotNull(
+        message: "Un fichier est requis.",
+        groups: ['create']
+    )]
+
     private ?File $file = null;
 
     public function __construct()
@@ -69,6 +86,7 @@ class ArticleAttachment
     #[ORM\PrePersist]
     public function onPrePersist(): void
     {
+        // Par sécurité (si jamais __construct n’a pas tourné)
         if (!isset($this->createdAt)) {
             $this->createdAt = new \DateTimeImmutable();
         }
@@ -81,10 +99,13 @@ class ArticleAttachment
         $this->updatedAt = new \DateTimeImmutable();
     }
 
-    // Forzar actualización cuando se sube un archivo
+    /**
+     * Déclenche la mise à jour si un nouveau fichier est uploadé.
+     */
     public function setFile(?File $file = null): void
     {
         $this->file = $file;
+
         if (null !== $file) {
             $this->updatedAt = new \DateTimeImmutable();
         }
@@ -110,7 +131,6 @@ class ArticleAttachment
     public function setArticle(?Article $article): self
     {
         $this->article = $article;
-
         return $this;
     }
 
@@ -122,19 +142,17 @@ class ArticleAttachment
     public function setTitle(?string $title): self
     {
         $this->title = $title;
-
         return $this;
     }
 
-    public function getFileName(): string
+    public function getFileName(): ?string
     {
         return $this->fileName;
     }
 
-    public function setFileName(string $fileName): self
+    public function setFileName(?string $fileName): self
     {
         $this->fileName = $fileName;
-
         return $this;
     }
 
@@ -146,7 +164,6 @@ class ArticleAttachment
     public function setOriginalName(?string $originalName): self
     {
         $this->originalName = $originalName;
-
         return $this;
     }
 
@@ -158,7 +175,6 @@ class ArticleAttachment
     public function setMimeType(?string $mimeType): self
     {
         $this->mimeType = $mimeType;
-
         return $this;
     }
 
@@ -170,7 +186,6 @@ class ArticleAttachment
     public function setSize(?int $size): self
     {
         $this->size = $size;
-
         return $this;
     }
 
@@ -182,7 +197,6 @@ class ArticleAttachment
     public function setPosition(int $position): self
     {
         $this->position = $position;
-
         return $this;
     }
 
@@ -194,7 +208,6 @@ class ArticleAttachment
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -206,12 +219,13 @@ class ArticleAttachment
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
     }
 
     public function __toString(): string
     {
-        return $this->title ?? ($this->originalName ?? ('Attachment #'.$this->id));
+        return $this->title
+            ?? $this->originalName
+            ?? ('Attachment #' . ($this->id ?? 'new'));
     }
 }

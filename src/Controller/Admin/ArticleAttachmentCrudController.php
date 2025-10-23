@@ -20,25 +20,31 @@ class ArticleAttachmentCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        // champs principales
+        // Champs principaux
         yield IdField::new('id')->onlyOnIndex();
 
-        // Relation  PAS TOUCHER sinon -- BORDEL DANS ENTITE ARTICLE
+        // Relation – ⚠️ Ne pas modifier sinon désynchronisation avec l’entité Article
         yield AssociationField::new('article')
             ->setRequired(true)
-            ->setHelp('Artículo al que pertenece el adjunto')
+            ->setHelp('Article auquel la pièce jointe est rattachée')
             ->hideOnIndex();
 
         yield TextField::new('title', 'Titre')
-            ->setHelp('Opcional. Si está vacío, se mostrará el nombre original del archivo');
+            ->setHelp('Optionnel. S’il est vide, le nom original du fichier sera affiché.');
 
-        // upload
+        // Champ d’upload du fichier
         yield TextField::new('file', 'Fichier')
             ->setFormType(VichFileType::class)
             ->onlyOnForms()
-            ->setHelp('PDF u otro documento.');
+            ->setHelp('Téléverser un fichier PDF ou un autre document.')
+            ->setFormTypeOptions([
+                'required' => true,
+                'allow_delete' => false,
+                'download_uri' => false,
+            ]);
 
-        // Link de telechargement
+
+        // Lien de téléchargement (colonne affichée dans la liste)
         yield TextField::new('download', 'Télécharger')
             ->onlyOnIndex()
             ->renderAsHtml()
@@ -52,13 +58,12 @@ class ArticleAttachmentCrudController extends AbstractCrudController
                 return sprintf('<a href="%s" class="btn btn-sm btn-outline-primary">Télécharger</a>', $url);
             });
 
-
-        // Metadonnes du fichier: read only
-        yield TextField::new('originalName', 'Nom d\'origine')
+        // Métadonnées du fichier (lecture seule)
+        yield TextField::new('originalName', 'Nom d’origine')
             ->hideOnForm()
             ->onlyOnDetail();
 
-        yield TextField::new('mimeType', 'MIME type')
+        yield TextField::new('mimeType', 'Type MIME')
             ->onlyOnDetail()
             ->setFormTypeOption('disabled', true);
 
@@ -67,17 +72,17 @@ class ArticleAttachmentCrudController extends AbstractCrudController
             ->formatValue(fn ($v) => $v ? $this->humanSize($v) : null)
             ->onlyOnDetail();
 
-        // ordre
+        // Ordre d’affichage dans l’article
         yield IntegerField::new('position', 'Position')
-            ->setHelp('Orden de aparición en el artículo (ascendente)');
+            ->setHelp('Ordre d’apparition dans l’article (croissant).');
 
-        // dates read only
+        // Dates (lecture seule)
         yield DateTimeField::new('createdAt', 'Créé le')->onlyOnDetail();
         yield DateTimeField::new('updatedAt', 'Modifié le')->onlyOnDetail();
     }
 
     /**
-     *  bytes a unw chaine  (KB/MB/GB).
+     * Convertit des octets en une chaîne lisible (Ko, Mo, Go, ...).
      */
     private function humanSize(int $bytes): string
     {

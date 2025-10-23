@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+{% block title 'Modifier l’événement' %}
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{% block body %}
+    <div class="container py-4">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('account_events_index') }}">Mes événements</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_event_show', {slug: event.slug}) }}">{{ event.title }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Modifier</li>
+            </ol>
+        </nav>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h3 mb-0">Modifier « {{ event.title }} »</h1>
+            <span class="badge text-bg-secondary">{{ event.type }}</span>
+        </div>
+
+        <div class="card shadow-sm rounded-3">
+            <div class="card-body">
+                {{ form_start(form) }}
+
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        {{ form_row(form.title) }}
+                        {{ form_row(form.description) }}
+                        {{ form_row(form.type) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.startAt) }}
+                        {{ form_row(form.endAt) }}
+                        {{ form_row(form.registrationOpen) }}
+                        {{ form_row(form.isMembersOnly) }}
+                        {{ form_row(form.maxParticipants) }}
+                    </div>
+                    <div class="col-md-8">
+                        {{ form_row(form.locationName) }}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form_row(form.lat) }}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form_row(form.lng) }}
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <a href="{{ path('account_events_index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-chevron-left me-1"></i>Retour
+                    </a>
+                    <button class="btn btn-primary">
+                        <i class="bi bi-save me-1"></i>Enregistrer
+                    </button>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+            <div class="card-footer small text-muted">
+                Dernière modification : {{ event.updatedAt|date('d/m/Y H:i') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

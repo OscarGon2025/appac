@@ -1,41 +1,48 @@
-{# templates/partials/_navbar.html.twig #}
-{# Paramètres attendus :
-   - navbar_is_transparent (bool) -> true sur l’accueil, false sur les pages enfants
-#}
-
 
 {% set navbar_is_transparent = navbar_is_transparent|default(false) %}
-{% set base_classes = 'navbar navbar-expand-lg festava-navbar navbar-dark' %}
-{% set initial_classes = navbar_is_transparent
-    ? 'top-0 start-0 w-100'
-    : 'nav-solid' %}
 {% set current = app.request.attributes.get('_route') %}
+{% set base_classes = 'navbar navbar-expand-lg festava-navbar navbar-dark' %}
+{% set state_class = navbar_is_transparent ? 'navbar-ghost' : 'nav-solid' %}
 
-<nav id="mainNav" class="{{ base_classes }} {{ initial_classes }}" role="navigation" aria-label="Navigation principale">
+<nav id="mainNav"
+     class="{{ base_classes }} {{ state_class }}"
+     role="navigation"
+     aria-label="Navigation principale">
+
     <div class="container">
-        <a class="navbar-brand p-0 me-2 d-flex align-items-center" href="{{ path('app_home') }}" aria-label="APPAC">
+        {# Brand #}
+        <a class="navbar-brand p-0 me-2 d-flex align-items-center"
+           href="{{ path('app_home') }}"
+           aria-label="APPAC">
             <img id="brandLogo"
                  src="{{ asset('images/logo/logo-appac.svg') }}"
                  data-light="{{ asset('images/logo/logo-appac.svg') }}"
                  data-dark="{{ asset('images/logo/logo-appac-white.svg') }}"
-                 alt="APPAC" class="brand-logo">
-
-            <script src="{{ asset('js/custom.js') }}"></script>
+                 alt="APPAC"
+                 class="brand-logo">
         </a>
 
-
-        <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false"
+        {# Toggler mobile #}
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
                 aria-label="Basculer la navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
+        {# Menu #}
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav align-items-lg-center ms-auto me-lg-5">
+
                 <li class="nav-item">
                     <a class="nav-link {{ current == 'app_home' ? 'active' : '' }}"
-                       href="{{ path('app_home') }}">Accueil</a>
+                       href="{{ path('app_home') }}"
+                       aria-current="{{ current == 'app_home' ? 'page' : null }}">
+                        Accueil
+                    </a>
                 </li>
 
                 <li class="nav-item">
@@ -47,50 +54,57 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link {{ current starts with 'app_event' ? 'active' : '' }}"
-                       href="{{ path('app_event_index') }}">Événements</a>
+                    <a class="nav-link {{ current starts with 'app_event_index' ? 'active' : '' }}"
+                       href="{{ path('app_event_index') }}"
+                       aria-current="{{ current starts with 'app_event_index' ? 'page' : null }}">
+                        Événements
+                    </a>
                 </li>
-
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle {{ current starts with 'app_about' ? 'active' : '' }}"
-                       href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Vie de l'association</a>
+                       href="#"
+                       id="aboutDropdown"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Vie de l'association
+                    </a>
                     <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
-                        <li><a class="dropdown-item" href="{{ path('app_home') }}">Qui sommes-nous ?</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_home') }}#about">Qui sommes-nous ?</a></li>
                         <li><a class="dropdown-item" href="{{ path('board_member_organigram') }}">Conseil d'administration</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}#partenaires">Partenaires</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ current starts with 'gallery_index' ? 'active' : '' }}"
+                               href="{{ path('gallery_index') }}" aria-current="{{ current starts with 'gallery_index' ? 'page' : null }}">Galerie</a>
+                        </li>
                     </ul>
                 </li>
 
 
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_home') }}#partenaires">Partenaires</a>
-                </li>
 
-                <li class="nav-item">
-                    <a class="nav-link {{ current starts with 'gallery_index' ? 'active' : '' }}"
-                       href="{{ path('gallery_index') }}">Galerie photo</a>
-                </li>
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link {{ current starts with 'board_member_organigram' ? 'active' : '' }}"#}
+{#                       href="{{ path('board_member_organigram') }}"#}
+{#                       aria-current="{{ current starts with 'board_member_organigram' ? 'page' : null }}">#}
+{#                        Trombinoscope#}
+{#                    </a>#}
+{#                </li>#}
+{#            </ul>#}
 
-                <li class="nav-item">
-                    <a class="nav-link {{ current starts with 'board_member_organigram' ? 'active' : '' }}"
-                       href="{{ path('board_member_organigram') }}">Trombinoscope</a>
-                </li>
-
-
-
-            </ul>
-
+            {# CTA derecha #}
             {% if app.user %}
                 <div class="d-flex gap-2">
                     <a href="{{ path('app_account') }}" class="btn btn-outline-light">Mon compte</a>
                     <a href="{{ path('app_logout') }}" class="btn custom-btn">Déconnexion</a>
                 </div>
             {% else %}
-                <a href="{{ path('app_login') }}" class="btn custom-btn">Connexion</a>
+                <div class="d-flex gap-2">
+                    <a href="{{ path('app_login') }}" class="btn custom-btn">Connexion</a>
+                    <a href="{{ path('app_register') }}" class="btn btn-outline-light">S'inscrire</a>
+                </div>
             {% endif %}
-            <div class="d-flex gap-2 px-4 "><a href="{{ path('app_register') }}" class="btn btn-outline-light">S'inscrire</a></div>
         </div>
     </div>
-
 </nav>

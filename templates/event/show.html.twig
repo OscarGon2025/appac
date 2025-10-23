@@ -1,193 +1,201 @@
 {# templates/event/show.html.twig #}
 {% extends 'base.html.twig' %}
-
-
 {% set navbar_is_transparent = false %}
-
 {% block title %}{{ event.title }}{% endblock %}
-
-
-{% set has_coords = (event.locationLat is defined and event.locationLng is defined and event.locationLat and event.locationLng) %}
 
 {% block stylesheets %}
     {{ parent() }}
-    {% if has_coords %}
-        <link
-            rel="stylesheet"
-            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-            crossorigin=""
-        />
+    {# Cargamos Leaflet solo si hay coordenadas (OJO: event.lat / event.lng) #}
+    {% if event.lat and event.lng %}
+        <link rel="stylesheet"
+              href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+              integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
         <style>
-            #event-map { height: 320px; }
-            @media (min-width: 992px){ #event-map { height: 380px; } }
+            .leaflet-map{height:240px;border-radius:.5rem}
+            @media (min-width: 992px){ .leaflet-map{height:300px} }
         </style>
     {% endif %}
 {% endblock %}
 
 {% block body %}
-    <section class="container-lg section-padding">
-        {# Breadcrumb #}
-        <nav aria-label="Fil d'Ariane" class="mb-3">
-            <ol class="breadcrumb bg-transparent px-0 py-2 border-bottom">
-                <li class="breadcrumb-item">
-                    <a href="{{ path('app_event_index') }}" class="text-decoration-none">Événements</a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">{{ event.title }}</li>
-            </ol>
-        </nav>
+    <section class="section-padding bg-white px-4 py-5 pt-lg-5 mt-5">
+        <div class="container">
 
-        <div class="row g-4">
-            {# ---------- MAIN ---------- #}
-            <div class="col-lg-8">
-                <header class="mb-3">
-                    <h1 class="display-6 fw-bold mb-2">{{ event.title }}</h1>
+            {# --- flashes del controlador (registro / baja) --- #}
+            {% for label, msgs in app.flashes %}
+                {% for msg in msgs %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                        {{ msg|raw }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
 
-                    <div class="d-flex flex-wrap gap-2 align-items-center">
+            <a href="{{ path('app_event_index') }}" class="btn btn-outline-secondary btn-sm mb-3">← Retour à la liste</a>
+
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <h1 class="h2 mb-2">{{ event.title }}</h1>
+
+                    <div class="d-flex flex-wrap gap-2 mb-3">
                         {% if event.type %}
-                            <span class="badge text-bg-primary">
-              <i class="bi bi-flag me-1"></i>{{ event.type }}
-            </span>
+                            <span class="badge bg-secondary">{{ event.type }}</span>
                         {% endif %}
 
-                        {% if event.status %}
-                            {% set status_class =
-                                event.status == 'PUBLISHED' ? 'text-bg-success' :
-                                (event.status == 'DRAFT' ? 'text-bg-secondary' :
-                                (event.status == 'CANCELED' ? 'text-bg-danger' : 'text-bg-dark')) %}
-                            <span class="badge {{ status_class }}">
-              <i class="bi bi-info-circle me-1"></i>{{ event.status }}
-            </span>
+                        {% set status = (event.status ?? '')|upper %}
+                        {% if status == 'PUBLISHED' %}
+                            <span class="badge bg-success">Publié</span>
+                        {% elseif status in ['REVIEW','PENDING','PENDING_APPROVAL','EN_ATTENTE','AWAITING'] %}
+                            <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>En attente</span>
+                        {% elseif status == 'DRAFT' %}
+                            <span class="badge bg-secondary">Brouillon</span>
+                        {% elseif status %}
+                            <span class="badge bg-danger">{{ status }}</span>
+                        {% endif %}
+
+                        {% if event.isMembersOnly %}
+                            <span class="badge text-bg-dark"><i class="bi bi-lock-fill me-1"></i>Membres</span>
                         {% endif %}
                     </div>
-                </header>
 
-                {% if event.description %}
-                    <article class="fs-5">
-                        {{ event.description|nl2br }}
-                    </article>
-                {% endif %}
+                    <ul class="list-unstyled text-muted small mb-3">
+                        <li class="mb-1">
+                            <i class="bi bi-calendar-event me-1"></i>
+                            Début : {{ event.startAt ? event.startAt|date('d/m/Y H:i') : '—' }}
+                            {% if event.endAt %}
+                                <span class="mx-1">–</span>{{ event.endAt|date('d/m/Y H:i') }}
+                            {% endif %}
+                        </li>
+                        {% if event.locationName %}
+                            <li class="mb-1"><i class="bi bi-geo-alt me-1"></i>{{ event.locationName }}</li>
+                        {% endif %}
+                        {% if event.createdBy %}
+                            <li class="mb-1"><i class="bi bi-person-circle me-1"></i>Organisé par : {{ event.createdBy }}</li>
+                        {% endif %}
+                    </ul>
 
+                    {% if event.description %}
+                        <div class="mt-2 fs-6">{{ event.description|raw }}</div>
+                    {% endif %}
+                </div>
 
-                {% if has_coords %}
-                    <div class="card shadow-sm mt-4 d-lg-none">
-                        <div class="card-body p-0">
-                            <div id="event-map" data-lat="{{ event.locationLat }}" data-lng="{{ event.locationLng }}" data-zoom="15"></div>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-
-            {# ---------- SIDEBAR ---------- #}
-            <aside class="col-lg-4">
-                <div class="position-sticky" style="top: 6rem;">
+                <div class="col-lg-4">
                     <div class="card shadow-sm mb-3">
                         <div class="card-body">
-                            <h2 class="h6 text-uppercase text-muted mb-3">Informations</h2>
 
-                            <ul class="list-unstyled mb-3">
-                                <li class="mb-2">
-                                    <i class="bi bi-calendar-event me-2"></i>
-                                    <strong>Début :</strong>
-                                    {{ event.startAt ? event.startAt|date('d/m/Y H:i') : '—' }}
-                                </li>
-
-                                {% if event.endAt %}
-                                    <li class="mb-2">
-                                        <i class="bi bi-calendar-check me-2"></i>
-                                        <strong>Fin :</strong>
-                                        {{ event.endAt|date('d/m/Y H:i') }}
-                                    </li>
-                                {% endif %}
-
-                                {% if event.locationName %}
-                                    <li class="mb-2">
-                                        <i class="bi bi-geo-alt me-2"></i>
-                                        <strong>Lieu :</strong> {{ event.locationName }}
-                                    </li>
-                                {% endif %}
-                            </ul>
-
-                            {# Capacité / progression #}
-                            {% if event.maxParticipants %}
+                            {# ---- Aforo ---- #}
+                            {% if event.maxParticipants is not null %}
                                 {% set spots_left = event.spotsLeft() %}
-                                {% set taken = event.maxParticipants - spots_left %}
-                                {% set percent = event.maxParticipants > 0
-                                    ? ((taken / event.maxParticipants) * 100)|round(0, 'ceil')
+                                {% set pct = event.maxParticipants > 0
+                                    ? (((event.maxParticipants - spots_left) / event.maxParticipants) * 100)|round(0, 'ceil')
                                     : 0 %}
                                 <div class="mb-2">
-                                    <strong>Participants :</strong>
-                                    {{ taken }}/{{ event.maxParticipants }}
-                                </div>
-                                <div class="progress mb-3" style="height:10px;">
-                                    <div
-                                        class="progress-bar {% if percent < 50 %}bg-success{% elseif percent < 80 %}bg-warning{% else %}bg-danger{% endif %}"
-                                        role="progressbar"
-                                        style="width: {{ percent }}%;"
-                                        aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="d-flex justify-content-between small">
+                                        <span>Places</span><span>{{ spots_left }}/{{ event.maxParticipants }}</span>
                                     </div>
-                                </div>
-                            {% else %}
-                                <div class="mb-3">
-                                    <strong>Participants :</strong> Illimité
+                                    <div class="progress" style="height:8px;">
+                                        <div class="progress-bar
+                      {% if pct < 50 %}bg-success{% elseif pct < 80 %}bg-warning{% else %}bg-danger{% endif %}"
+                                             role="progressbar" style="width: {{ pct }}%"
+                                             aria-valuenow="{{ pct }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
                                 </div>
                             {% endif %}
 
-                            <div class="d-grid gap-2">
-                                <a href="{{ path('app_event_index') }}" class="btn btn-outline-dark">
-                                    <i class="bi bi-chevron-left me-1"></i>Retour à la liste
-                                </a>
+                            {# ---- Lógica de CTA ---- #}
+                            {% set is_pending = status in ['REVIEW','PENDING','PENDING_APPROVAL','EN_ATTENTE','AWAITING'] %}
+                            {% set is_published = status == 'PUBLISHED' %}
+                            {% set is_past = event.endAt ? (event.endAt < date()) : (event.startAt and event.startAt < date('-2 hours')) %}
+                            {% set requires_login = event.isMembersOnly and not app.user %}
+                            {% set is_full = (event.maxParticipants ?? 0) > 0 and (event.spotsLeft() ?? 0) <= 0 %}
 
+                            {% if is_pending %}
+                                <div class="alert alert-warning py-2 small mb-3">
+                                    <i class="bi bi-info-circle me-1"></i>L’événement est en attente de validation.
+                                </div>
+                            {% endif %}
+                            {% if is_past %}
+                                <div class="alert alert-light border py-2 small mb-3">
+                                    <i class="bi bi-clock-history me-1"></i>Cet événement est passé.
+                                </div>
+                            {% endif %}
+                            {% if is_full %}
+                                <div class="alert alert-danger py-2 small mb-3">
+                                    <i class="bi bi-people-fill me-1"></i>Complet — plus d’inscriptions possibles.
+                                </div>
+                            {% endif %}
 
-                                {% if is_granted('ROLE_EDITOR') %}
-                                    <a href="{{ path('app_event_edit', {id: event.id}) }}" class="btn btn-outline-secondary">
-                                        <i class="bi bi-pencil me-1"></i>Éditer
-                                    </a>
+                            {# Si tu ya tienes un método isRegisteredBy(User) úsalo; si no, el controlador puede pasar la variable #}
+                            {% set is_registered = (is_registered is defined)
+                                ? is_registered
+                                : (app.user and event.isRegisteredBy is defined ? event.isRegisteredBy(app.user) : false) %}
+
+                            {% if requires_login %}
+                                <a href="{{ path('app_login') }}" class="btn btn-primary w-100">Se connecter pour s’inscrire</a>
+
+                            {% elseif is_past %}
+                                <button class="btn btn-outline-secondary w-100" disabled>Événement terminé</button>
+
+                            {% elseif is_full and not is_registered %}
+                                <button class="btn btn-outline-secondary w-100" disabled>Complet</button>
+
+                            {% elseif not is_published and not is_registered %}
+                                <button class="btn btn-outline-secondary w-100" disabled>Indisponible</button>
+
+                            {% else %}
+                                {% if is_registered %}
+                                    <form method="post" action="{{ path('app_event_unregister', { id: event.id }) }}" class="d-grid gap-2">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('event_unregister_' ~ event.id) }}">
+                                        <button class="btn btn-outline-danger w-100">
+                                            <i class="bi bi-x-circle me-1"></i>Se désinscrire
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form method="post" action="{{ path('app_event_register', { id: event.id }) }}" class="d-grid gap-2">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('event_register_' ~ event.id) }}">
+                                        <button class="btn btn-primary w-100">
+                                            <i class="bi bi-check2-circle me-1"></i>Je m’inscris
+                                        </button>
+                                    </form>
                                 {% endif %}
-                            </div>
+                            {% endif %}
                         </div>
                     </div>
 
-
-                    {% if has_coords %}
-                        <div class="card shadow-sm d-none d-lg-block">
-                            <div class="card-body p-0">
-                                <div id="event-map" data-lat="{{ event.locationLat }}" data-lng="{{ event.locationLng }}" data-zoom="15"></div>
+                    {# ---- Mapa ---- #}
+                    {% if event.lat and event.lng %}
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h3 class="h6 mb-2">Localisation</h3>
+                                <div id="leaflet-map" class="leaflet-map w-100"
+                                     data-lat="{{ event.lat }}"
+                                     data-lng="{{ event.lng }}"
+                                     data-zoom="14"></div>
                             </div>
                         </div>
                     {% endif %}
                 </div>
-            </aside>
+            </div>
         </div>
     </section>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    {% if has_coords %}
+    {% if event.lat and event.lng %}
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-                crossorigin=""></script>
+                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <script>
             (function () {
-                var el = document.getElementById('event-map');
+                var el = document.getElementById('leaflet-map');
                 if (!el || typeof L === 'undefined') return;
-
-                var lat = parseFloat(el.dataset.lat);
-                var lng = parseFloat(el.dataset.lng);
-                var zoom = parseInt(el.dataset.zoom || '15', 10);
-
+                var lat = parseFloat(el.dataset.lat), lng = parseFloat(el.dataset.lng);
+                var zoom = parseInt(el.dataset.zoom || '14', 10);
                 var map = L.map(el, { scrollWheelZoom: false }).setView([lat, lng], zoom);
-
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '&copy; OpenStreetMap'
+                    maxZoom: 19, attribution: '&copy; OpenStreetMap'
                 }).addTo(map);
-
-                var marker = L.marker([lat, lng]).addTo(map);
-                marker.bindPopup({{ (event.locationName ?? 'Lieu')|json_encode|raw }});
-
-
+                L.marker([lat, lng]).addTo(map);
                 setTimeout(function(){ map.invalidateSize(); }, 250);
                 window.addEventListener('resize', function(){ map.invalidateSize(); });
             })();
