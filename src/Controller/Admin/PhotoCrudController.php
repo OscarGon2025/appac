@@ -1,122 +1,26 @@
 <?php
 
-//
-// namespace App\Controller\Admin;
-//
-// use App\Entity\Photo;
-// use App\Enum\MediaVisibility;
-// use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-// use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-// use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-// use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
-// use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-// use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-// use Vich\UploaderBundle\Form\Type\VichImageType;
-//
-// class PhotoCrudController extends AbstractCrudController
-// {
-//    public static function getEntityFqcn(): string
-//    {
-//        return Photo::class;
-//    }
-//
-//    public function configureFields(string $pageName): iterable
-//    {
-//        // Champ image miniature visible dans la liste
-//        $thumbnail = ImageField::new('imageName', 'Aperçu')
-//            ->setBasePath('/uploads/photos')
-//            ->onlyOnIndex()
-//            ->setCssClass('ea-thumbnail');
-//
-//        // Champ pour uploader l’image dans les formulaires
-//        $uploadField = TextField::new('imageFile', 'Fichier image')
-//            ->setFormType(VichImageType::class)
-//            ->onlyOnForms();
-//
-//        // Pour uploader des images depuis l'admin
-//        $imageFile = ImageField::new('imageName', 'Photo')
-//            ->setBasePath('/uploads/photos')
-//            ->onlyOnIndex();
-//
-//        $vichFile = TextField::new('imageFile', 'Fichier')
-//            ->setFormType(VichImageType::class)
-//            ->onlyOnForms();
-//
-//        //        return [
-//        //            IdField::new('id')->hideOnForm(),
-//        //            TextField::new('title', 'Titre'),
-//        //            ImageField::new('file')
-//        //                ->setBasePath('/uploads/photos')
-//        //                ->setUploadDir('public/uploads/photos')
-//        //                ->setUploadedFileNamePattern('[uuid].[extension]'),
-//        //            TextEditorField::new('description', 'Description')->hideOnIndex(),
-//        //            $uploadField,
-//        //            $thumbnail,
-//        //            $vichFile,
-//        //            $imageFile,
-//        //
-//        //
-//        //            ChoiceField::new('visibility', 'Visibilité')
-//        //                ->setChoices([
-//        //                    'Public' => MediaVisibility::PUBLIC,
-//        //                    'Membres' => MediaVisibility::MEMBERS,
-//        //                ])
-//        //                ->renderAsBadges([
-//        //                    MediaVisibility::PUBLIC->value => 'success',
-//        //                    MediaVisibility::MEMBERS->value => 'warning',
-//        //                ])
-//        //                ->formatValue(function ($value) {
-//        //                    return $value instanceof MediaVisibility ? $value->label() : $value;
-//        //                }),
-//        //        ];
-//        return [
-//            IdField::new('id')->hideOnForm(),
-//
-//            TextField::new('title', 'Titre'),
-//
-//            TextEditorField::new('description', 'Description')->hideOnIndex(),
-//
-//            // Champ pour uploader l’image via VichUploader
-//            TextField::new('imageFile', 'Fichier image')
-//                ->setFormType(VichImageType::class)
-//                ->onlyOnForms(),
-//
-//            // Affichage de la miniature dans la liste
-//            ImageField::new('fileName', 'Aperçu')
-//                ->setBasePath('/uploads/photos')
-//                ->onlyOnIndex()
-//                ->setCssClass('ea-thumbnail'),
-//
-//            // Visibilité
-//            ChoiceField::new('visibility', 'Visibilité')
-//                ->setChoices([
-//                    'Public' => MediaVisibility::PUBLIC,
-//                    'Membres' => MediaVisibility::MEMBERS,
-//                ])
-//                ->renderAsBadges([
-//                    MediaVisibility::PUBLIC->value => 'success',
-//                    MediaVisibility::MEMBERS->value => 'warning',
-//                ])
-//                ->formatValue(fn ($value) => $value instanceof MediaVisibility ? $value->value : $value),
-//
-//            // Album (optionnel)
-//            TextField::new('album', 'Album')->hideOnIndex(),
-//        ];
-//    }
-// }
-
 namespace App\Controller\Admin;
 
-use App\Entity\Album;
 use App\Entity\Photo;
 use App\Enum\MediaVisibility;
+use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Annotation\Route;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class PhotoCrudController extends AbstractCrudController
@@ -128,47 +32,103 @@ class PhotoCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        // Miniature visible uniquement sur les pages index
-        $thumbnail = ImageField::new('fileName', 'Aperçu')
-            ->setBasePath('/uploads/photos')
-            ->onlyOnIndex()
-            ->setCssClass('ea-thumbnail');
-
-        // Champ upload pour le formulaire
-        $uploadField = TextField::new('imageFile', 'Fichier image')
-            ->setFormType(VichImageType::class)
-            ->onlyOnForms();
-
-        // Champ titre et description
-        $title = TextField::new('title', 'Titre');
-        $description = TextEditorField::new('description', 'Description')->hideOnIndex();
-
-        // Champ Album (déroulant avec les albums existants)
-        $albumField = AssociationField::new('album', 'Album')
-            ->setCrudController(AlbumCrudController::class)
-            ->autocomplete() // permet de chercher si beaucoup d’albums
-            ->setRequired(false);
-
-        // Champ visibilité (enum)
-        $visibilityField = ChoiceField::new('visibility', 'Visibilité')
-            ->setChoices([
-                'Public' => MediaVisibility::PUBLIC,
-                'Membres' => MediaVisibility::MEMBERS,
-            ])
-            ->renderAsBadges([
-                MediaVisibility::PUBLIC->value => 'success',
-                MediaVisibility::MEMBERS->value => 'warning',
-            ])
-            ->formatValue(fn ($value) => $value instanceof MediaVisibility ? $value->value : $value);
-
         return [
             IdField::new('id')->hideOnForm(),
-            $thumbnail,
-            $uploadField,
-            $title,
-            $description,
-            $albumField,
-            $visibilityField,
+            ImageField::new('fileName', 'Aperçu')
+                ->setBasePath('/uploads/photos')
+                ->onlyOnIndex()
+                ->setCssClass('ea-thumbnail'),
+            TextField::new('imageFile', 'Fichier image')
+                ->setFormType(VichImageType::class)
+                ->onlyOnForms(),
+            TextField::new('title', 'Titre'),
+            TextEditorField::new('description', 'Description')->hideOnIndex(),
+            AssociationField::new('album', 'Album')
+                ->setCrudController(AlbumCrudController::class)
+                ->autocomplete()
+                ->setRequired(false),
+            ChoiceField::new('visibility', 'Visibilité')
+                ->setChoices([
+                    'Public' => MediaVisibility::PUBLIC,
+                    'Membres' => MediaVisibility::MEMBERS,
+                ])
+                ->renderAsBadges([
+                    MediaVisibility::PUBLIC->value => 'success',
+                    MediaVisibility::MEMBERS->value => 'warning',
+                ])
+                ->formatValue(fn ($value) => $value instanceof MediaVisibility ? $value->value : $value),
+            DateTimeField::new('deletedAt', 'Supprimé le')->onlyOnIndex(),
         ];
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        // Bouton RESTAURER visible uniquement si soft-deleted
+        $restoreAction = Action::new('restore', 'Restaurer', 'fas fa-undo')
+            ->linkToRoute('admin_photo_restore', function ($entity) {
+                return ['id' => $entity->getId()];
+            })
+            ->displayIf(fn ($entity) => $entity->isDeleted());
+
+        // Masquer le bouton DELETE si déjà soft-deleted
+        $actions = $actions
+            ->add('index', $restoreAction)
+            ->add('detail', $restoreAction)
+            ->update('index', Action::DELETE, fn (Action $action) => $action
+                ->displayIf(fn ($entity) => !$entity->isDeleted()))
+            ->update('detail', Action::DELETE, fn (Action $action) => $action
+                ->displayIf(fn ($entity) => !$entity->isDeleted()));
+
+        return $actions;
+    }
+
+
+
+    // Affiche toutes les photos même les soft-deleted
+    public function createIndexQueryBuilder(
+        SearchDto $searchDto,
+        EntityDto $entityDto,
+        FieldCollection $fields,
+        FilterCollection $filters,
+    ): \Doctrine\ORM\QueryBuilder {
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        // Désactiver le filtre softdeleteable uniquement s'il est activé
+        $filtersCollection = $qb->getEntityManager()->getFilters();
+        if ($filtersCollection->isEnabled('softdeleteable')) {
+            $filtersCollection->disable('softdeleteable');
+        }
+
+        return $qb;
+    }
+
+    // Route pour restaurer une photo supprimée
+    #[Route('/admin/photo/{id}/restore', name: 'admin_photo_restore', methods: ['GET', 'POST'])]
+    public function restorePhotoById(int $id, EntityManagerInterface $em): RedirectResponse
+    {
+        $filters = $em->getFilters();
+        if ($filters->isEnabled('softdeleteable')) {
+            $filters->disable('softdeleteable');
+        }
+
+        $photo = $em->getRepository(Photo::class)->find($id);
+
+        if (!$photo) {
+            $this->addFlash('danger', 'Photo introuvable.');
+
+            return $this->redirectToRoute('admin');
+        }
+
+        if ($photo->isDeleted()) {
+            $photo->setDeletedAt(null);
+            $em->flush();
+            $this->addFlash('success', 'Photo restaurée avec succès !');
+        } else {
+            $this->addFlash('info', 'La photo n’était pas supprimée.');
+        }
+
+        return $this->redirectToRoute('admin', [
+            'crudControllerFqcn' => self::class,
+        ]);
     }
 }

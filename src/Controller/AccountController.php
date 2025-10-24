@@ -2,16 +2,14 @@
 
 namespace App\Controller;
 
-use App\Form\RegistrationType;
-use App\Form\UserProfileType;
 use App\Form\ChangePasswordType;
+use App\Form\UserProfileType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-
 
 class AccountController extends AbstractController
 {
@@ -26,47 +24,40 @@ class AccountController extends AbstractController
 
     // Modifier profil
     #[Route('/mon-compte/modifier', name: 'app_account_edit')]
-    public function edit(Request $request, EntityManagerInterface $em): Response
+    public function edit(Request $request, UserPasswordHasherInterface $hasher, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
-        $form = $this->createForm(UserProfileType::class, $user);
 
-        $form->handleRequest($request);
+        // Formulaire d’édition du profil
+        $profileForm = $this->createForm(UserProfileType::class, $user);
+        $profileForm->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        // Formulaire de changement de mot de passe
+        $passwordForm = $this->createForm(ChangePasswordType::class);
+        $passwordForm->handleRequest($request);
+
+        // Gestion du formulaire de profil
+        if ($profileForm->isSubmitted() && $profileForm->isValid()) {
             $em->flush();
-            $this->addFlash('success', 'Profil mis à jour avec succès !');
+            $this->addFlash('success', '✅ Votre profil a été mis à jour avec succès.');
 
-            return $this->redirectToRoute('app_account');
+            return $this->redirectToRoute('app_account_edit');
         }
 
-        return $this->render('account/edit.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    // Changer mot de passe
-    #[Route('/mon-compte/changer-mot-de-passe', name: 'app_account_change_password')]
-    public function changePassword(Request $request, UserPasswordHasherInterface $hasher, EntityManagerInterface $em): Response
-    {
-        $user = $this->getUser();
-        $form = $this->createForm(ChangePasswordType::class);
-
-        $form->handleRequest($request);
-
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $plainPassword = $form->get('plainPassword')->getData();
+        // Gestion du formulaire de mot de passe
+        if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
+            $plainPassword = $passwordForm->get('plainPassword')->getData();
             $user->setPassword($hasher->hashPassword($user, $plainPassword));
             $em->flush();
 
-            $this->addFlash('success', 'Mot de passe modifié avec succès !');
+            $this->addFlash('success', '🔒 Votre mot de passe a été modifié avec succès.');
 
-            return $this->redirectToRoute('app_account');
+            return $this->redirectToRoute('app_account_edit');
         }
 
-        return $this->render('account/change_password.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('account/edit_account.html.twig', [
+            'profileForm' => $profileForm->createView(),
+            'passwordForm' => $passwordForm->createView(),
         ]);
     }
 }

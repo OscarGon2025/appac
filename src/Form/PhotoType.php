@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class PhotoType extends AbstractType
@@ -20,25 +21,39 @@ class PhotoType extends AbstractType
     {
         $builder
             ->add('imageFile', VichImageType::class, [
-                'label' => 'Photo (fichier image)',
-                'required' => true,
+                'label' => 'Photo (JPG, PNG, WEBP - max 128Mo)',
+                'required' => false,
                 'allow_delete' => false,
                 'download_uri' => false,
                 'image_uri' => false,
                 'attr' => [
-                    'accept' => 'image/*',
+                    'accept' => 'image/jpeg,image/png,image/webp',
+                ],
+                'constraints' => [
+                    new File([
+                        'maxSize' => '128M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/webp',
+                        ],
+                        'mimeTypesMessage' => 'Formats acceptés : JPG, PNG ou WEBP uniquement et la taille maximum du fichier est de 8mo.',
+                    ]),
                 ],
             ])
+
             ->add('title', TextType::class, [
                 'label' => 'Titre',
                 'required' => false,
                 'attr' => ['placeholder' => 'Titre de la photo'],
             ])
+
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
                 'required' => false,
                 'attr' => ['rows' => 3, 'placeholder' => 'Description ou légende'],
             ])
+
             ->add('visibility', ChoiceType::class, [
                 'label' => 'Visibilité',
                 'choices' => [

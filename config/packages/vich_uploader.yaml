@@ -9,7 +9,7 @@ vich_uploader:
             namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
             inject_on_load: true
             delete_on_update: true
-            delete_on_remove: true
+            delete_on_remove: false
 
         board_member_photos:
             uri_prefix: /uploads/board_members
