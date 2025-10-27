@@ -168,6 +168,7 @@
     <orderEntry type="library" name="lightbox2" level="application" />
     <orderEntry type="library" name="glightbox" level="application" />
     <orderEntry type="library" name="OrgChart" level="application" />
-    <orderEntry type="library" name="lightbox2" level="application" />
+    <orderEntry type="library" name="bootstrap" level="application" />
+    <orderEntry type="library" name="leaflet" level="application" />
   </component>
 </module>

@@ -37,6 +37,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav align-items-lg-center ms-auto me-lg-5">
 
+                {#Accueil#}
                 <li class="nav-item">
                     <a class="nav-link {{ current == 'app_home' ? 'active' : '' }}"
                        href="{{ path('app_home') }}"
@@ -45,44 +46,59 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_home') }}#about">Qui sommes-nous ?</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_home') }}#actus">Actus</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link {{ current starts with 'app_event_index' ? 'active' : '' }}"
-                       href="{{ path('app_event_index') }}"
-                       aria-current="{{ current starts with 'app_event_index' ? 'page' : null }}">
-                        Événements
-                    </a>
-                </li>
-
+                {#Activités#}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle {{ current starts with 'app_about' ? 'active' : '' }}"
-                       href="#"
-                       id="aboutDropdown"
-                       role="button"
-                       data-bs-toggle="dropdown"
-                       aria-expanded="false">
-                        Vie de l'association
+                       href="#" id="aboutDropdown" role="button"
+                       aria-expanded="false">Activités<span class="dropdown-arrow">▾</span>
+                    </a>
+                <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
+                    <li><a class="dropdown-item" href="{{ path('app_home') }}#events-section">Événements</a></li>
+                </ul>
+
+
+                {#Vie de l'association#}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {{ current starts with 'app_about' ? 'active' : '' }}"
+                       href="#" id="aboutDropdown" role="button"
+                       aria-expanded="false">Vie de l'association<span class="dropdown-arrow">▾</span>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
                         <li><a class="dropdown-item" href="{{ path('app_home') }}#about">Qui sommes-nous ?</a></li>
-                        <li><a class="dropdown-item" href="{{ path('board_member_organigram') }}">Conseil d'administration</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}#partenaires">Partenaires</a></li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ current starts with 'gallery_index' ? 'active' : '' }}"
-                               href="{{ path('gallery_index') }}" aria-current="{{ current starts with 'gallery_index' ? 'page' : null }}">Galerie</a>
-                        </li>
+                        <li><a class="dropdown-item" href="{{ path('board_member_organigram') }}">Trombinoscope CA</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_home') }}#actus">Actualités</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_home') }}#">Nos status</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_home') }}#">Archives</a></li>
                     </ul>
                 </li>
 
 
+                {#Infos pratiques#}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {{ current starts with 'app_about' ? 'active' : '' }}"
+                       href="#" id="aboutDropdown" role="button"
+                       aria-expanded="false">Infos pratiques<span class="dropdown-arrow">▾</span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
+                        <li><a class="dropdown-item" href="{{ path('app_home') }}#">Règlementation</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_home') }}#">Petites annonces</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_home') }}#partenaires">Partenaires</a></li>
+                    </ul>
+                </li>
 
+
+                {#Galerie photo#}
+                <li class="nav-item">
+                    <a class="nav-link {{ current starts with 'gallery_index' ? 'active' : '' }}"
+                       href="{{ path('gallery_index') }}">Galerie photo</a>
+                </li>
+
+
+                {#Contactez-nous#}
+                <li class="nav-item">
+                    <a class="nav-link {{ current starts with 'app_about' ? 'active' : '' }}"
+                       href="{{ path('app_home') }}#contact">Contactez-nous</a>
+                </li>
 
 {#                <li class="nav-item">#}
 {#                    <a class="nav-link {{ current starts with 'board_member_organigram' ? 'active' : '' }}"#}

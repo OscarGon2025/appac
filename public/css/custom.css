@@ -385,6 +385,124 @@
 .navbar .brand-logo { height: var(--brand-h); width: auto; display: block; transition: opacity .15s ease; }
 
 
-.photo-item { background: #fff; }
-.photo-item .form-label { font-weight: 600; }
-.photo-item .vich-image a { display: none; } /* oculta enlace de descarga si sale */
+/* ==========================
+       NAVBAR DROPDOWN
+   ==========================
+*/
+
+/* Apparence de base du menu déroulant */
+.navbar .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 230px;
+    padding: 0.5rem 0;
+    border-radius: 0.6rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    background: rgba(20, 20, 20, 0.98);
+    border: 1px solid rgba(255, 122, 0, 0.12);
+
+    /* Animation fluide d'apparition */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s;
+    z-index: 1050;
+}
+
+/* Liens à l'intérieur du menu */
+.navbar .dropdown-item {
+    color: #ddd;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    border-radius: 0.4rem;
+    transition: all 0.2s ease;
+}
+.navbar .dropdown-item:hover {
+    background-color: rgba(255, 122, 0, 0.12);
+    color: #ff7a00 !important;
+}
+
+/* Affichage du menu */
+.navbar .dropdown.show > .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Survol du menu (ordinateur uniquement) */
+@media (min-width: 992px) {
+    .navbar .dropdown:hover > .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+}
+
+/* Suppression de l'icône Bootstrap par défaut */
+.navbar .nav-link.dropdown-toggle::after {
+    content: none !important;
+}
+
+/* Ajout flèche */
+.navbar .dropdown-toggle .dropdown-arrow {
+    display: inline-block;
+    margin-left: 0.25rem;
+    transition: transform 0.25s ease;
+}
+
+/* Rotation de la flèche quand le menu est ouvert */
+.navbar .dropdown.show .dropdown-toggle .dropdown-arrow
+@media (min-width: 992px) {
+    .navbar .dropdown:hover .dropdown-toggle .dropdown-arrow {
+        transform: rotate(180deg);
+    }
+}
+
+/* Variante quand la navbar est transparente */
+.has-transparent-nav .festava-navbar.is-transparent .dropdown-menu {
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 122, 0, 0.12);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.has-transparent-nav .festava-navbar.is-transparent .dropdown-item {
+    color: #222;
+}
+.has-transparent-nav .festava-navbar.is-transparent .dropdown-item:hover {
+    background-color: rgba(255, 122, 0, 0.08);
+    color: #ff7a00;
+}
+
+/* Comportement mobile */
+@media (max-width: 991.98px) {
+    .navbar .dropdown-menu {
+        position: static;
+        transform: none;
+        opacity: 1;
+        visibility: visible;
+        box-shadow: none;
+        border-radius: 0;
+        background: rgba(0, 0, 0, 0.95);
+    }
+
+    .navbar .dropdown-item {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .navbar .dropdown-item:last-child {
+        border-bottom: 0;
+    }
+
+    /* Pour cacher la flèche sur mobile */
+    .navbar .dropdown-toggle .dropdown-arrow {
+        display: none;
+    }
+}
+
+/*Pour un scroll fluide*/
+html {
+    scroll-behavior: smooth;
+}
+
+

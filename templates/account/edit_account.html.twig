@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte - Modifier mes informations{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <h1 class="text-center mb-5 fw-bold">Mon compte</h1>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success text-center mb-4">{{ message }}</div>
+        {% endfor %}
+
+        <div class="row g-5 justify-content-center">
+            <!-- Bloc Informations personnelles -->
+            <div class="col-md-6">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-header bg-dark text-light text-center rounded-top-4 py-3">
+                        <h4 class="m-0">✏️ Modifier mes informations</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        {{ form_start(profileForm) }}
+                        <div class="mb-3">
+                            {{ form_label(profileForm.email) }}
+                            {{ form_widget(profileForm.email, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(profileForm.email) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(profileForm.firstName) }}
+                            {{ form_widget(profileForm.firstName, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(profileForm.lastName) }}
+                            {{ form_widget(profileForm.lastName, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+
+                        <div class="text-end mt-4">
+                            <button type="submit" class="btn btn-warning px-4">💾 Enregistrer</button>
+                        </div>
+                        {{ form_end(profileForm) }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bloc Changer le mot de passe -->
+            <div class="col-md-6">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-header bg-dark text-light text-center rounded-top-4 py-3">
+                        <h4 class="m-0">🔒 Modifier mon mot de passe</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        {{ form_start(passwordForm) }}
+                        <div class="mb-3">
+                            {{ form_label(passwordForm.plainPassword.first) }}
+                            {{ form_widget(passwordForm.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(passwordForm.plainPassword.first) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(passwordForm.plainPassword.second) }}
+                            {{ form_widget(passwordForm.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(passwordForm.plainPassword.second) }}
+                        </div>
+
+                        <div class="text-end mt-4">
+                            <button type="submit" class="btn btn-primary px-4">🔑 Changer le mot de passe</button>
+                        </div>
+                        {{ form_end(passwordForm) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="{{ path('app_account') }}" class="btn btn-outline-secondary">
+                ← Retour à mon espace
+            </a>
+        </div>
+    </div>
+{% endblock %}
