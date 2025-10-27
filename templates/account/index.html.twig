@@ -81,18 +81,18 @@
                                     ✏️ Modifier mon profil
                                 </a>
 
- 
-                                {#<hr class="my-2">
 
-                                {# (Optionnel) Lien admin visible uniquement pour ROLE_ADMIN #}
-                                {#{% if is_granted('ROLE_ADMIN') %}#}
-                                    {#<a href="{{ path('admin') }}" class="btn btn-dark">
+                                <hr class="my-2">
+
+
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <a href="{{ path('admin') }}" class="btn btn-dark">
                                         <i class="bi bi-speedometer2 me-1"></i> Accéder au back-office
                                     </a>
                                     <hr class="my-2">
-                                {% endif %}#}
+                                {% endif %}
 
-                                {# Déconnexion (ajuste si tu usas logout en POST) #}#}
+                                {# Déconnexion (ajuste si tu usas logout en POST) #}
 
                                 <a href="{{ path('app_logout') }}" class="btn btn-outline-danger">
                                     <i class="bi bi-box-arrow-right me-1"></i> Se déconnecter

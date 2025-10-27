@@ -88,8 +88,8 @@ class Photo
         return $this->title ?: $this->fileName ?: 'Photo';
     }
 
-    #[Vich\UploadableField(mapping: 'photos', fileNameProperty: 'fileName')]
-    private ?File $imageFile = null;
+//    #[Vich\UploadableField(mapping: 'photos', fileNameProperty: 'fileName')]
+//    private ?File $imageFile = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $deletedAt = null;
@@ -131,15 +131,15 @@ class Photo
     /**
      * Setter utilisé par Vich pour gérer la mise à jour du fichier.
      */
-    public function setImageFile(?File $imageFile = null): void
-    {
-        $this->imageFile = $imageFile;
-
-        if (null !== $imageFile) {
-            // Force Doctrine à déclencher PreUpdate
-            $this->updatedAt = new \DateTimeImmutable();
-        }
-    }
+//    public function setImageFile(?File $imageFile = null): void
+//    {
+//        $this->imageFile = $imageFile;
+//
+//        if (null !== $imageFile) {
+//            // Force Doctrine à déclencher PreUpdate
+//            $this->updatedAt = new \DateTimeImmutable();
+//        }
+//    }
 
     public function getTitle(): ?string
     {
@@ -239,10 +239,10 @@ class Photo
         }
     }
 
-    public function getImageFile(): ?File
-    {
-        return $this->imageFile;
-    }
+//    public function getImageFile(): ?File
+//    {
+//        return $this->imageFile;
+//    }
 
     public function getDeletedAt(): ?\DateTimeImmutable
     {

@@ -187,5 +187,6 @@ security:
         - { path: ^/register, roles: PUBLIC_ACCESS }        # ok
         - { path: ^/reset-password, roles: PUBLIC_ACCESS }  # ok
         - { path: ^/membre, roles: ROLE_MEMBER }            # ok
+        - { path: ^/admin, roles: ROLE_EDITOR }            # ok
         - { path: ^/, roles: PUBLIC_ACCESS }                # ok
 

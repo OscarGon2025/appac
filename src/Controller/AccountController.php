@@ -16,7 +16,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class AccountController extends AbstractController
+ final class AccountController extends AbstractController{
 /**final class AccountController extends AbstractController
 {
     /**
@@ -50,9 +50,9 @@ class AccountController extends AbstractController
         $profileForm = $this->createForm(UserProfileType::class, $user);
         $profileForm->handleRequest($request);
 
-  /**
-        $form = $this->createForm(UserProfileType::class, $user);
-        $form->handleRequest($request);        */
+        /**
+         * $form = $this->createForm(UserProfileType::class, $user);
+         * $form->handleRequest($request);        */
 
 
         // Formulaire de changement de mot de passe
@@ -76,16 +76,21 @@ class AccountController extends AbstractController
 
             $this->addFlash('success', '🔒 Votre mot de passe a été modifié avec succès.');
 
-            return $this->redirectToRoute('app_account_edit');
 
-          /**  $this->addFlash('success', 'Profil mis à jour avec succès.');
-            return $this->redirectToRoute('app_account');
+
         }
-
-        return $this->render('account/edit.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        return $this->redirectToRoute('app_account_edit');
     }
+
+
+//           $this->addFlash('success', 'Profil mis à jour avec succès.');
+//            return $this->redirectToRoute('app_account');
+//        }
+//
+//        return $this->render('account/edit.html.twig', [
+//            'form' => $form->createView(),
+//        ]);
+//
 
     /**
      * Changer mon mot de passe
@@ -112,13 +117,13 @@ class AccountController extends AbstractController
             $this->addFlash('success', 'Mot de passe modifié avec succès.');
             return $this->redirectToRoute('app_account'); */
 
-        }
+            /**  }
 
         return $this->render('account/edit_account.html.twig', [
             'profileForm' => $profileForm->createView(),
             'passwordForm' => $passwordForm->createView(),
         ]);
-    }
+    } */
 
     /**
      * Supprimer mon compte (action irréversible)

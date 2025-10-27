@@ -240,7 +240,7 @@ class UserCrudController extends AbstractCrudController
     {
         if ($entityInstance instanceof User && $entityInstance->isApproved()) {
             // Envoi d'email lors de l'approbation via formulaire Edit
-            $email = (new TemplatedEmail())
+            $email = new TemplatedEmail()
                 ->from('no-reply@tonsite.fr')
                 ->to($entityInstance->getEmail())
                 ->subject('Votre compte a été approuvé')
