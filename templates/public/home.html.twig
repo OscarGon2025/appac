@@ -15,7 +15,7 @@
         crossorigin=""
     />
     <style>
-        /* Altura del mapa (responsive) */
+
         .leaflet-map { height: 380px; }
         @media (min-width: 992px){ .leaflet-map { height: 480px; } }
     </style>
@@ -101,7 +101,7 @@
                     </div>
 
                     <div class="text-center">
-                        <a href="#actus" class="btn custom-btn px-4" aria-label="Aller aux actualités">Découvrir nos actus</a>
+                        <a href="{{ path('app_adhesion') }}" class="btn custom-btn px-4" aria-label="Aller aux actualités">S'abonner</a>
                     </div>
                 </div>
             </div>
@@ -244,10 +244,20 @@
         </div>
     </section>
 
+
+    {# ====
+     Section : Annonces
+     ==== #}
+
+    {% include 'partials/_classifieds_home.html.twig' %}
+
+
+
+
     {# ====
      Section : Partenaires
      ==== #}
-    <section id="partenaires" class="py-5 bg-white" aria-labelledby="partners-title">
+    <section id="partenaires" class="py-5 bg-light" aria-labelledby="partners-title">
         <div class="container">
             <h2 id="partners-title" class="text-center mb-4">Nos partenaires</h2>
 
@@ -275,7 +285,7 @@
     </section>
 
     {# ======= Contactez-nous ======= #}
-    <section id="contact" class="section-padding bg-light pb-0" aria-labelledby="contact-title">
+    <section id="contact" class="section-padding bg-white pb-0" aria-labelledby="contact-title">
         <div class="container">
             <div class="row mb-4">
                 <div class="col-12 text-center">
@@ -330,7 +340,7 @@
         {# Carte full-width #}
         <div class="container-fluid px-0 mt-4">
             <div id="leaflet-map" class="leaflet-map w-100"
-                 data-lat="47.50017" data-lng="-2.37828 data-zoom="15"></div>
+                 data-lat="47.50017" data-lng="-2.37828" data-zoom="15"></div>
         </div>
     </section>
 

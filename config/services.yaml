@@ -1,13 +1,24 @@
 # config/services.yaml
+
 parameters:
+    # === Clés & config globales ===
     recaptcha_site: '%env(RECAPTCHA_SITE_KEY)%'
     recaptcha_secret: '%env(RECAPTCHA_SECRET_KEY)%'
 
     # Arzal coordinates
+
+    app.timezone: 'Europe/Paris'
+
     app.weather_lat: 47.52
     app.weather_lon: -2.30
     app.tide_lat: 47.45
     app.tide_lon: -2.50
+
+    # === HelloAsso (depuis .env.local) ===
+    helloasso.client_id: '%env(HELLOASSO_CLIENT_ID)%'
+    helloasso.client_secret: '%env(HELLOASSO_CLIENT_SECRET)%'
+    helloasso.organization_slug: '%env(HELLOASSO_ORGANIZATION_SLUG)%'
+    helloasso.form_slug: '%env(HELLOASSO_FORM_SLUG)%'
 
 services:
     App\EventSubscriber\PhotoThumbnailSubscriber:
@@ -15,6 +26,11 @@ services:
             $cacheManager: '@liip_imagine.cache.manager'
         tags:
             - { name: 'kernel.event_subscriber' }
+
+
+    App\Controller\Admin\DashboardController:
+        tags: [ 'controller.service_arguments', 'ea.dashboard' ]
+
 
     _defaults:
         autowire: true
@@ -35,9 +51,17 @@ services:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
+    # FR: (Optionnel) Bind des paramètres météo à un contrôleur précis
     # App\Controller\HeaderController:
     #   bind:
     #     $weatherLat: '%app.weather_lat%'
     #     $weatherLon: '%app.weather_lon%'
     #     $tideLat: '%app.tide_lat%'
     #     $tideLon: '%app.tide_lon%'
+
+    # FR: Service HelloAsso avec injection des paramètres
+    App\Service\HelloAsso\HelloAssoApi:
+        arguments:
+            $clientId: '%helloasso.client_id%'
+            $clientSecret: '%helloasso.client_secret%'
+            $organizationSlug: '%helloasso.organization_slug%'

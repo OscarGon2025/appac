@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+{% block title 'Mes événements' %}
+
+{% block body %}
+    <div class="container px-4 py-5 pt-lg-5 mt-5">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0">Mes événements</h1>
+            <a href="{{ path('account_events_new') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i>Nouveau
+            </a>
+        </div>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('info') %}
+            <div class="alert alert-info">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('warning') %}
+            <div class="alert alert-warning">{{ message }}</div>
+        {% endfor %}
+
+        {% if events is empty %}
+            <div class="text-center text-muted py-5">
+                <i class="bi bi-calendar2-event display-6 d-block mb-2"></i>
+                <p class="mb-0">Vous n’avez pas encore créé d’événement.</p>
+            </div>
+        {% else %}
+            <div class="row g-4">
+                {% for event in events %}
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm rounded-3">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h2 class="h5 mb-0">{{ event.title }}</h2>
+                                    <span class="badge text-bg-secondary">{{ event.type }}</span>
+                                </div>
+
+                                <p class="text-muted small mb-3">
+                                    <i class="bi bi-geo-alt me-1"></i>{{ event.locationName ?? 'Lieu à préciser' }}
+                                </p>
+
+                                <div class="mb-3">
+                                    <i class="bi bi-clock me-1"></i>
+                                    <strong>Début:</strong>
+                                    {{ event.startAt ? event.startAt|date('d/m/Y H:i') : '—' }}
+                                    {% if event.endAt %}
+                                        <span class="text-muted"> → {{ event.endAt|date('d/m/Y H:i') }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mt-auto d-flex gap-2">
+                                    <a href="{{ path('app_event_show', {slug: event.slug}) }}" class="btn btn-outline-secondary btn-sm">
+                                        <i class="bi bi-eye me-1"></i>Voir
+                                    </a>
+                                    <a href="{{ path('account_events_edit', {slug: event.slug}) }}" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-pencil me-1"></i>Éditer
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent small text-muted">
+                                Mis à jour le {{ event.updatedAt|date('d/m/Y H:i') }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

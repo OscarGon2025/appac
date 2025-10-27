@@ -1,0 +1,103 @@
+{# templates/classified_ad/index.html.twig #}
+{% extends 'base.html.twig' %}
+{% set navbar_is_transparent = false %}
+{% block title %}{{ ad.title }} — Petites annonces{% endblock %}
+
+{% block body %}
+    <section class="container-lg px-4 py-5 pt-lg-5 mt-5" id="ad-show">
+        <nav aria-label="Fil d’Ariane" class="mb-3">
+            <ol class="breadcrumb bg-transparent px-0 mb-0">
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}" class="text-decoration-none">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_classified_index') }}" class="text-decoration-none">Petites annonces</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ ad.title|u.truncate(40, '…') }}</li>
+            </ol>
+        </nav>
+
+        <div class="row g-4">
+            {# =========================
+       Columna de fotos
+       ========================= #}
+            <div class="col-lg-7">
+                {% if ad.photos|length > 0 %}
+                    <div id="adPhotos" class="carousel slide rounded overflow-hidden shadow-sm">
+                        <div class="carousel-inner">
+                            {% for photo in ad.photos %}
+                                {% if photo.fileName %}
+                                    <div class="carousel-item {{ loop.first ? 'active' : '' }}">
+                                        <img
+                                            src="{{ asset('uploads/classifieds/' ~ photo.fileName) | imagine_filter('ad_large') }}"
+                                            class="d-block w-100 ad-photo"
+                                            alt="{{ ad.title ~ ' — photo ' ~ loop.index }}"
+                                            loading="lazy">
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        {% if ad.photos|length > 1 %}
+                            <button class="carousel-control-prev" type="button" data-bs-target="#adPhotos" data-bs-slide="prev" aria-label="Précédente">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#adPhotos" data-bs-slide="next" aria-label="Suivante">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            </button>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="ratio ratio-16x9 bg-light rounded d-flex align-items-center justify-content-center text-muted">
+                        <span>Aucune photo</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            {# =========================
+       Columna info
+       ========================= #}
+            <div class="col-lg-5">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        {% if ad.status %}
+                            <span class="badge
+              {% if ad.status.value == 'APPROVED' %}text-bg-success
+              {% elseif ad.status.value == 'PENDING' %}text-bg-warning
+              {% elseif ad.status.value == 'REJECTED' %}text-bg-danger
+              {% else %}text-bg-secondary
+              {% endif %}
+            ">Disponible</span>
+                        {% endif %}
+
+                        <h1 class="h3 mt-2 mb-3">{{ ad.title }}</h1>
+
+                        <ul class="list-unstyled small text-muted mb-3">
+                            {% if ad.condition %}<li><strong>État :</strong> {{ ad.condition }}</li>{% endif %}
+                            {% if ad.location %}<li><strong>Localisation :</strong> {{ ad.location }}</li>{% endif %}
+                            {% if ad.publishedAt %}<li><strong>Publiée :</strong> {{ ad.publishedAt|date('d/m/Y') }}</li>{% endif %}
+                        </ul>
+
+                        <div class="d-flex align-items-baseline justify-content-end mb-3">
+            <span class="fs-3 fw-bold">
+              {% if ad.price is not null %}{{ ad.price|number_format(0, ',', ' ') }} €{% else %}-{% endif %}
+            </span>
+                        </div>
+
+                        {% if ad.description %}
+                            <h2 class="h6">Description</h2>
+                            <p>{{ ad.description|nl2br }}</p>
+                        {% endif %}
+
+                        <a href="mailto:contact@appac56.fr?subject=ANNONCE%20{{ ad.id }}"
+                           class="btn btn-primary w-100 mt-3">Contacter le vendeur</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        /* altura agradable y cover */
+        #ad-show .ad-photo {
+            aspect-ratio: 16/9;
+            object-fit: cover;
+        }
+    </style>
+{% endblock %}

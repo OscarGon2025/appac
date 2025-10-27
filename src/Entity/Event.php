@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks]
 class Event
 {
-    public const TYPES = ['OUTING', 'REGATTA', 'MEETING', 'OTHER'];
+    public const TYPES    = ['OUTING', 'REGATTA', 'MEETING', 'OTHER'];
     public const STATUSES = ['DRAFT', 'PUBLISHED', 'CANCELLED'];
 
     #[ORM\Id]
@@ -25,54 +25,72 @@ class Event
     #[ORM\Column]
     private ?int $id = null;
 
+    // 🏷️ Titre
     #[ORM\Column(length: 255)]
     private string $title;
 
+    // 🔗 Slug unique
     #[ORM\Column(length: 255, unique: true)]
     private string $slug;
 
+    // ✏️ Description (HTML autorisé dans tes vues)
     #[ORM\Column(type: Types::TEXT)]
     private string $description;
 
-    #[Assert\Choice(choices: self::TYPES)]
+    // 🧩 Type (contrôlé)
+    #[Assert\Choice(choices: self::TYPES, message: "Type invalide.")]
     #[ORM\Column(length: 32)]
     private string $type = 'OUTING';
 
+    // 🔓 Inscriptions ouvertes ?
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $registrationOpen = false;
 
+    // 🧑‍🤝‍🧑 Réservé aux membres ?
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $isMembersOnly = false;
 
+    // 🕒 Début
+    #[Assert\NotNull(message: "La date de début est requise.", groups: ['create'])]
     #[ORM\Column(type: 'datetime_immutable')]
-    private \DateTimeImmutable $startAt;
+    private ?\DateTimeImmutable $startAt = null;
 
+    // 🕒 Fin (≥ début si présente)
+    #[Assert\Expression(
+        "value === null or this.getStartAt() === null or value >= this.getStartAt()",
+        message: "La date de fin doit être postérieure (ou égale) à la date de début."
+    )]
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $endAt = null;
 
+    // 📍 Lieu
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $locationName = null;
 
+    // 🌐 Coordonnées (décimales)
     #[ORM\Column(type: 'decimal', precision: 9, scale: 6, nullable: true)]
     private ?string $lat = null;
 
     #[ORM\Column(type: 'decimal', precision: 9, scale: 6, nullable: true)]
     private ?string $lng = null;
 
+    // 👥 Limite de participants (null = illimité)
     #[ORM\Column(type: 'smallint', nullable: true)]
     private ?int $maxParticipants = null;
 
-    #[Assert\Choice(choices: self::STATUSES)]
+    // 🚦 Statut
+    #[Assert\Choice(choices: self::STATUSES, message: "Statut invalide.")]
     #[ORM\Column(length: 16)]
     private string $status = 'DRAFT';
 
+    // 🕒 Audit
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $updatedAt;
 
-    // >>>>inversedBy --->  User::$eventsCreated
+    // 👤 Créateur
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'eventsCreated')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $createdBy = null;
@@ -105,24 +123,133 @@ class Event
 
     private function ensureSlug(): void
     {
-        if (empty($this->slug) && !empty($this->title)) {
-            $this->slug = strtolower((new AsciiSlugger())->slug($this->title)->toString());
+        if (!isset($this->slug) || trim((string) $this->slug) === '') {
+            $title = trim((string) ($this->title ?? ''));
+            if ($title !== '') {
+                $slugger = new AsciiSlugger();
+                $this->slug = strtolower($slugger->slug($title)->toString());
+            }
         }
     }
 
-    // ---------- Helpers ----------
+    // ---------- Helpers Domain ----------
+    public function isPublished(): bool
+    {
+        return strtoupper($this->status) === 'PUBLISHED';
+    }
+
+    public function isCancelled(): bool
+    {
+        return strtoupper($this->status) === 'CANCELLED';
+    }
+
+    public function isUpcoming(\DateTimeImmutable $ref = new \DateTimeImmutable()): bool
+    {
+        // on considère "à venir" si startAt > maintenant ou pas encore terminé
+        if ($this->endAt) {
+            return $this->endAt >= $ref;
+        }
+        return ($this->startAt ?? $ref) >= $ref;
+    }
+
+    public function isPast(\DateTimeImmutable $ref = new \DateTimeImmutable()): bool
+    {
+        if ($this->endAt) {
+            return $this->endAt < $ref;
+        }
+        return ($this->startAt ?? $ref) < $ref;
+    }
+
+    /** Nombre de places confirmées (via OutingRequest) */
+    public function confirmedSeats(): int
+    {
+        $sum = 0;
+        foreach ($this->outingRequests as $r) {
+            if ($r->getStatus() === OutingRequest::STATUS_CONFIRMED) {
+                $sum += max(0, (int) $r->getSeats());
+            }
+        }
+        return $sum;
+    }
+
+    /** Nombre de demandes en attente (pending) */
+    public function pendingCount(): int
+    {
+        $n = 0;
+        foreach ($this->outingRequests as $r) {
+            if ($r->getStatus() === OutingRequest::STATUS_PENDING) {
+                $n++;
+            }
+        }
+        return $n;
+    }
+
+    /** Plazas restantes: null si aforo ilimitado */
     public function spotsLeft(): ?int
     {
         if ($this->maxParticipants === null) {
             return null;
         }
-        $confirmed = 0;
+        return max(0, $this->maxParticipants - $this->confirmedSeats());
+    }
+
+    /** Como entero “seguro” (∞ -> PHP_INT_MAX) para lógicas de comparación */
+    public function spotsLeftInt(): int
+    {
+        $left = $this->spotsLeft();
+        return $left === null ? PHP_INT_MAX : $left;
+    }
+
+    public function isFull(): bool
+    {
+        return $this->maxParticipants !== null && $this->spotsLeftInt() <= 0;
+    }
+
+    /** Busca la petición del usuario (si existe) */
+    public function findRequestBy(?User $user): ?OutingRequest
+    {
+        if (!$user) return null;
         foreach ($this->outingRequests as $r) {
-            if ($r->getStatus() === OutingRequest::STATUS_CONFIRMED) {
-                $confirmed += max(0, $r->getSeats());
+            if ($r->getUser() && $r->getUser()->getId() === $user->getId()) {
+                return $r;
             }
         }
-        return max(0, $this->maxParticipants - $confirmed);
+        return null;
+    }
+
+    /** ¿El usuario tiene alguna solicitud (cualquiera que sea el estado)? */
+    public function isRegisteredBy(?User $user): bool
+    {
+        return $this->findRequestBy($user) !== null;
+    }
+
+    /**
+     * ¿Puede inscribirse este usuario?
+     *  - evento publicado
+     *  - inscripciones abiertas
+     *  - no pasado
+     *  - aforo disponible
+     *  - si es “sólo miembros”, exigir rol (ajústalo a tu rol real)
+     */
+    public function canRegister(?User $user, \DateTimeImmutable $ref = new \DateTimeImmutable()): bool
+    {
+        if (!$this->isPublished() || !$this->registrationOpen || $this->isPast($ref) || $this->isFull()) {
+            return false;
+        }
+
+        if ($this->isMembersOnly) {
+            // si tu rol de socio es otro, cambia 'ROLE_MEMBER'
+            if (!$user || !$user->hasRole('ROLE_MEMBER')) {
+                return false;
+            }
+        }
+
+        // ya tiene una solicitud (pendiente o confirmada)
+        if ($this->isRegisteredBy($user)) {
+            return false;
+        }
+
+        return true;
     }
 
     // ---------- Getters/Setters ----------
@@ -146,8 +273,8 @@ class Event
     public function isMembersOnly(): bool { return $this->isMembersOnly; }
     public function setIsMembersOnly(bool $m): self { $this->isMembersOnly = $m; return $this; }
 
-    public function getStartAt(): \DateTimeImmutable { return $this->startAt; }
-    public function setStartAt(\DateTimeImmutable $startAt): self { $this->startAt = $startAt; return $this; }
+    public function getStartAt(): ?\DateTimeImmutable { return $this->startAt; }
+    public function setStartAt(?\DateTimeImmutable $startAt): self { $this->startAt = $startAt; return $this; }
 
     public function getEndAt(): ?\DateTimeImmutable { return $this->endAt; }
     public function setEndAt(?\DateTimeImmutable $endAt): self { $this->endAt = $endAt; return $this; }
@@ -200,6 +327,6 @@ class Event
 
     public function __toString(): string
     {
-        return $this->title ?? ('Event #' . $this->id);
+        return $this->title ?? ('Event #'.$this->id);
     }
 }

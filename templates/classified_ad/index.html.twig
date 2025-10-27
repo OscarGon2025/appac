@@ -1,0 +1,210 @@
+{% extends 'base.html.twig' %}
+{% set navbar_is_transparent = false %}
+
+{% block title %}Petites annonces{% endblock %}
+
+{% block body %}
+    <section class="container-lg px-4 py-5 pt-lg-5 mt-5" id="classified-index" aria-labelledby="classified-index-title">
+        <nav aria-label="Fil d’Ariane" class="mb-3">
+            <ol class="breadcrumb bg-transparent px-0 mb-0">
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}" class="text-decoration-none">Accueil</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Petites annonces</li>
+            </ol>
+        </nav>
+
+        <header class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-4">
+            <div>
+                <h1 id="classified-index-title" class="display-6 fw-bold mb-1">Toutes les petites annonces</h1>
+                <p class="text-muted mb-0">Recherchez par mots-clés, prix, état et localisation.</p>
+            </div>
+        </header>
+
+        {% if is_granted('ROLE_USER') %}
+            <div class="mb-3 text-end">
+                <a class="btn btn-success" href="{{ path('account_ad_new') }}">
+                    <i class="bi bi-plus-lg me-1"></i> Déposer une annonce
+                </a>
+            </div>
+        {% endif %}
+
+        {# =======================
+     Filtres
+     ======================= #}
+        <form method="get" class="row g-3 align-items-end mb-4" role="search" aria-label="Filtres petites annonces">
+            <div class="col-12 col-md-4">
+                <label for="f-q" class="form-label">Recherche</label>
+                <input id="f-q" name="q" type="search" class="form-control" placeholder="Titre ou description" value="{{ q }}">
+            </div>
+
+            <div class="col-6 col-md-2">
+                <label for="f-min" class="form-label">Prix min</label>
+                <input id="f-min" name="min" type="number" min="0" class="form-control" value="{{ min is not null ? min }}">
+            </div>
+
+            <div class="col-6 col-md-2">
+                <label for="f-max" class="form-label">Prix max</label>
+                <input id="f-max" name="max" type="number" min="0" class="form-control" value="{{ max is not null ? max }}">
+            </div>
+
+            <div class="col-6 col-md-2">
+                <label for="f-condition" class="form-label">État</label>
+                <select id="f-condition" name="condition" class="form-select">
+                    <option value="" {{ condition is empty ? 'selected' : '' }}>— Tous —</option>
+                    <option value="NEW" {{ condition == 'NEW' ? 'selected' : '' }}>Neuf</option>
+                    <option value="USED" {{ condition == 'USED' ? 'selected' : '' }}>Occasion</option>
+                    <option value="REFURB" {{ condition == 'REFURB' ? 'selected' : '' }}>Reconditionné</option>
+                </select>
+            </div>
+
+            <div class="col-6 col-md-2">
+                <label for="f-location" class="form-label">Localisation</label>
+                <input id="f-location" name="location" type="text" class="form-control" placeholder="Ville / zone" value="{{ location }}">
+            </div>
+
+            <div class="col-6 col-md-2">
+                <label for="f-sort" class="form-label">Trier par</label>
+                <select id="f-sort" name="sort" class="form-select">
+                    <option value="recent" {{ sort == 'recent' ? 'selected' : '' }}>Plus récents</option>
+                    <option value="price_asc" {{ sort == 'price_asc' ? 'selected' : '' }}>Prix: croissant</option>
+                    <option value="price_desc" {{ sort == 'price_desc' ? 'selected' : '' }}>Prix: décroissant</option>
+                </select>
+            </div>
+
+            <div class="col-6 col-md-2">
+                <label for="f-perPage" class="form-label">Par page</label>
+                <select id="f-perPage" name="perPage" class="form-select">
+                    {% set per = perPage|default(12) %}
+                    {% for n in [12, 24, 36] %}
+                        <option value="{{ n }}" {{ per == n ? 'selected' : '' }}>{{ n }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-12 col-md-2">
+                <button class="btn btn-primary w-100">Filtrer</button>
+            </div>
+            <div class="col-12 col-md-auto">
+                <a href="{{ path('app_classified_index') }}" class="btn btn-outline-secondary">Effacer</a>
+            </div>
+        </form>
+
+        {# Résumé de résultats #}
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="text-muted">
+                {% if total > 0 %}
+                    {{ total }} résultat{{ total > 1 ? 's' : '' }}
+                {% else %}
+                    Aucun résultat.
+                {% endif %}
+            </div>
+        </div>
+
+        {# =======================
+     Grid des annonces
+     ======================= #}
+        <div class="row">
+            {% for ad in ads %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <article class="card h-100 shadow-sm">
+
+                        {# ------- Miniature sûre (VichUploader + fallback) ------- #}
+                        {% set thumb = asset('images/placeholders/classified_no_image.png') %}
+                        {% if ad.photos is defined and ad.photos|length > 0 %}
+                            {% set first = ad.photos|first %}
+                            {% if first %}
+                                {# Ajusta 'imageFile' al nombre real del campo uploadable en tu entidad Photo #}
+                                {% set vichUrl = vich_uploader_asset(first, 'imageFile') ?? null %}
+
+                                {% if vichUrl %}
+                                    {% set thumb = vichUrl %}
+                                {% else %}
+                                    {# Fallback a propiedades comunes si no usas Vich en Photo #}
+                                    {% set fileName = attribute(first, 'fileName') ?? attribute(first, 'filename') ?? attribute(first, 'name') ?? null %}
+                                    {% if fileName %}
+                                        {% set thumb = asset('uploads/classifieds/' ~ fileName) %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+
+                        <img
+                            src="{{ thumb | imagine_filter('ad_thumb') }}"
+                            class="card-img-top"
+                            alt="{{ ad.title }}"
+                            loading="lazy"
+                        >
+
+                        <div class="card-body d-flex flex-column">
+                            <h3 class="h5 card-title mb-2">{{ ad.title }}</h3>
+
+                            <ul class="list-unstyled small text-muted mb-3">
+                                {% if ad.location %}<li><i class="bi bi-geo-alt me-1"></i>{{ ad.location }}</li>{% endif %}
+                                {% if ad.publishedAt %}<li><i class="bi bi-clock me-1"></i>{{ ad.publishedAt|date('d/m/Y') }}</li>{% endif %}
+                            </ul>
+
+                            {% if ad.description %}
+                                {% set excerpt = ad.description|striptags %}
+                                <p class="card-text mb-3">{{ excerpt|length > 120 ? excerpt|slice(0, 120) ~ '…' : excerpt }}</p>
+                            {% endif %}
+
+                            <div class="d-flex align-items-center justify-content-between mt-auto pt-2">
+              <span class="fw-semibold fs-5">
+                {% if ad.price is not null %}
+                    {{ ad.price|number_format(0, ',', ' ') }} €
+                {% else %}
+                    -
+                {% endif %}
+              </span>
+
+                                <a class="btn btn-outline-primary btn-sm" href="{{ path('app_classified_show', { id: ad.id }) }}">
+                                    Voir
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            {% else %}
+                <div class="col-12 text-center">
+                    <div class="alert alert-light border">
+                        Aucun résultat ne correspond à vos filtres. Essayez d’élargir la recherche.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {# =======================
+     Pagination
+     ======================= #}
+        {% if pages > 1 %}
+            {% set currentQuery = app.request.query.all %}
+            <nav aria-label="Pagination des annonces">
+                <ul class="pagination justify-content-center">
+                    {% set prev = page - 1 %}
+                    {% set next = page + 1 %}
+
+                    <li class="page-item {{ page == 1 ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ path('app_classified_index', currentQuery|merge({'page': 1})) }}" aria-label="Première">«</a>
+                    </li>
+                    <li class="page-item {{ page == 1 ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ path('app_classified_index', currentQuery|merge({'page': prev})) }}" aria-label="Précédente">‹</a>
+                    </li>
+
+                    {% set start = page - 2 > 1 ? page - 2 : 1 %}
+                    {% set end   = page + 2 < pages ? page + 2 : pages %}
+                    {% for p in start..end %}
+                        <li class="page-item {{ p == page ? 'active' : '' }}">
+                            <a class="page-link" href="{{ path('app_classified_index', currentQuery|merge({'page': p})) }}">{{ p }}</a>
+                        </li>
+                    {% endfor %}
+
+                    <li class="page-item {{ page == pages ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ path('app_classified_index', currentQuery|merge({'page': next})) }}" aria-label="Suivante">›</a>
+                    </li>
+                    <li class="page-item {{ page == pages ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ path('app_classified_index', currentQuery|merge({'page': pages})) }}" aria-label="Dernière">»</a>
+                    </li>
+                </ul>
+            </nav>
+        {% endif %}
+    </section>
+{% endblock %}

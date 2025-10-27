@@ -16,40 +16,50 @@ use Gedmo\Mapping\Annotation as Gedmo;
 #[Vich\Uploadable]
 class Photo
 {
-    #[ORM\Id] #[ORM\GeneratedValue] #[ORM\Column]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private ?int $id = null;
 
-    // Propietaire (User::$photos du cote inverse)
+    // Propriétaire (User::$photos côté inverse)
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $owner = null;
 
-    // fichier physuique (ruta/nom de fichier en BD)
+    // Nom de fichier stocké en base
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $fileName = null;
 
-    // Metadonnes
+    /**
+     * Champ de fichier non persisté géré par VichUploader.
+     * ⚠️ Le nom du mapping doit correspondre à celui défini dans config/packages/vich_uploader.yaml
+     * Exemple : mapping: 'photos' ou 'classifieds'
+     */
+    #[Vich\UploadableField(mapping: 'photos', fileNameProperty: 'fileName')]
+    private ?File $imageFile = null;
+
+    // Métadonnées
     #[ORM\Column(length: 180, nullable: true)]
     private ?string $title = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    //  visibility (public ou membres)
+    // Visibilité (public ou membres)
     #[ORM\Column(enumType: MediaVisibility::class)]
     private MediaVisibility $visibility = MediaVisibility::PUBLIC;
 
-    // optionel: apartenir a un álbum (Album::$photos c'est du cote inverse)
+    // Lien vers album (Album::$photos côté inverse)
     #[ORM\ManyToOne(targetEntity: Album::class, inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Album $album = null;
 
-    // Optionel: Photo asocie au ad
+    // Lien vers annonce (ClassifiedAd::$photos côté inverse)
     #[ORM\ManyToOne(targetEntity: ClassifiedAd::class, inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?ClassifiedAd $classifiedAd = null;
 
-    // dates EXIF / telecharge
+    // Dates EXIF / upload
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $takenAt = null;
 
@@ -99,7 +109,6 @@ class Photo
     public function setOwner(?User $owner): self
     {
         $this->owner = $owner;
-
         return $this;
     }
 
@@ -111,8 +120,25 @@ class Photo
     public function setFileName(?string $fileName): self
     {
         $this->fileName = $fileName;
-
         return $this;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    /**
+     * Setter utilisé par Vich pour gérer la mise à jour du fichier.
+     */
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // Force Doctrine à déclencher PreUpdate
+            $this->updatedAt = new \DateTimeImmutable();
+        }
     }
 
     public function getTitle(): ?string
@@ -123,7 +149,6 @@ class Photo
     public function setTitle(?string $title): self
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -135,7 +160,6 @@ class Photo
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -147,7 +171,6 @@ class Photo
     public function setVisibility(MediaVisibility $visibility): self
     {
         $this->visibility = $visibility;
-
         return $this;
     }
 
@@ -159,7 +182,6 @@ class Photo
     public function setAlbum(?Album $album): self
     {
         $this->album = $album;
-
         return $this;
     }
 
@@ -171,7 +193,6 @@ class Photo
     public function setClassifiedAd(?ClassifiedAd $ad): self
     {
         $this->classifiedAd = $ad;
-
         return $this;
     }
 
@@ -183,7 +204,6 @@ class Photo
     public function setTakenAt(?\DateTimeImmutable $takenAt): self
     {
         $this->takenAt = $takenAt;
-
         return $this;
     }
 
@@ -195,7 +215,6 @@ class Photo
     public function setUploadedAt(\DateTimeImmutable $uploadedAt): self
     {
         $this->uploadedAt = $uploadedAt;
-
         return $this;
     }
 
@@ -207,7 +226,6 @@ class Photo
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
     }
 

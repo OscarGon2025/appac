@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,95 +18,60 @@ class EventType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-
-        $typeChoices = \defined(Event::class.'::TYPES')
-            ? array_combine(Event::TYPES, Event::TYPES)
-            : [
-                'Sortie' => 'OUTING',
-                'Régate' => 'REGATTA',
-                'Réunion' => 'MEETING',
-            ];
-
-        $statusChoices = \defined(Event::class.'::STATUSES')
-            ? array_combine(Event::STATUSES, Event::STATUSES)
-            : [
-                'Brouillon' => 'DRAFT',
-                'Publié'    => 'PUBLISHED',
-                'Annulé'    => 'CANCELLED',
-            ];
-
         $builder
-            ->add('title', TextType::class, [
-                'label' => 'Titre de l’événement',
-                'attr'  => ['placeholder' => 'Ex. Sortie conviviale vers Pénestin'],
-                'help'  => 'Un titre court et explicite.',
-            ])
-
-            ->add('description', TextareaType::class, [
-                'label'    => 'Description',
-                'required' => false,
-                'attr'     => [
-                    'rows'        => 5,
-                    'placeholder' => 'Détails, matériel, conditions, etc.',
-                ],
-                'help'     => 'Quelques lignes suffisent (vous pourrez compléter plus tard).',
-            ])
-
+            ->add('title', TextType::class, ['label' => 'Titre'])
+            ->add('description', TextareaType::class, ['label' => 'Description'])
             ->add('type', ChoiceType::class, [
-                'label'       => 'Type',
-                'choices'     => $typeChoices,
-                'placeholder' => '— Sélectionnez —',
-                'help'        => 'Choisissez le type d’activité.',
+                'label'   => 'Type',
+                'choices' => [
+                    'Sortie'  => 'OUTING',
+                    'Régate'  => 'REGATTA',
+                    'Réunion' => 'MEETING',
+                    'Autre'   => 'OTHER',
+                ],
             ])
-
             ->add('startAt', DateTimeType::class, [
-                'label'        => 'Date de début',
-                'widget'       => 'single_text',
-                'with_seconds' => false,
-                'html5'        => true,
-                'help'         => 'Date et heure de début de l’événement.',
+                'label'  => 'Début',
+                'widget' => 'single_text',
+                'html5'  => true,
+                'required' => true,
             ])
-
             ->add('endAt', DateTimeType::class, [
-                'label'        => 'Date de fin',
-                'required'     => false,
-                'widget'       => 'single_text',
-                'with_seconds' => false,
-                'html5'        => true,
-                'help'         => 'Optionnel si l’heure de fin n’est pas connue.',
-            ])
-
-            ->add('locationName', TextType::class, [
-                'label'    => 'Lieu',
+                'label'  => 'Fin',
+                'widget' => 'single_text',
+                'html5'  => true,
                 'required' => false,
-                'attr'     => ['placeholder' => 'Capitainerie d’Arzal-Camoël, cale, etc.'],
             ])
-
-            ->add('maxParticipants', IntegerType::class, [
-                'label'       => 'Nombre maximum de participants',
-                'required'    => false,
-                'empty_data'  => '', // para guardar NULL si se deja vacío
-                'attr'        => ['min' => 0, 'placeholder' => 'Illimité'],
-                'help'        => 'Déjelo vide para inscripciones ilimitadas.',
-            ])
-
             ->add('registrationOpen', CheckboxType::class, [
                 'label'    => 'Inscriptions ouvertes',
                 'required' => false,
             ])
-
             ->add('isMembersOnly', CheckboxType::class, [
                 'label'    => 'Réservé aux membres',
                 'required' => false,
             ])
-
-            ->add('status', ChoiceType::class, [
-                'label'       => 'Statut',
-                'choices'     => $statusChoices,
-                'placeholder' => '— Sélectionnez —',
-                'help'        => 'Laissez en brouillon tant que l’événement n’est pas finalisé.',
+            ->add('maxParticipants', IntegerType::class, [
+                'label'    => 'Capacité',
+                'required' => false,
             ])
-        ;
+            ->add('locationName', TextType::class, [
+                'label'    => 'Lieu',
+                'required' => false,
+            ])
+            ->add('lat', NumberType::class, [
+                'label'       => 'Latitude',
+                'required'    => false,
+                'scale'       => 6,
+                'html5'       => true,
+                'attr'        => ['step' => '0.000001'],
+            ])
+            ->add('lng', NumberType::class, [
+                'label'       => 'Longitude',
+                'required'    => false,
+                'scale'       => 6,
+                'html5'       => true,
+                'attr'        => ['step' => '0.000001'],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

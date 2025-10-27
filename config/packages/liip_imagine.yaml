@@ -1,57 +1,72 @@
-##Documentation on how to configure the bundle can be found at: https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html
+# config/packages/liip_imagine.yaml
+# Documentation officielle :
+# https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html
 
 liip_imagine:
-    # Driver pour le traitement des images
-    driver: "gd"  # ou "imagick" si le serveur le supporte : plus rapide et précis
+    # Moteur de traitement d’image
+    # "gd" est supporté par défaut ; "imagick" ou "gmagick" offrent de meilleures performances
+    driver: "gd"
 
-    # Résolveur de cache — où les miniatures sont enregistrées
+    # Emplacement où les miniatures générées sont mises en cache
     resolvers:
         default:
             web_path:
                 web_root: '%kernel.project_dir%/public'
                 cache_prefix: 'media/cache'
 
-    # Configuration des filtres
-    filter_sets:
-        cache: ~  # requis par LiipImagine
+    # Chargeur de fichiers (utile si les images sont servies depuis /public)
+    loaders:
+        default:
+            filesystem:
+                data_root:
+                    - '%kernel.project_dir%/public'
 
-        # ✅ Vignette pour la galerie
+    # Définition des filtres (ensembles de transformations)
+    filter_sets:
+        # Nécessaire au fonctionnement interne du bundle
+        cache: ~
+
+        # ✅ Miniature utilisée dans la galerie (le filtre manquant)
         thumbnail_small:
             quality: 80
             filters:
-                # Recadre proprement sans bandes ni déformation
                 thumbnail:
-                    size: [220, 180]
-                    mode: outbound
+                    size: [220, 180]     # Taille des vignettes de la galerie
+                    mode: outbound       # Recadre sans bandes
                     allow_upscale: false
-                # Ajoute un fond transparent pour éviter toute bordure visible
-                background:
-                    size: [220, 180]
-                    position: center
-                    color: '#ffffff'  # transparent
 
-        # ✅ Taille moyenne pour pages de détails ou listes
-        thumbnail_medium:
+        # Miniature utilisée pour les petites annonces
+        ad_thumb:
             quality: 85
             filters:
                 thumbnail:
-                    size: [400, 300]
+                    size: [400, 300]     # Format 4:3
                     mode: outbound
                     allow_upscale: true
-                background:
-                    size: [400, 300]
-                    position: center
-                    color: '#ffffff'
 
-        # ✅ Grande taille (par ex. pour affichage en Lightbox)
-        thumbnail_large:
-            quality: 90
+        # Miniature pour les articles / actualités
+        article_thumb:
+            quality: 85
             filters:
                 thumbnail:
-                    size: [800, 600]
+                    size: [600, 400]     # Format 3:2
                     mode: outbound
                     allow_upscale: true
-                background:
-                    size: [800, 600]
-                    position: center
-                    color: '#ffffff'
+
+        # Miniature carrée (avatars, grilles, icônes)
+        square_thumb:
+            quality: 85
+            filters:
+                thumbnail:
+                    size: [300, 300]     # Format 1:1
+                    mode: outbound
+                    allow_upscale: true
+
+        # Format panoramique pour bannières / en-têtes
+        banner_wide:
+            quality: 85
+            filters:
+                thumbnail:
+                    size: [1200, 400]    # Format 3:1
+                    mode: outbound
+                    allow_upscale: true

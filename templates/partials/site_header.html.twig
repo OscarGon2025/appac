@@ -1,43 +1,62 @@
-{# ------- MOBILE / TABLET (< lg) ------- #}
-<header class="site-header bg-warning small d-lg-none">
+{# templates/partials/site_header.html.twig
+   Renderizado por HeaderController::siteHeader y recibe "header"
+   con: header.weather { temp, wind, dir } y header.tide { type, time } #}
+
+{% set h = header|default({}) %}
+
+{% set wx = {
+    temp: h.weather is defined and h.weather is not null and h.weather.temp is defined ? h.weather.temp : null,
+    wind: h.weather is defined and h.weather is not null and h.weather.wind is defined ? h.weather.wind : null,
+    dir:  h.weather is defined and h.weather is not null and h.weather.dir  is defined ? h.weather.dir  : null
+} %}
+
+{% set tide = {
+    type: h.tide is defined and h.tide is not null and h.tide.type is defined ? h.tide.type : null,
+    time: h.tide is defined and h.tide is not null and h.tide.time is defined ? h.tide.time : null
+} %}
+
+<header id="siteHeader" class="site-header bg-warning small" role="region" aria-label="Informations météo et marées">
     <div class="container py-1">
+        <div class="d-flex align-items-center justify-content-between">
 
-        <div class="site-header-row d-flex align-items-center">
+            {# Ligne défilable si le contenu dépasse en petit écran #}
+            <div class="d-flex align-items-center flex-nowrap overflow-auto me-2" style="gap:.5rem">
 
-            <div class="site-header-scroll d-flex align-items-center flex-nowrap overflow-auto me-2">
-        <span class="chip d-inline-flex align-items-center">
-          <i class="custom-icon bi-geo-alt me-2 fs-5"></i>
+        <span class="chip d-inline-flex align-items-center flex-shrink-0">
+          <i class="custom-icon bi-geo-alt me-2 fs-5" aria-hidden="true"></i>
           <strong class="text-dark">Arzal</strong>
         </span>
 
-                {% if header.weather %}
-                    <span class="chip chip--temp"><i class="bi bi-thermometer-half me-1"></i>{{ header.weather.temp }}°C</span>
-                    <span class="chip chip--wind">
-            <i class="bi bi-wind me-1"></i>{{ header.weather.wind }} km/h
-            {% if header.weather.dir is not null %}
-                <span class="chip--winddir">({{ header.weather.dir }}°)</span>
-            {% endif %}
-          </span>
-                {% endif %}
+                <span class="chip chip--temp flex-shrink-0" aria-label="Température">
+          <i class="bi bi-thermometer-half me-1" aria-hidden="true"></i>
+          {{ wx.temp is not null ? (wx.temp ~ '°C') : '—°C' }}
+        </span>
 
-                {% if header.tide %}
-                    <span class="chip chip--tide">
-            <i class="bi bi-water me-1"></i>
-            <span class="d-none d-sm-inline">Marée :</span>
-            <strong class="ms-1">{{ header.tide.type }}</strong>
-            <span class="ms-1">{{ header.tide.time|date('H:i') }}</span>
-          </span>
-                {% endif %}
+                <span class="chip chip--wind flex-shrink-0" aria-label="Vent">
+          <i class="bi bi-wind me-1" aria-hidden="true"></i>
+          {{ wx.wind is not null ? (wx.wind ~ ' km/h') : '— km/h' }}
+                    {% if wx.dir is not null %}
+                        <span class="chip--winddir">({{ wx.dir }}°)</span>
+                    {% endif %}
+        </span>
+
+                <span class="chip chip--tide flex-shrink-0" aria-label="Marée">
+          <i class="bi bi-water me-1" aria-hidden="true"></i>
+          <span class="d-none d-sm-inline">Marée :</span>
+          <strong class="ms-1">{{ tide.type ?? '—' }}</strong>
+          <span class="ms-1">{{ tide.time is not null ? (tide.time|date('H:i')) : '—:—' }}</span>
+        </span>
+
             </div>
 
-
-            <a class="btn btn-sm btn-outline-dark site-header-cta"
+            <a class="btn btn-sm btn-outline-dark flex-shrink-0"
                href="https://passeportecluse-arzal-camoel.com/"
-               target="_blank" rel="noopener" title="Voir horaires des écluses">
-                <i class="bi bi-clock-history me-1"></i>
-                <span class="btn-text">Horaires des écluses</span>
+               target="_blank" rel="noopener"
+               title="Voir horaires des écluses">
+                <i class="bi bi-clock-history me-1" aria-hidden="true"></i>
+                Horaires des écluses
             </a>
-        </div>
 
+        </div>
     </div>
 </header>

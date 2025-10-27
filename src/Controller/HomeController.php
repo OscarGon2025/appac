@@ -6,55 +6,59 @@ use App\Enum\PublishStatus;
 use App\Repository\ArticleRepository;
 use App\Repository\EventRepository;
 use App\Repository\PartnerLinkRepository;
+use App\Service\ClassifiedAdService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class HomeController extends AbstractController
 {
-    // — Unifier la logique dans une seule action pour "/" — //
     #[Route('/', name: 'app_home', methods: ['GET'])]
-    public function index(ArticleRepository $articles, EventRepository $events, PartnerLinkRepository $partners): Response
-    {
-        // — Derniers articles publiés
-        $latest = $articles->latestPublished(6);
+    public function index(
+        ArticleRepository $articles,
+        EventRepository $eventRepository,
+        ClassifiedAdService $classifieds,
+        PartnerLinkRepository $partnerLinks
+    ): Response {
 
-        // — Prochains événements publiés (triés par date)
-        $qb = $events->createQueryBuilder('e')
-            ->where('e.status = :status')
+        $latestArticles = $articles->latestPublished(6);
+
+        $now = new \DateTimeImmutable('now');
+
+        $qb = $eventRepository->createQueryBuilder('e')
+            ->andWhere('e.status = :published')
             ->andWhere('e.startAt >= :now')
-            ->setParameter('status', PublishStatus::PUBLISHED)
-            ->setParameter('now', new \DateTimeImmutable())
+            ->setParameter('published', PublishStatus::PUBLISHED)
+            ->setParameter('now', $now)
             ->orderBy('e.startAt', 'ASC')
             ->setMaxResults(6);
 
-        // — Partenaires actifs triés par position
-        $partnersList = $partners->createQueryBuilder('p')
-            ->where('p.isActive = :active')
+
+        if (!$this->isGranted('ROLE_MEMBER')) {
+            $qb->andWhere('e.isMembersOnly = :publicOnly')
+                ->setParameter('publicOnly', false);
+        }
+
+        $upcomingEvents = $qb->getQuery()->getResult();
+
+
+        $latestAds = $classifieds->latestApproved(6);
+
+
+        $partners = $partnerLinks->createQueryBuilder('p')
+            ->andWhere('p.isActive = :active')
             ->setParameter('active', true)
             ->orderBy('p.position', 'ASC')
             ->getQuery()
             ->getResult();
 
         return $this->render('public/home.html.twig', [
-            // — Données fusionnées
-            'actus' => $latest,
-            'events' => $qb->getQuery()->getResult(),
-            'partners' => $partnersList,
+            'actus'     => $latestArticles,
+            'events'    => $upcomingEvents,
+            'partners'  => $partners,
+            'latestAds' => $latestAds,
         ]);
     }
 
-    #[Route('/evenements/{slug}', name: 'app_event_show')]
-    public function show(string $slug, EventRepository $eventRepository): Response
-    {
-        $event = $eventRepository->findOneBy(['slug' => $slug]);
 
-        if (!$event) {
-            throw $this->createNotFoundException('Événement non trouvé.');
-        }
-
-        return $this->render('event/show.html.twig', [
-            'event' => $event,
-        ]);
-    }
 }
