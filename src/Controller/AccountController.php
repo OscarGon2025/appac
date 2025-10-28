@@ -32,103 +32,42 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 
     // Modifier profil
-    #[Route('/mon-compte/modifier', name: 'app_account_edit')]
-    public function edit(Request $request, UserPasswordHasherInterface $hasher, EntityManagerInterface $em): Response
+     #[Route('/mon-compte/modifier', name: 'app_account_edit', methods: ['GET','POST'])]
+     public function edit(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher): Response
+     {
+         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-    /**
-     * Modifier mon profil
-     */
-    /**#[Route('/mon-compte/modifier', name: 'app_account_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, EntityManagerInterface $em): Response */
+         /** @var \App\Entity\User $user */
+         $user = $this->getUser();
 
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+         $profileForm  = $this->createForm(UserProfileType::class, $user);
+         $profileForm->handleRequest($request);
 
-        $user = $this->getUser();
+         $passwordForm = $this->createForm(ChangePasswordType::class);
+         $passwordForm->handleRequest($request);
 
-        // Formulaire d’édition du profil
-        $profileForm = $this->createForm(UserProfileType::class, $user);
-        $profileForm->handleRequest($request);
+         // 1) Perfil
+         if ($profileForm->isSubmitted() && $profileForm->isValid()) {
+             $em->flush();
+             $this->addFlash('success', '✅ Profil mis à jour.');
+             return $this->redirectToRoute('app_account_edit'); // PRG SOLO aquí
+         }
 
-        /**
-         * $form = $this->createForm(UserProfileType::class, $user);
-         * $form->handleRequest($request);        */
+         // 2) Password
+         if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
+             $plain = (string) $passwordForm->get('plainPassword')->getData();
+             $user->setPassword($hasher->hashPassword($user, $plain));
+             $em->flush();
+             $this->addFlash('success', '🔒 Mot de passe modifié.');
+             return $this->redirectToRoute('app_account_edit'); // PRG SOLO aquí
+         }
 
-
-        // Formulaire de changement de mot de passe
-        $passwordForm = $this->createForm(ChangePasswordType::class);
-        $passwordForm->handleRequest($request);
-
-        // Gestion du formulaire de profil
-        if ($profileForm->isSubmitted() && $profileForm->isValid()) {
-            $em->flush();
-
-            $this->addFlash('success', '✅ Votre profil a été mis à jour avec succès.');
-
-            return $this->redirectToRoute('app_account_edit');
-        }
-
-        // Gestion du formulaire de mot de passe
-        if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
-            $plainPassword = $passwordForm->get('plainPassword')->getData();
-            $user->setPassword($hasher->hashPassword($user, $plainPassword));
-            $em->flush();
-
-            $this->addFlash('success', '🔒 Votre mot de passe a été modifié avec succès.');
-
-
-
-        }
-        return $this->redirectToRoute('app_account_edit');
-    }
-
-
-//           $this->addFlash('success', 'Profil mis à jour avec succès.');
-//            return $this->redirectToRoute('app_account');
-//        }
-//
-//        return $this->render('account/edit.html.twig', [
-//            'form' => $form->createView(),
-//        ]);
-//
-
-    /**
-     * Changer mon mot de passe
-     */
-    /**#[Route('/mon-compte/changer-mot-de-passe', name: 'app_account_change_password', methods: ['GET', 'POST'])]
-    public function changePassword(
-        Request                     $request,
-        UserPasswordHasherInterface $hasher,
-        EntityManagerInterface      $em
-    ): Response
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        $user = $this->getUser();
-        $form = $this->createForm(ChangePasswordType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
-            /** $plainPassword = (string)$form->get('plainPassword')->getData();
-            $user->setPassword($hasher->hashPassword($user, $plainPassword));
-            $em->flush();
-
-            $this->addFlash('success', 'Mot de passe modifié avec succès.');
-            return $this->redirectToRoute('app_account'); */
-
-            /**  }
-
-        return $this->render('account/edit_account.html.twig', [
-            'profileForm' => $profileForm->createView(),
-            'passwordForm' => $passwordForm->createView(),
-        ]);
-    } */
-
-    /**
-     * Supprimer mon compte (action irréversible)
-     * — Requiere: <form method="post" action="{{ path('account_delete') }}"> + CSRF
-     */
+         // ⬇️ IMPORTANTE: no redirigir aquí; renderizar
+         return $this->render('account/edit_account.html.twig', [
+             'profileForm'  => $profileForm->createView(),
+             'passwordForm' => $passwordForm->createView(),
+         ]);
+     }
     #[Route('/mon-compte/supprimer', name: 'app_account_delete', methods: ['POST'])]
     public function delete(Request $request, EntityManagerInterface $em, EventRepository $eventRepo): Response
     {
