@@ -3,7 +3,7 @@
         'name' => 'symfony/skeleton',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'ab0a53bccaf97474f74d636ddee371ecff868fa8',
+        'reference' => '0e1ba3ad92c4ee15d1e83be623b7935814866458',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -938,7 +938,7 @@
         'symfony/skeleton' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'ab0a53bccaf97474f74d636ddee371ecff868fa8',
+            'reference' => '0e1ba3ad92c4ee15d1e83be623b7935814866458',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
