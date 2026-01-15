@@ -37,7 +37,7 @@ class PhotoType extends AbstractType
                             'image/png',
                             'image/webp',
                         ],
-                        'mimeTypesMessage' => 'Formats acceptés : JPG, PNG ou WEBP uniquement et la taille maximum du fichier est de 8mo.',
+                        'mimeTypesMessage' => 'Formats acceptés : JPG, PNG ou WEBP uniquement et la taille maximum du fichier est de 128mo.',
                     ]),
                 ],
             ])

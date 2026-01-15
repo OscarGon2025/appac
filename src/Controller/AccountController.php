@@ -19,9 +19,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  final class AccountController extends AbstractController{
 /**final class AccountController extends AbstractController
 {
-    /**
-     * Espace membre
-     */
+    /*** Espace membre*/
     #[Route('/mon-compte', name: 'app_account', methods: ['GET'])]
     public function index(): Response
     {

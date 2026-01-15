@@ -149,6 +149,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -200,7 +201,7 @@ class UserCrudController extends AbstractCrudController
             ->add(Crud::PAGE_DETAIL, $approveUser);
     }
 
-    public function approveUser(AdminContext $context, EntityManagerInterface $em)
+    public function approveUser(AdminContext $context, EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator)
     {
         /** @var User $user */
         $user = $context->getEntity()->getInstance();
@@ -213,7 +214,7 @@ class UserCrudController extends AbstractCrudController
 
             // Pour envoyer un email à l'utilisateur quand il a été approuvé par l'admin
             $email = (new TemplatedEmail())
-                ->from('no-reply@tonsite.fr')
+                ->from('no-reply@appac.fr')
                 ->to($user->getEmail())
                 ->subject('Votre compte a été approuvé')
                 ->htmlTemplate('emails/user_approved.html.twig')
@@ -227,7 +228,20 @@ class UserCrudController extends AbstractCrudController
             $this->addFlash('info', 'Cet utilisateur est déjà approuvé.');
         }
 
-        return $this->redirect($context->getReferrer());
+//        return $this->redirect($context->getReferrer());
+        $referrer = $context->getReferrer();
+
+//        return $referrer
+//            ? $this->redirect($referrer)
+//            : $this->redirectToRoute('admin');
+
+        return $this->redirect(
+            $adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Crud::PAGE_INDEX)
+                ->generateUrl()
+        );
+
     }
 
     public function configureFilters(Filters $filters): Filters
@@ -238,20 +252,20 @@ class UserCrudController extends AbstractCrudController
 
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if ($entityInstance instanceof User && $entityInstance->isApproved()) {
-            // Envoi d'email lors de l'approbation via formulaire Edit
-            $email = new TemplatedEmail()
-                ->from('no-reply@tonsite.fr')
-                ->to($entityInstance->getEmail())
-                ->subject('Votre compte a été approuvé')
-                ->htmlTemplate('emails/user_approved.html.twig')
-                ->context([
-                    'user' => $entityInstance,
-                    'login_url' => $this->generateUrl('app_login', [], UrlGeneratorInterface::ABSOLUTE_URL),
-                ]);
-
-            $this->mailer->send($email);
-        }
+//        if ($entityInstance instanceof User && $entityInstance->isApproved()) {
+//            // Envoi d'email lors de l'approbation via formulaire Edit
+//            $email = new TemplatedEmail()
+//                ->from('no-reply@tonsite.fr')
+//                ->to($entityInstance->getEmail())
+//                ->subject('Votre compte a été approuvé')
+//                ->htmlTemplate('emails/user_approved.html.twig')
+//                ->context([
+//                    'user' => $entityInstance,
+//                    'login_url' => $this->generateUrl('app_login', [], UrlGeneratorInterface::ABSOLUTE_URL),
+//                ]);
+//
+//            $this->mailer->send($email);
+//        }
 
         parent::updateEntity($entityManager, $entityInstance);
     }

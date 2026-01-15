@@ -67,6 +67,12 @@ class Article
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $attachments;
 
+
+    #[ORM\ManyToOne(targetEntity: ArchiveImage::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?ArchiveImage $coverImage = null;
+
+
     public function __construct()
     {
         $this->attachments = new ArrayCollection();
@@ -252,5 +258,16 @@ class Article
     public function __toString(): string
     {
         return $this->title ?? ('Article #'.$this->id);
+    }
+
+    public function getCoverImage(): ?ArchiveImage
+    {
+        return $this->coverImage;
+    }
+
+    public function setCoverImage(?ArchiveImage $coverImage): self
+    {
+        $this->coverImage = $coverImage;
+        return $this;
     }
 }

@@ -46,7 +46,7 @@ class PhotoCrudController extends AbstractCrudController
             AssociationField::new('album', 'Album')
                 ->setCrudController(AlbumCrudController::class)
                 ->autocomplete()
-                ->setRequired(false),
+                ->setRequired(true),
             ChoiceField::new('visibility', 'Visibilité')
                 ->setChoices([
                     'Public' => MediaVisibility::PUBLIC,

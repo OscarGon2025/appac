@@ -57,6 +57,8 @@ final class HomeController extends AbstractController
             'events'    => $upcomingEvents,
             'partners'  => $partners,
             'latestAds' => $latestAds,
+            'navbar_is_transparent' => true,
+            'body_class' => 'has-transparent-nav',
         ]);
     }
 

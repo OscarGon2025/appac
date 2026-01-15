@@ -1,0 +1,40 @@
+{#{% extends '@EasyAdmin/crud/index.html.twig' %}#}
+
+{#{% block content %}#}
+{#    <h1>Albums</h1>#}
+
+{#    <ul class="album-list">#}
+{#        {% for album in entities %}#}
+{#            {% if not album.parent %}#}
+{#                <li>#}
+{#                    {{ album.title }}#}
+{#                    {% if album.children|length > 0 %}#}
+{#                        {% include 'admin/fields/album_hierarchy.html.twig' with { value: album.children } %}#}
+{#                    {% endif %}#}
+{#                </li>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+{#    </ul>#}
+{#{% endblock %}#}
+
+{% extends '@EasyAdmin/crud/index.html.twig' %}
+
+{% block page_content %}
+    <h1 class="mb-4">Albums (vue hiérarchique)</h1>
+
+    <ul class="album-list mb-5">
+        {% for album in entities %}
+            {% set entity = album.instance ?? album %}
+            {% if not entity.parent %}
+                <li>
+                    <strong>{{ entity.title }}</strong>
+                    {% if entity.children|length > 0 %}
+                        {% include 'admin/fields/album_hierarchy.html.twig' with { value: entity.children } %}
+                    {% endif %}
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    {{ parent() }}
+{% endblock %}

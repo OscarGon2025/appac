@@ -47,7 +47,7 @@
 {# Navbar principale -> le partial doit avoir <nav id="mainNav" ...> #}
 {% include 'partials/_navbar.html.twig' with { 'navbar_is_transparent': navbar_is_transparent } %}
 
-<main>
+<main id="main-content">
     {% block body %}{% endblock %}
 </main>
 

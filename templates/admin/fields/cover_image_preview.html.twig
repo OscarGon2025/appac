@@ -1,0 +1,46 @@
+{# Ce template est pour AssociationField #}
+{% extends '@EasyAdmin/crud/field/association.html.twig' %}
+
+{% block field_widget %}
+    {{ form_widget(field.form) }}
+
+    <div id="cover-preview-container-{{ field.uniqueId }}" style="margin-top: 10px;">
+        {% if field.value is not null %}
+            <img src="{{ asset('uploads/archives/' ~ field.value.fileName) }}"
+                 alt="{{ field.value.title ?: field.value.fileName }}"
+                 style="max-height: 100px; border-radius: 6px; box-shadow: 0 0 6px rgba(0,0,0,0.3);">
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const select = document.querySelector('[name="{{ field.form.vars.full_name }}"]');
+            const container = document.getElementById('cover-preview-container-{{ field.uniqueId }}');
+
+            if (!select || !container) return;
+
+            select.addEventListener('change', async () => {
+                const id = select.value;
+                if (!id) {
+                    container.innerHTML = '';
+                    return;
+                }
+
+                try {
+                    // Appel AJAX pour récupérer le nom du fichier via une route JSON
+                    const response = await fetch(`/admin/archive-image/${id}/info`);
+                    if (!response.ok) throw new Error('Erreur serveur');
+                    const data = await response.json();
+
+                    container.innerHTML = `
+                        <img src="/uploads/archives/${data.fileName}"
+                             alt="${data.title || data.fileName}"
+                             style="max-height: 100px; border-radius: 6px; box-shadow: 0 0 6px rgba(0,0,0,0.3); margin-top:5px;">
+                    `;
+                } catch (e) {
+                    console.error('Impossible de charger la miniature :', e);
+                }
+            });
+        });
+    </script>
+{% endblock %}

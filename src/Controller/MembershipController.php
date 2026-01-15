@@ -13,7 +13,7 @@ final class MembershipController extends AbstractController
     {
         return $this->render('membership/adhesion.html.twig', [
             'organizationSlug' => $this->getParameter('helloasso.organization_slug'),
-            'formSlug'         => $this->getParameter('helloasso.form_slug'),
+            'formSlug' => $this->getParameter('helloasso.form_slug'),
         ]);
     }
 

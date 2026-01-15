@@ -38,12 +38,31 @@
                              data-recent="{{ a.publishedAt is not null and a.publishedAt|date('U') > ('now'|date_modify('-30 days')|date('U')) ? '1' : '0' }}"
                              itemscope itemtype="https://schema.org/Article">
                         {# ---- Image de couverture ou fond neutre avec icône ---- #}
-                        {% if a.cover %}
+
+{#                        {% if a.cover %}#}
+{#                            <a href="{{ path('actus_show', { slug: a.slug }) }}" class="ratio ratio-16x9 d-block">#}
+{#                                <img#}
+{#                                    src="{{ asset('uploads/covers/' ~ a.cover) }}"#}
+{#                                    class="object-fit-cover rounded-top"#}
+{#                                    alt="{{ a.title }}"#}
+{#                                    loading="lazy"#}
+{#                                    itemprop="image">#}
+{#                            </a>#}
+{#                        {% else %}#}
+{#                            <a href="{{ path('actus_show', { slug: a.slug }) }}"#}
+{#                               class="ratio ratio-16x9 d-flex align-items-center justify-content-center rounded-top text-decoration-none"#}
+{#                               style="background:#eef2f6;">#}
+{#                                <i class="bi bi-newspaper" style="font-size:2rem; color:#94a3b8;"></i>#}
+{#                            </a>#}
+{#                        {% endif %}#}
+
+                        {# Modifs image de couverture venant des archives#}
+                        {% if a.coverImage %}
                             <a href="{{ path('actus_show', { slug: a.slug }) }}" class="ratio ratio-16x9 d-block">
                                 <img
-                                    src="{{ asset('uploads/covers/' ~ a.cover) }}"
+                                    src="{{ asset('uploads/archives/' ~ a.coverImage.fileName) }}"
                                     class="object-fit-cover rounded-top"
-                                    alt="{{ a.title }}"
+                                    alt="{{ a.coverImage.title ?: a.title }}"
                                     loading="lazy"
                                     itemprop="image">
                             </a>
@@ -54,6 +73,7 @@
                                 <i class="bi bi-newspaper" style="font-size:2rem; color:#94a3b8;"></i>
                             </a>
                         {% endif %}
+
 
                         <div class="custom-block card-body d-flex flex-column">
                             <div class="d-flex align-items-center gap-2 mb-2">

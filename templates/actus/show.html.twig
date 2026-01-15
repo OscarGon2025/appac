@@ -38,13 +38,34 @@
                         </div>
                     </header>
 
-                    {% if article.cover %}
+{#                    {% if article.cover %}#}
+{#                        <figure class="mb-4">#}
+{#                            <img class="img-fluid rounded shadow-sm w-100"#}
+{#                                 src="{{ asset('uploads/covers/' ~ article.cover) }}"#}
+{#                                 alt="{{ article.title }}" itemprop="image" loading="lazy">#}
+{#                        </figure>#}
+{#                    {% endif %}#}
+
+
+{#                    Modifs pour ajouter les images de couverture venant des archives#}
+                    {% if article.coverImage %}
                         <figure class="mb-4">
-                            <img class="img-fluid rounded shadow-sm w-100"
-                                 src="{{ asset('uploads/covers/' ~ article.cover) }}"
-                                 alt="{{ article.title }}" itemprop="image" loading="lazy">
+                            <img
+                                class="img-fluid rounded shadow-sm w-100"
+                                src="{{ asset('uploads/archives/' ~ article.coverImage.fileName) }}"
+                                alt="{{ article.coverImage.title ?: article.title }}"
+                                itemprop="image"
+                                loading="lazy"
+                                style="max-height: 500px; object-fit: cover;"
+                            >
+                            {% if article.coverImage.title %}
+                                <figcaption class="text-muted small mt-2 text-center">
+                                    {{ article.coverImage.title }}
+                                </figcaption>
+                            {% endif %}
                         </figure>
                     {% endif %}
+
 
                     <div class="content fs-5" itemprop="articleBody">
                         {{ article.content|raw }}
