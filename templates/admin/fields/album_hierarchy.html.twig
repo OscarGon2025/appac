@@ -1,0 +1,20 @@
+
+{% macro renderChildren(children) %}
+    {% if children|length > 0 %}
+        <ul style="margin-left: 20px;">
+            {% for child in children %}
+                <li>
+                    {{ child.title }}
+                    {# Pour afficher les sous-sous-albums #}
+                    {{ _self.renderChildren(child.children) }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{# Affichage principal #}
+{% import _self as macros %}
+<div class="album-children">
+    {{ macros.renderChildren(value) }}
+</div>

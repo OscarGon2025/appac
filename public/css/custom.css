@@ -194,7 +194,7 @@
 /* Actif / survol du menu */
 .navbar .nav-link.active,
 .navbar .nav-link:hover {
-    color: #ff7a00 !important; /* accent Festava */
+    color: #ff7a00 !important; /* accent Festava */''
 }
 
 /* Icône hamburger visible sur fonds clairs/transparents */
@@ -505,4 +505,176 @@ html {
     scroll-behavior: smooth;
 }
 
+/* ================================
+   Surcharge couleur bandeau météo
+   ================================ */
+#siteHeader.site-header {
+    background-color: #0b5ed7 !important; /* bleu Bootstrap */
+    color: #fff;
+}
 
+/* Chips d’information */
+.site-header .chip {
+    color: #fff !important;
+}
+
+/* Icônes à l’intérieur du bandeau */
+.site-header .bi {
+    color: #fff !important;
+    opacity: 0.9;
+}
+
+/* Bouton CTA dans le bandeau */
+.site-header .btn.btn-outline-dark {
+    border-color: #fff;
+    color: #fff;
+    transition: all 0.2s ease;
+}
+
+
+/* ==========================
+   Surcharge icône géolocalisation
+   ========================== */
+.site-header .bi-geo-alt::before {
+    color: #fff !important;
+}
+
+.site-header .text-dark {
+    color: #fff !important;
+}
+
+/* ==========================
+   Navbar - surcharge couleur
+   ========================== */
+
+/* Liens actifs / hover */
+.festava-navbar .nav-link.active,
+.festava-navbar .nav-link:hover {
+    color: #ffd966 !important; /* accent jaune clair */
+}
+
+/* Hamburger menu */
+.navbar-dark .navbar-toggler-icon {
+    filter: drop-shadow(0 0 2px rgba(0,0,0,.6)) brightness(1.2); /* illumine légèrement l’icône */
+}
+
+/* Dropdown items */
+.navbar .dropdown-item {
+    color: #fff !important;
+}
+
+.navbar .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: #ffd966 !important;
+}
+
+/* Tous les boutons custom orange du thème */
+.btn.custom-btn,
+.btn-primary {
+    background-color: #0a6fd1 !important; /* bleu marine */
+    border-color: #00274d !important;     /* même couleur pour la bordure */
+    color: #fff !important;               /* texte blanc */
+}
+
+.custom-btn{
+    background-color: #0a6fd1 !important;
+}
+
+.bi-clock::before{
+    color: #fff !important;
+}
+
+.bi-geo-alt::before{
+    color: #fff !important;
+}
+
+/* Fond des menus déroulants */
+.navbar .dropdown-menu {
+    background: #125dea; /* bleu marine */
+}
+
+/* ==========================
+   Section Partenaires
+   ========================== */
+
+
+/* Texte fallback (si pas de logo) */
+#partenaires span {
+    color: #495057;
+    font-weight: 500;
+}
+
+/* Lien partenaire */
+#partenaires a {
+    text-decoration: none;
+}
+
+/* Hover doux */
+#partenaires a:hover span {
+    color: #0b5ed7;
+}
+
+/* ==========================
+   Cartes Partenaires
+   ========================== */
+
+.partner-card {
+    display: block;
+    height: 100%;
+    background-color: #ffffff;
+    border: 2px solid #103b67;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.partner-card-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 120px;
+}
+
+.partner-card img {
+    max-height: 80px;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.partner-label {
+    color: #0a2540;
+    font-weight: 700;
+    font-size: 1.3rem;
+    display: block;
+    margin-top: 0.75rem;
+    text-align: center;
+    line-height: 1.2;
+    word-break: break-word;
+}
+
+
+.partner-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(11, 94, 215, 0.15);
+}
+
+/* Accessibilité */
+.partner-card:focus-visible {
+    outline: 3px solid #0b5ed7;
+    outline-offset: 4px;
+}
+
+/* ==========================
+   Décalage contenu sous navbar
+   ========================== */
+
+/* Pages internes uniquement */
+body:not(.has-transparent-nav) #main-content {
+    padding-top: 90px; /* hauteur de la navbar */
+}
+
+:target {
+    scroll-margin-top: 90px;
+}

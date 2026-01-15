@@ -6,6 +6,7 @@ use App\Entity\Album;
 use App\Entity\Photo;
 use App\Enum\MediaVisibility;
 use App\Form\PhotoType;
+use App\Repository\AlbumRepository;
 use App\Repository\PhotoRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -43,20 +44,62 @@ final class PhotoController extends AbstractController
         ]);
     }
 
+//    #[Route('/galerie', name: 'gallery_index')]
+//    public function index(PhotoRepository $photoRepository, EntityManagerInterface $em, Request $request): Response
+//    {
+//        $albumId = $request->query->get('album');
+//
+//        // Si un album est sélectionné, on filtre par album, sinon on récupère toutes les photos
+//        if ($albumId) {
+//            $photos = $photoRepository->findBy(['album' => $albumId, 'visibility' => MediaVisibility::PUBLIC], ['uploadedAt' => 'DESC']);
+//        } else {
+//            $photos = $photoRepository->findBy(['visibility' => MediaVisibility::PUBLIC], ['uploadedAt' => 'DESC']);
+//        }
+//
+//        // Récupère tous les albums pour le filtre
+//        $albums = $em->getRepository(Album::class)->findAll();
+//
+//        return $this->render('photo/gallery.html.twig', [
+//            'photos' => $photos,
+//            'albums' => $albums,
+//            'selectedAlbum' => $albumId,
+//        ]);
     #[Route('/galerie', name: 'gallery_index')]
-    public function index(PhotoRepository $photoRepository, EntityManagerInterface $em, Request $request): Response
-    {
+    public function index(PhotoRepository $photoRepository, AlbumRepository $albumRepository, Request $request, EntityManagerInterface $em): Response {
         $albumId = $request->query->get('album');
 
-        // Si un album est sélectionné, on filtre par album, sinon on récupère toutes les photos
+        // Si un album est sélectionné ça filtre ses photos
         if ($albumId) {
-            $photos = $photoRepository->findBy(['album' => $albumId, 'visibility' => MediaVisibility::PUBLIC], ['uploadedAt' => 'DESC']);
+            $photos = $photoRepository->findBy(
+                ['album' => $albumId, 'visibility' => MediaVisibility::PUBLIC],
+                ['uploadedAt' => 'DESC']
+            );
         } else {
-            $photos = $photoRepository->findBy(['visibility' => MediaVisibility::PUBLIC], ['uploadedAt' => 'DESC']);
+            $photos = $photoRepository->findBy(
+                ['visibility' => MediaVisibility::PUBLIC],
+                ['uploadedAt' => 'DESC']
+            );
         }
 
-        // Récupère tous les albums pour le filtre
-        $albums = $em->getRepository(Album::class)->findAll();
+        // Pour récupèrer uniquement les albums racines (ceux sans parent)
+        // Pour construire la hiérarchie dans le menu déroulant
+//        $albums = $albumRepository->createQueryBuilder('a')
+//            ->leftJoin('a.children', 'c')->addSelect('c')
+//            ->where('a.parent IS NULL')
+//            ->orderBy('a.title', 'ASC')
+//            ->getQuery()
+//            ->getResult();
+//
+//        return $this->render('photo/gallery.html.twig', [
+//            'photos' => $photos,
+//            'albums' => $albums,
+//            'selectedAlbum' => $albumId,
+//        ]);
+        $albums = $em->getRepository(Album::class)->createQueryBuilder('a')
+            ->where('a.parent IS NULL')
+            ->orderBy('a.title', 'ASC')
+            ->getQuery()
+            ->getResult();
 
         return $this->render('photo/gallery.html.twig', [
             'photos' => $photos,
@@ -65,34 +108,6 @@ final class PhotoController extends AbstractController
         ]);
     }
 
-
-    //    #[Route('/ajouter', name: 'app_photos_new')]
-    //    #[IsGranted('ROLE_USER')]
-    //    public function new(Request $request, EntityManagerInterface $em): Response
-    //    {
-    //        $photo = new Photo();
-    //        $photo->setOwner($this->getUser());
-    //
-    //        $form = $this->createForm(PhotoType::class, $photo);
-    //        $form->handleRequest($request);
-    //
-    //        if ($form->isSubmitted() && $form->isValid()) {
-    //            try {
-    //                $em->persist($photo);
-    //                $em->flush();
-    //
-    //                $this->addFlash('success', 'Photo ajoutée avec succès.');
-    //
-    //                return $this->redirectToRoute('app_photos_index');
-    //            } catch (FileException $e) {
-    //                $this->addFlash('error', 'Erreur lors du téléchargement du fichier.');
-    //            }
-    //        }
-    //
-    //        return $this->render('photo/new.html.twig', [
-    //            'form' => $form->createView(),
-    //        ]);
-    //    }
 
     #[Route('/supprimer/{id}', name: 'app_photos_delete', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]

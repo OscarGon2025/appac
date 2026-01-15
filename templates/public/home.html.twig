@@ -71,31 +71,35 @@
                 <div class="col-xl-8 col-lg-9">
                     <div class="text-center mb-4">
                         <h2 id="about-title" class="display-6 fw-bold mb-3 text-white">Qui sommes-nous&nbsp;?</h2>
-                        <p class="lead opacity-75 mb-0">
-                            Ami(e)s plaisanciers du Port d’Arzal-Camoël, bienvenue sur le site de l’association
-                            <strong>APPAC</strong>.
-                        </p>
+{#                        <p class="lead opacity-75 mb-0">#}
+{#                            Ami(e)s plaisanciers du Port d’Arzal-Camoël, bienvenue sur le site de l’association#}
+{#                            <strong>APPAC</strong>.#}
+{#                        </p>#}
                     </div>
 
                     <hr class="border-light opacity-25 my-4">
 
                     <div class="fs-5 opacity-85">
-                        <p class="mb-3 text-white">…Laissez naviguer votre curiosité à la découverte&nbsp;:</p>
+                        <p class="mb-3 text-white">L’APPAC, Association des usagers du Port de Plaisanciers d’Arzal-Camoël, situé en Bretagne,
+                            est une association loi 1901 qui rassemble des passionnés de navigation et de plaisance, propriétaires de bateaux
+                            présents sur le port d’Arzal-Camoël.</p>
 
                         <ul class="list-unstyled ps-0 mb-4">
                             <li class="d-flex align-items-start gap-2 mb-2 text-white">
-                                <i class="bi bi-life-preserver" aria-hidden="true"></i>
-                                <span>Nos engagements et les démarches pour la défense des intérêts des plaisanciers</span>
+{#                                <i class="bi bi-life-preserver" aria-hidden="true"></i>#}
+                                <span>L’association organise régulièrement des évènements, des rendez-vous en escales, des rencontres et ateliers
+                                    pour renforcer les liens entre ses membres.</span>
                             </li>
                             <li class="d-flex align-items-start gap-2 text-white">
-                                <i class="bi bi-emoji-smile" aria-hidden="true"></i>
-                                <span>Nos activités festives et diverses autour du plaisir de la plaisance</span>
+{#                                <i class="bi bi-emoji-smile" aria-hidden="true"></i>#}
+                                <span>L’APPAC joue également un rôle important dans la représentation des plaisanciers auprès des autorités portuaires,
+                                    des administrations et autres organismes en lien avec la plaisance. Elle veille à ce que les intérêts des usagers du
+                                    port soient bien pris en compte.</span>
                             </li>
                         </ul>
 
                         <p class="mb-1 text-white">
-                            Alors, <em>cap sur «&nbsp;Qui sommes-nous&nbsp;? / Présentation de l’APPAC&nbsp;»</em> et,
-                            si vous appréciez aussi la convivialité, <strong>n’hésitez pas à nous rejoindre&nbsp;!</strong>
+                            <strong>Venez nous rejoindre pour apporter vos compétences et votre convivialité !</strong>
                         </p>
                         <p class="mb-4 text-white">À bientôt&nbsp;⛵</p>
                     </div>
@@ -259,28 +263,51 @@
      ==== #}
     <section id="partenaires" class="py-5 bg-light" aria-labelledby="partners-title">
         <div class="container">
-            <h2 id="partners-title" class="text-center mb-4">Nos partenaires</h2>
+            <h2 id="partners-title" class="text-center mb-4">Partenaires et Informations</h2>
 
-            <div class="row justify-content-center">
+{#            <div class="row justify-content-center">#}
+{#                {% for partner in partners %}#}
+{#                    <div class="col-6 col-md-3 text-center mb-4">#}
+{#                        <a href="{{ partner.url }}" target="_blank" rel="noopener">#}
+{#                            {% if partner.logo %}#}
+{#                                <img#}
+{#                                    src="{{ asset(partner.logo) }}"#}
+{#                                    alt="{{ partner.label }}"#}
+{#                                    class="img-fluid"#}
+{#                                    style="max-height:100px"#}
+{#                                    loading="lazy">#}
+{#                            {% else %}#}
+{#                                <span>{{ partner.label }}</span>#}
+{#                            {% endif %}#}
+{#                        </a>#}
+{#                    </div>#}
+{#                {% else %}#}
+{#                    <p class="text-center mb-0">Aucun partenaire pour le moment.</p>#}
+{#                {% endfor %}#}
+{#            </div>#}
+
+            <div class="row justify-content-center g-4">
                 {% for partner in partners %}
-                    <div class="col-6 col-md-3 text-center mb-4">
-                        <a href="{{ partner.url }}" target="_blank" rel="noopener">
-                            {% if partner.logo %}
-                                <img
-                                    src="{{ asset(partner.logo) }}"
-                                    alt="{{ partner.label }}"
-                                    class="img-fluid"
-                                    style="max-height:100px"
-                                    loading="lazy">
-                            {% else %}
-                                <span>{{ partner.label }}</span>
-                            {% endif %}
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <a href="{{ partner.url }}" target="_blank" rel="noopener"
+                           class="partner-card">
+                            <div class="partner-card-body">
+                                {% if partner.logo %}
+                                    <img
+                                        src="{{ asset(partner.logo) }}"
+                                        alt="{{ partner.label }}"
+                                        loading="lazy">
+                                {% else %}
+                                    <span class="partner-label">{{ partner.label }}</span>
+                                {% endif %}
+                            </div>
                         </a>
                     </div>
                 {% else %}
                     <p class="text-center mb-0">Aucun partenaire pour le moment.</p>
                 {% endfor %}
             </div>
+
         </div>
     </section>
 

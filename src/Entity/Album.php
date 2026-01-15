@@ -31,6 +31,16 @@ class Album
     #[ORM\Column]
     private \DateTimeImmutable $updatedAt;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isPrivate = false; // false = public / true = réservé aux membres
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?self $parent = null;
+
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class, cascade: ['persist'])]
+    private Collection $children;
+
     /** @var Collection<int, Photo> */
     #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'album', cascade: ['persist'], orphanRemoval: false)]
     #[ORM\OrderBy(['uploadedAt' => 'DESC'])]
@@ -39,6 +49,7 @@ class Album
     public function __construct()
     {
         $this->photos = new ArrayCollection();
+        $this->children = new ArrayCollection();
         $now = new \DateTimeImmutable();
         $this->createdAt = $now;
         $this->updatedAt = $now;
@@ -146,4 +157,50 @@ class Album
 
         return $this;
     }
+
+    public function isPrivate(): bool
+    {
+        return $this->isPrivate;
+    }
+
+    public function setIsPrivate(bool $isPrivate): self
+    {
+        $this->isPrivate = $isPrivate;
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): self
+    {
+        $this->parent = $parent;
+        return $this;
+    }
+
+    /** @return Collection<int, self> */
+    public function getChildren(): Collection
+    {
+        return $this->children;
+    }
+
+    public function addChild(self $child): self
+    {
+        if (!$this->children->contains($child)) {
+            $this->children->add($child);
+            $child->setParent($this);
+        }
+        return $this;
+    }
+
+    public function removeChild(self $child): self
+    {
+        if ($this->children->removeElement($child) && $child->getParent() === $this) {
+            $child->setParent(null);
+        }
+        return $this;
+    }
+
 }

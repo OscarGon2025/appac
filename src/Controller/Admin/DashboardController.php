@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Article;
+use App\Entity\BoardMember;
 use App\Entity\Event;
 use App\Entity\Page;
 use App\Entity\Album;
@@ -24,6 +25,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Response;
+
+use App\Entity\ArchiveImage;
 
 
 
@@ -62,6 +65,13 @@ final class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Albums', 'fas fa-images', Album::class);
         yield MenuItem::linkToCrud('Photos', 'fas fa-image', Photo::class);
         yield MenuItem::linkToCrud('Pièces jointes', 'fas fa-paperclip', ArticleAttachment::class);
+
+        yield MenuItem::section('Organisation');
+        yield MenuItem::linkToCrud('Organigramme', 'fas fa-sitemap', BoardMember::class);
+
+
+        yield MenuItem::section('Archives');
+        yield MenuItem::linkToCrud('Photos articles', 'fas fa-archive', ArchiveImage::class);
 
         yield MenuItem::section('Petites annonces');
         yield MenuItem::linkToCrud('Annonces', 'fas fa-bullhorn', ClassifiedAd::class)

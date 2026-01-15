@@ -1,0 +1,39 @@
+{# templates/admin/fields/archive_image_preview.html.twig #}
+
+<div class="archive-image-field">
+    {{ form_widget(field.form) }}
+
+    {# Aperçu de l’image sélectionnée #}
+    <div style="margin-top: 10px;">
+        <img id="archiveImagePreview"
+             src="{{ field.data ? '/uploads/archives/' ~ field.data.fileName : '' }}"
+             style="max-height: 80px; border-radius: 4px; display: {{ field.data ? 'block' : 'none' }};"
+             alt="Aperçu de l'image">
+    </div>
+</div>
+
+<script>
+    (function() {
+        const select = document.getElementById('{{ field.form.vars.id }}');
+        const preview = document.getElementById('archiveImagePreview');
+        if (!select || !preview) return;
+
+        select.addEventListener('change', function() {
+            const selectedOption = select.selectedOptions[0];
+            if (!selectedOption || !selectedOption.value) {
+                preview.style.display = 'none';
+                preview.src = '';
+                return;
+            }
+
+            // L'URL de l'image dans /uploads/archives/<fileName>
+            const fileName = selectedOption.dataset.filename;
+            if (fileName) {
+                preview.src = '/uploads/archives/' + fileName;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+    })();
+</script>

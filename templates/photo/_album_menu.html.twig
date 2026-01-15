@@ -1,0 +1,28 @@
+
+{% macro render_album_menu(album, level, selectedAlbum) %}
+    {% if not album.isPrivate or is_granted('ROLE_USER') %}
+        {% set prefix = '' %}
+
+        {# On ajoute les symboles en fonction du niveau de dossier #}
+        {% if level == 0 %}
+            {% set prefix = '— ' %}
+        {% else %}
+            {% set arrows = '' %}
+            {% for i in 1..level %}
+                {% set arrows = arrows ~ '➤ ' %}
+            {% endfor %}
+            {% set prefix = arrows %}
+        {% endif %}
+
+        <option value="{{ album.id }}"
+                class="level-{{ level }}"
+                {% if selectedAlbum == album.id %}selected{% endif %}>
+            {{ prefix|raw }}{{ album.title }}
+        </option>
+
+        {% for child in album.children %}
+            {{ _self.render_album_menu(child, level + 1, selectedAlbum) }}
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+

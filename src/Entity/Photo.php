@@ -50,9 +50,14 @@ class Photo
     private MediaVisibility $visibility = MediaVisibility::PUBLIC;
 
     // Lien vers album (Album::$photos côté inverse)
+//    #[ORM\ManyToOne(targetEntity: Album::class, inversedBy: 'photos')]
+//    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+//    private ?Album $album = null;
+
     #[ORM\ManyToOne(targetEntity: Album::class, inversedBy: 'photos')]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Album $album = null;
+
 
     // Lien vers annonce (ClassifiedAd::$photos côté inverse)
     #[ORM\ManyToOne(targetEntity: ClassifiedAd::class, inversedBy: 'photos')]
