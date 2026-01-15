@@ -43,7 +43,7 @@
                         <div class="card-body d-flex flex-column">
                             <h3 class="h6 card-title mb-2 text-truncate" title="{{ ad.title }}">{{ ad.title }}</h3>
                             {% if ad.description is defined %}
-                                <p class="card-text text-muted small mb-3">{{ ad.description|u.truncate(120, '…', false) }}</p>
+                                <p class="card-text text-muted small mb-3">{{ ad.description|striptags|slice(0, 120) ~ (ad.description|length > 120 ? '…' : '') }}</p>
                             {% endif %}
 
                             <div class="mt-auto d-flex align-items-center justify-content-between">

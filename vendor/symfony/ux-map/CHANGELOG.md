@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2.32
+
+-  Add `Map::removeAllMarkers()`, `Map::removeAllPolygons()`, `Map::removeAllPolylines()`, `Map::removeAllCircles()` and `Map::removeAllRectangles()` methods
+
+## 2.31
+
+-  Add `fitBoundsToMarkers` parameter to `ux_map()` Twig function
+
 ## 2.30
 
 -  Ensure compatibility with PHP 8.5
