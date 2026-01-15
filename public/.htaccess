@@ -1,5 +1,3 @@
-# 🏁 Fichier racine .htaccess pour Symfony (redirige tout vers index.php)
-
 DirectoryIndex index.php
 
 # Désactive MultiViews pour éviter les résolutions inattendues
