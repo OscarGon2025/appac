@@ -1,33 +1,42 @@
-
-###> symfony/framework-bundle ###
+### Symfony core ###
 /.env.local
 /.env.local.php
 /.env.*.local
+/config/secrets/*/*/*.php
 /config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
-/var/
-/vendor/
-###< symfony/framework-bundle ###
 
-###> phpunit/phpunit ###
+### Logs & cache ###
+/var/*
+!/var/cache
+!/var/cache/prod
+/var/log/*
+!/var/log/.gitkeep
+
+### PHPUnit ###
 /phpunit.xml
-/.phpunit.cache/
-###< phpunit/phpunit ###
+/.phpunit.cache
 
-###> symfony/asset-mapper ###
-###/public/assets/###
-###/assets/vendor/###
-###< symfony/asset-mapper ###
+### Assets build (NO Webpack, NO Encore) ###
+/public/assets
+/public/bundles
 
-###> liip/imagine-bundle ###
-/public/media/cache/
-###< liip/imagine-bundle ###
+### LiipImagine cache ###
+/public/media/cache
 
-###> friendsofphp/php-cs-fixer ###
+### PHP-CS-Fixer ###
 /.php-cs-fixer.php
 /.php-cs-fixer.cache
-###< friendsofphp/php-cs-fixer ###
 
-###> phpstan/phpstan ###
-phpstan.neon
-###< phpstan/phpstan ###
+### PHPStan ###
+/phpstan.neon
+
+### OS / IDE ###
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+### IMPORTANT FOR OVH GIT DEPLOY ###
+# vendor MUST be versioned because OVH does NOT run composer
+# DO NOT IGNORE vendor
+# /vendor/   <-- intentionally NOT ignored
