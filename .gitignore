@@ -1,40 +1,61 @@
-### Symfony / PHP (runtime)
-# Cache, logs, sessions (se generan en el servidor)
- /var/
- /public/media/cache/
- /public/bundles/
+####################################
+# Symfony (runtime / generated)
+####################################
 
-### Environment (NO subir secretos reales)
- /.env.local
- /.env.*.local
- /.env.dev
- /.env.test
+/var/
+/public/media/cache/
+/public/bundles/
 
-### Composer / PHP tooling
-# IMPORTANTE: en tu caso NO ignoramos /vendor/
- /composer.phar
- /phpunit.xml
- /.phpunit.cache/
- /.php-cs-fixer.php
- /.php-cs-fixer.cache
- /.phpstan.cache
- /.phpstan/
- /.phpstorm.meta.php/
+####################################
+# Environment / secrets
+####################################
 
-### Node (si aplica)
- /node_modules/
- /npm-debug.log*
- /yarn-debug.log*
- /yarn-error.log*
- /.pnpm-store/
+.env.local
+.env.*.local
 
-### IDE / OS
- /.idea/
- /.vscode/
- .DS_Store
- Thumbs.db
+# ⚠️ Se versiona SOLO .env (plantilla)
+# .env.dev / .env.test se ignoran para evitar confusión
+.env.dev
+.env.test
 
-### Git / deploy artefacts
- # (opcional) si no quieres que el deploy deje metadatos
- # pero OJO: OVH Git deploy necesita su .git en servidor para actualizar.
- # Si te da problemas, NO ignores .git
+####################################
+# Composer / PHP
+####################################
+
+/vendor/
+composer.phar
+
+/phpunit.xml
+/.phpunit.cache/
+/.php-cs-fixer.cache
+/.phpstan.cache
+/.phpstan/
+/.phpstorm.meta.php/
+
+####################################
+# Node / Frontend (si aplica)
+####################################
+
+/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-store/
+
+####################################
+# IDE / OS
+####################################
+
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+####################################
+# Deploy / Git
+####################################
+
+# ⚠️ NO ignores .git
+# Es necesario para:
+# - git pull en OVH
+# - déploiement continu via SSH
