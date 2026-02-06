@@ -1,0 +1,37 @@
+{% block javascripts %}
+    <script>
+        // Crée un bandeau cookies pour cette page
+        document.addEventListener("DOMContentLoaded", function() {
+            // Vérifie si l'utilisateur a déjà accepté ou refusé
+            if(!localStorage.getItem('reglementationCookies')) {
+                // Crée le div
+                const banner = document.createElement('div');
+                banner.id = 'cookie-banner';
+                banner.style.position = 'fixed';
+                banner.style.bottom = '0';
+                banner.style.width = '100%';
+                banner.style.background = '#f8f9fa';
+                banner.style.padding = '10px';
+                banner.style.textAlign = 'center';
+                banner.style.boxShadow = '0 -2px 5px rgba(0,0,0,0.1)';
+                banner.style.zIndex = '9999';
+                banner.innerHTML = `
+            Ce site utilise des cookies pour améliorer votre expérience.
+            <button id="acceptCookies">Accepter</button>
+            <button id="declineCookies">Refuser</button>
+        `;
+                document.body.appendChild(banner);
+
+                // Actions boutons
+                document.getElementById('acceptCookies').onclick = () => {
+                    localStorage.setItem('reglementationCookies', 'accepted');
+                    banner.style.display = 'none';
+                };
+                document.getElementById('declineCookies').onclick = () => {
+                    localStorage.setItem('reglementationCookies', 'declined');
+                    banner.style.display = 'none';
+                };
+            }
+        });
+    </script>
+{% endblock %}

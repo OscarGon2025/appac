@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Article;
 use App\Entity\BoardMember;
+use App\Entity\Document;
 use App\Entity\Event;
 use App\Entity\Page;
 use App\Entity\Album;
@@ -72,6 +73,9 @@ final class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Archives');
         yield MenuItem::linkToCrud('Photos articles', 'fas fa-archive', ArchiveImage::class);
+
+        yield MenuItem::section('Documents');
+        yield MenuItem::linkToCrud('Archives et Statuts', 'fas fa-file-pdf', Document::class);
 
         yield MenuItem::section('Petites annonces');
         yield MenuItem::linkToCrud('Annonces', 'fas fa-bullhorn', ClassifiedAd::class)

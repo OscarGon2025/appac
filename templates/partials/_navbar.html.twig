@@ -67,8 +67,8 @@
                         <li><a class="dropdown-item" href="{{ path('app_home') }}#about">Qui sommes-nous ?</a></li>
                         <li><a class="dropdown-item" href="{{ path('board_member_organigram') }}">Trombinoscope CA</a></li>
                         <li><a class="dropdown-item" href="{{ path('app_home') }}#actus">Actualités</a></li>
-                        <li><a class="dropdown-item" href="{{ path('app_home') }}#">Nos status</a></li>
-                        <li><a class="dropdown-item" href="{{ path('app_home') }}#">Archives</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_statuts') }}#">Nos status</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_archives') }}#">Archives</a></li>
                     </ul>
                 </li>
 
@@ -80,7 +80,7 @@
                        aria-expanded="false">Infos pratiques<span class="dropdown-arrow">▾</span>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
-                        <li><a class="dropdown-item" href="{{ path('app_home') }}#">Règlementation</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_reglementation') }}#">Règlementation</a></li>
                         <li><a class="dropdown-item" href="{{ path('app_home') }}#classifieds">Petites annonces</a></li>
                         <li><a class="dropdown-item" href="{{ path('app_home') }}#partenaires">Partenaires et Informations</a></li>
                     </ul>
@@ -107,7 +107,7 @@
 {#                        Trombinoscope#}
 {#                    </a>#}
 {#                </li>#}
-{#            </ul>#}
+            </ul>
 
             {# CTA derecha #}
             {% if app.user %}

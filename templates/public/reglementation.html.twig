@@ -1,0 +1,128 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Règlementation - Association de Plaisanciers{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        /* Espacements spécifiques à la page Règlementation */
+        .reglementation p {
+            margin-bottom: 1.5em;
+        }
+
+        .reglementation h2 {
+            margin-top: 2em;
+            margin-bottom: 0.75em;
+        }
+
+        .reglementation h3 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        .reglementation ul {
+            margin-bottom: 1.5em;
+        }
+
+        .reglementation ul li {
+            margin-bottom: 0.5em;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <section class="reglementation container-lg px-4 py-5">
+        <h1>Règlementation et mentions légales</h1>
+
+        <!-- Mentions légales -->
+        <section id="mentions-legales">
+            <h2>Mentions légales</h2>
+            <p><strong>Nom de l’association :</strong> UPAC - Association de Plaisanciers d'Arzal-Camoël</p>
+            <p><strong>Adresse :</strong> Capitainerie du port d'Arzal-Camoël</p>
+            <p><strong>E-mail de contact :</strong> <a href="mailto:ccontact@appac56.fr">contact@appac56.fr</a></p>
+            <p><strong>Président / Directeur de publication :</strong> Voir l'organigramme de l'association</p>
+            <p><strong>Hébergeur du site :</strong> OVH, 2 rue Kellermann, 59100 Roubaix, France</p>
+            <p><strong>Numéro SIRET :</strong> [à compléter]</p>
+        </section>
+
+        <!-- Politique de confidentialité -->
+        <section id="rgpd">
+            <h2>Politique de confidentialité (RGPD)</h2>
+            <h3>1. Collecte des données personnelles</h3>
+            <ul>
+                <li>Formulaire de contact : nom, prénom, e-mail, message</li>
+                <li>Espace membre : nom, prénom, e-mail, mot de passe</li>
+                <li>Données techniques : adresse IP, cookies de session</li>
+            </ul>
+
+            <h3>2. Finalité de la collecte</h3>
+            <ul>
+                <li>Répondre aux demandes via le formulaire de contact</li>
+                <li>Gérer les adhésions et l’espace membre</li>
+                <li>Assurer la sécurité du site</li>
+                <li>Envoyer des informations sur les activités de l’association (si consentement)</li>
+            </ul>
+
+            <h3>3. Base légale</h3>
+            <p>Consentement de l’utilisateur et exécution d’un service demandé.</p>
+
+            <h3>4. Durée de conservation</h3>
+            <ul>
+                <li>Données de contact : 3 ans après le dernier contact</li>
+                <li>Données des membres : pendant la durée d’adhésion, puis archivage limité</li>
+            </ul>
+
+            <h3>5. Droits des utilisateurs</h3>
+            <ul>
+                <li>Accéder à ses données</li>
+                <li>Demander la rectification ou la suppression</li>
+                <li>S’opposer au traitement</li>
+                <li>Demander la portabilité de ses données</li>
+            </ul>
+            <p>Pour exercer ces droits, contactez l’association à <a href="mailto:contact@appac56.fr">contact@appac56.fr</a>.</p>
+
+            <h3>6. Sécurité</h3>
+            <p>Le site utilise HTTPS, mots de passe chiffrés et protections contre les attaques (SQL injection, CSRF).</p>
+        </section>
+
+        <!-- Accessibilité -->
+        <section id="accessibilite">
+            <h2>Accessibilité numérique (RGAA)</h2>
+            <ul>
+                <li>Balises HTML sémantiques</li>
+                <li>Labels associés aux champs de formulaire</li>
+                <li>Texte alternatif pour les images</li>
+                <li>Navigation possible au clavier</li>
+                <li>Contrastes de couleurs adaptés</li>
+            </ul>
+        </section>
+
+        <!-- Cookies (texte informatif seulement, bandeau global via base.html.twig) -->
+        <section id="cookies">
+            <h2>Gestion des cookies</h2>
+            <p>Le site utilise des cookies pour :</p>
+            <ul>
+                <li>Fonctionnement technique (session, connexion membre)</li>
+                <li>Statistiques de fréquentation (avec consentement via le bandeau cookie)</li>
+            </ul>
+            <p>Vous pouvez gérer vos préférences via le bandeau cookies visible sur toutes les pages du site.</p>
+        </section>
+
+        <!-- Propriété intellectuelle -->
+        <section id="propriete-intellectuelle">
+            <h2>Propriété intellectuelle</h2>
+            <p>Les contenus du site (textes, images, logo, documents) sont protégés par le droit d’auteur. Toute reproduction totale ou partielle est interdite sans autorisation.</p>
+        </section>
+
+        <!-- Sécurité générale -->
+        <section id="securite">
+            <h2>Sécurité du site</h2>
+            <ul>
+                <li>HTTPS pour toutes les communications</li>
+                <li>Validation et filtrage des formulaires</li>
+                <li>Upload sécurisé des fichiers</li>
+                <li>Protection contre les injections SQL et attaques CSRF</li>
+            </ul>
+        </section>
+    </section>
+{% endblock %}
