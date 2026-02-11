@@ -7,6 +7,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: DocumentRepository::class)]
 #[Vich\Uploadable]
@@ -48,8 +50,17 @@ class Document
     }
 
 
+//    #[Vich\UploadableField(mapping: 'documents', fileNameProperty: 'fileName')]
+//    private ?File $file = null;
     #[Vich\UploadableField(mapping: 'documents', fileNameProperty: 'fileName')]
+    #[Assert\File(
+        maxSize: '50M',
+        mimeTypes: ['application/pdf'],
+        mimeTypesMessage: 'Seuls les fichiers PDF sont autorisés.',
+        maxSizeMessage: 'Le fichier ne doit pas dépasser 50 Mo.'
+    )]
     private ?File $file = null;
+
 
     public function getId(): ?int { return $this->id; }
 

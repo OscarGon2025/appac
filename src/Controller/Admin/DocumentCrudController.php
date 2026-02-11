@@ -8,6 +8,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use Vich\UploaderBundle\Form\Type\VichFileType;
+use Symfony\Component\Validator\Constraints\File;
+
 
 class DocumentCrudController extends AbstractCrudController
 {
@@ -36,9 +38,23 @@ class DocumentCrudController extends AbstractCrudController
                 ->hideOnIndex(),
 
             // Upload du PDF
+//            TextField::new('file', 'Fichier PDF')
+//                ->setFormType(VichFileType::class)
+//                ->onlyOnForms(),
             TextField::new('file', 'Fichier PDF')
                 ->setFormType(VichFileType::class)
+                ->setFormTypeOptions([
+                    'required' => $pageName === 'new', // obligatoire à la création
+                    'constraints' => [
+                        new File([
+                            'maxSize' => '50M',
+                            'mimeTypes' => ['application/pdf'],
+                            'mimeTypesMessage' => 'Seuls les fichiers PDF sont autorisés.',
+                        ]),
+                    ],
+                ])
                 ->onlyOnForms(),
+
 
             // Nom du fichier affiché dans la liste admin
             TextField::new('fileName', 'Fichier')
