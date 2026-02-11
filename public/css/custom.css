@@ -678,3 +678,36 @@ body:not(.has-transparent-nav) #main-content {
 :target {
     scroll-margin-top: 90px;
 }
+
+/*!* Navbar page login – fond sombre et liens visibles *!*/
+/*.nav-login {*/
+/*    background-color: #090909 !important;  !* fond sombre *!*/
+/*    transition: none !important;        !* supprime effets si nécessaires *!*/
+/*}*/
+
+/*.nav-login .nav-link {*/
+/*    color: #fff !important;             !* liens visibles *!*/
+/*}*/
+
+/*.nav-login .nav-link:hover {*/
+/*    color: #ffcc00 !important;          !* couleur au survol *!*/
+/*}*/
+
+/*.nav-login #brandLogo {*/
+/*    filter: brightness(0) invert(1);    !* si le logo est sombre, il devient clair *!*/
+/*}*/
+
+/* Navbar sur page login */
+.nav-login {
+    background-color: #090909 !important; /* fond blanc ou couleur désirée */
+}
+
+.nav-login .nav-link,
+.nav-login .navbar-brand {
+    color: #ffffff !important; /* couleur texte / liens */
+}
+
+.nav-login .nav-link:hover,
+.nav-login .nav-link:focus {
+    color: #ffd966 !important; /* couleur au hover */
+}

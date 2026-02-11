@@ -34,10 +34,17 @@
 </head>
 
 {# Défauts sûrs #}
+{#{% set body_class = body_class|default('') %}#}
+{#{% set navbar_is_transparent = navbar_is_transparent|default(false) %}#}
+
+{#<body class="with-fixed-navbar {{ body_class }}">#}
+
+{# Détecte la page login pour ajouter une classe spéciale #}
 {% set body_class = body_class|default('') %}
 {% set navbar_is_transparent = navbar_is_transparent|default(false) %}
 
-<body class="with-fixed-navbar {{ body_class }}">
+<body class="with-fixed-navbar {{ body_class }} {% if app.request.attributes.get('_route') == 'app_login' %}login-page{% endif %}">
+
 
 {# Bandeau (météo / marées) — IMPORTANT: vía subrequest al contrôleur #}
 <header id="siteHeader">

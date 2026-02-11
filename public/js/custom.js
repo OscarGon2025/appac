@@ -5,6 +5,19 @@
 /* ======================================================
    1) NAVBAR : transparente ⇄ solide + padding dynamique
    ====================================================== */
+
+(function () {
+    var nav = document.getElementById('mainNav');
+    if (!nav) return;
+
+    // Si on est sur la page login
+    if (document.body.classList.contains('login-page')) {
+        nav.classList.add('nav-login'); // on ajoute une classe spéciale
+        return; // stop le reste du JS navbar transparente/scroll
+    }
+})();
+
+
 (function () {
     var nav   = document.getElementById('mainNav');
     var hero  = document.querySelector('.hero-section');
@@ -89,10 +102,11 @@
     }
 })();
 
+
 /* ======================================================
    2) Changement de logo (clair / foncé) selon le scroll
    ====================================================== */
-(function () {
+/*(function () {
     var nav  = document.getElementById('mainNav');
     var logo = document.getElementById('brandLogo');
     if (!nav || !logo) return;
@@ -109,11 +123,44 @@
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
 })();
+*/
+
+/* ======================================================
+   2) Changement de logo (clair / foncé) selon le scroll
+   ====================================================== */
+/* Logo et navbar sur login */
+(function () {
+    var nav  = document.getElementById('mainNav');
+    var logo = document.getElementById('brandLogo');
+    if (!nav || !logo) return;
+
+    if (document.body.classList.contains('login-page')) {
+        nav.classList.add('nav-login'); // ajoute classe CSS spéciale
+        var loginLogo = logo.getAttribute('data-light'); // logo "clair" visible sur fond blanc
+        if (loginLogo) logo.src = loginLogo;
+        return; // stop le reste du JS
+    }
+
+    // Effet scroll normal sur les autres pages
+    function onScroll() {
+        var scrolled = window.scrollY > 10;
+        nav.classList.toggle('is-scrolled', scrolled);
+        var light = logo.getAttribute('data-light');
+        var dark  = logo.getAttribute('data-dark');
+        if (light && dark) {
+            logo.src = scrolled ? dark : light;
+        }
+    }
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+})();
+
+
 
 /* ======================================================
    3) Fermer le menu mobile au clic sur un lien (UX mobile)
    ====================================================== */
-(function () {
+/*(function () {
     var navCollapse = document.getElementById('navbarNav'); // id de la div .collapse
     if (!navCollapse || typeof bootstrap === 'undefined' || !bootstrap.Collapse) return;
 
@@ -124,7 +171,37 @@
             if (bsCollapse) bsCollapse.hide();
         }
     });
+})(); */
+
+/* ======================================================
+   3) Navbar mobile – dropdown sans fermeture du burger (Correction)
+   ====================================================== */
+
+(function () {
+    var navCollapse = document.getElementById('navbarNav');
+    if (!navCollapse || typeof bootstrap === 'undefined') return;
+
+    var isMobile = () => window.innerWidth < 992;
+
+    // Empêche la fermeture du collapse uniquement quand on clique sur un dropdown toggle
+    navCollapse.querySelectorAll('.dropdown-toggle').forEach(function (toggle) {
+        toggle.addEventListener('click', function (e) {
+            if (isMobile()) {
+                e.stopPropagation(); // bloque seulement pour le dropdown
+            }
+        });
+    });
+
+    // Fermer le menu SEULEMENT quand on clique sur un vrai lien
+    navCollapse.querySelectorAll('.nav-link:not(.dropdown-toggle), .dropdown-item').forEach(function (link) {
+        link.addEventListener('click', function () {
+            if (!isMobile()) return;
+            var bsCollapse = bootstrap.Collapse.getInstance(navCollapse);
+            if (bsCollapse) bsCollapse.hide();
+        });
+    });
 })();
+
 
 /* ======================================================
    4) Bouton "Retour en haut" (si présent dans le footer)

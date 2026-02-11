@@ -71,7 +71,7 @@ final class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Organigramme', 'fas fa-sitemap', BoardMember::class);
 
 
-        yield MenuItem::section('Archives');
+        yield MenuItem::section('Photos pour articles');
         yield MenuItem::linkToCrud('Photos articles', 'fas fa-archive', ArchiveImage::class);
 
         yield MenuItem::section('Documents');
