@@ -21,6 +21,10 @@ parameters:
     helloasso.form_slug: '%env(HELLOASSO_FORM_SLUG)%'
 
 services:
+
+    Gedmo\SoftDeleteable\SoftDeleteableListener:
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
     App\EventSubscriber\PhotoThumbnailSubscriber:
         arguments:
             $cacheManager: '@liip_imagine.cache.manager'
