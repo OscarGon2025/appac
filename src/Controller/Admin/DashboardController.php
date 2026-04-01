@@ -2,40 +2,39 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Album;
+use App\Entity\ArchiveImage;
 use App\Entity\Article;
+use App\Entity\ArticleAttachment;
 use App\Entity\BoardMember;
+use App\Entity\ClassifiedAd;
 use App\Entity\Document;
 use App\Entity\Event;
-use App\Entity\Page;
-use App\Entity\Album;
-use App\Entity\Photo;
-use App\Entity\ClassifiedAd;
-use App\Entity\PartnerLink;
-use App\Entity\ArticleAttachment;
-use App\Entity\OutingRequest;
-use App\Entity\MembershipApplication;
 use App\Entity\Membership;
+use App\Entity\MembershipApplication;
+use App\Entity\OutingRequest;
+use App\Entity\Page;
+use App\Entity\PartnerLink;
+use App\Entity\Photo;
 use App\Entity\User;
 
-use App\Controller\Admin\ArticleCrudController;
-use App\Controller\Admin\ClassifiedAdCrudController;
-
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Response;
 
-use App\Entity\ArchiveImage;
+use App\Controller\Admin\ArticleCrudController;
+use App\Controller\Admin\ClassifiedAdCrudController;
 
-
-
+#[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 final class DashboardController extends AbstractDashboardController
 {
-    public function __construct(private AdminUrlGenerator $adminUrlGenerator) {}
+    public function __construct(private AdminUrlGenerator $adminUrlGenerator)
+    {
+    }
 
-    #[Route('/admin', name: 'admin', methods: ['GET'])]
     public function index(): Response
     {
         $url = $this->adminUrlGenerator
@@ -69,7 +68,6 @@ final class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Organisation');
         yield MenuItem::linkToCrud('Organigramme', 'fas fa-sitemap', BoardMember::class);
-
 
         yield MenuItem::section('Photos pour articles');
         yield MenuItem::linkToCrud('Photos articles', 'fas fa-archive', ArchiveImage::class);

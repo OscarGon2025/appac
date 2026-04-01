@@ -18,6 +18,11 @@
       <phpcs_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="752bac9b-9001-4da9-a23c-89d5286a1c24" tool_path="C:/wamp64/www/appac/vendor/bin/php-cs-fixer.bat" />
     </phpcsfixer_settings>
   </component>
+  <component name="PhpCodeSniffer">
+    <phpcs_settings>
+      <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="5c843234-dc3e-4b89-8db4-f46aa981cbb3" timeout="30000" />
+    </phpcs_settings>
+  </component>
   <component name="PhpIncludePathManager">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/behat/transliterator" />
