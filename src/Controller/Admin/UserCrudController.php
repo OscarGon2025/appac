@@ -153,15 +153,23 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserCrudController extends AbstractCrudController
 {
     private MailerInterface $mailer;
+    private AdminUrlGenerator $adminUrlGenerator;
 
-    public function __construct(MailerInterface $mailer)
+    public function __construct(MailerInterface $mailer, AdminUrlGenerator $adminUrlGenerator)
     {
         $this->mailer = $mailer;
+        $this->adminUrlGenerator = $adminUrlGenerator;
     }
+
+ //   public function __construct(MailerInterface $mailer)
+ //   {
+ //       $this->mailer = $mailer;
+ //   }
 
     public static function getEntityFqcn(): string
     {
@@ -201,7 +209,51 @@ class UserCrudController extends AbstractCrudController
             ->add(Crud::PAGE_DETAIL, $approveUser);
     }
 
-    public function approveUser(AdminContext $context, EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator)
+//    public function approveUser(AdminContext $context, EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator)
+//    {
+//        /** @var User $user */
+//        $user = $context->getEntity()->getInstance();
+//
+//        if (!$user->isApproved()) {
+//            $user->setIsApproved(true);
+//            $em->flush();
+//
+//            $this->addFlash('success', 'Utilisateur approuvé avec succès ✅');
+//
+//            // Pour envoyer un email à l'utilisateur quand il a été approuvé par l'admin
+//            $email = (new TemplatedEmail())
+//                ->from('no-reply@appac.fr')
+//                ->to($user->getEmail())
+//                ->subject('Votre compte a été approuvé')
+//                ->htmlTemplate('emails/user_approved.html.twig')
+//                ->context([
+//                    'user' => $user,
+//                    'login_url' => $this->generateUrl('app_login', [], UrlGeneratorInterface::ABSOLUTE_URL),
+//                ]);
+//
+//            $this->mailer->send($email);
+//        } else {
+//            $this->addFlash('info', 'Cet utilisateur est déjà approuvé.');
+//        }
+//
+////        return $this->redirect($context->getReferrer());
+//        $referrer = $context->getReferrer();
+//
+////        return $referrer
+////            ? $this->redirect($referrer)
+////            : $this->redirectToRoute('admin');
+//
+//        return $this->redirect(
+//            $adminUrlGenerator
+//                ->setController(self::class)
+//                ->setAction(Crud::PAGE_INDEX)
+//                ->generateUrl()
+//        );
+//
+//    }
+
+
+    public function approveUser(AdminContext $context, EntityManagerInterface $em): Response
     {
         /** @var User $user */
         $user = $context->getEntity()->getInstance();
@@ -210,9 +262,9 @@ class UserCrudController extends AbstractCrudController
             $user->setIsApproved(true);
             $em->flush();
 
-            $this->addFlash('success', 'Utilisateur approuvé avec succès ✅');
+            $this->addFlash('success', 'Utilisateur approuvé avec succès');
 
-            // Pour envoyer un email à l'utilisateur quand il a été approuvé par l'admin
+            // Envoi de l'email
             $email = (new TemplatedEmail())
                 ->from('no-reply@appac.fr')
                 ->to($user->getEmail())
@@ -228,15 +280,10 @@ class UserCrudController extends AbstractCrudController
             $this->addFlash('info', 'Cet utilisateur est déjà approuvé.');
         }
 
-//        return $this->redirect($context->getReferrer());
-        $referrer = $context->getReferrer();
 
-//        return $referrer
-//            ? $this->redirect($referrer)
-//            : $this->redirectToRoute('admin');
-
+        // Redirection vers la liste des utilisateurs
         return $this->redirect(
-            $adminUrlGenerator
+            $this->adminUrlGenerator
                 ->setController(self::class)
                 ->setAction(Crud::PAGE_INDEX)
                 ->generateUrl()

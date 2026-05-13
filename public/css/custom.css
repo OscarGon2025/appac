@@ -381,7 +381,7 @@
 
 /* LOGO */
 
-:root { --brand-h: 62px; }
+:root { --brand-h: 100px; }
 .navbar .brand-logo { height: var(--brand-h); width: auto; display: block; transition: opacity .15s ease; }
 
 

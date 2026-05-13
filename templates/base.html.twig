@@ -27,6 +27,9 @@
         :root { --navbar-h: 0px; }
     </style>
 
+    {#FavIcon#}
+    <link rel="icon" href="{{ asset('images/logo/upac56-1.svg') }}">
+
     {# reCAPTCHA v3 (optionnel) #}
     {% if recaptcha_site is defined %}
         <script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site }}"></script>
