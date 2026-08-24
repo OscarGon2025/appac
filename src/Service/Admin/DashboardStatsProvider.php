@@ -12,7 +12,6 @@ use App\Entity\Event;
 use App\Entity\Membership;
 use App\Entity\MembershipApplication;
 use App\Entity\OutingRequest;
-use App\Entity\Page;
 use App\Entity\Photo;
 use App\Entity\User;
 use App\Enum\AdStatus;
@@ -92,8 +91,6 @@ final class DashboardStatsProvider
                 ->setParameter('now', new \DateTimeImmutable())
                 ->getQuery()
                 ->getSingleScalarResult(),
-            'pages' => $this->count(Page::class),
-            'pagesPublished' => $this->count(Page::class, ['isPublished' => true]),
         ];
     }
 

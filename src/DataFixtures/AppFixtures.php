@@ -3,7 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\{
-    User, Page, PartnerLink, Article, Event, Album, Photo,
+    User, PartnerLink, Article, Event, Album, Photo,
     ClassifiedAd, Membership, MembershipApplication, OutingRequest
 };
 use App\Enum\{
@@ -68,19 +68,6 @@ final class AppFixtures extends Fixture
             $u->setPassword($this->hasher->hashPassword($u, 'password'));
             $em->persist($u);
             $users[] = $u;
-        }
-
-        // ---------------- Pages ----------------
-        foreach (['Qui sommes-nous', 'Sécurité en mer', 'Contact'] as $pTitle) {
-            $p = new Page();
-            $pSlug = strtolower($slugger->slug($pTitle)->toString());
-            $p->setTitle($pTitle);
-            $p->setSlug($pSlug);
-            $p->setBody($faker->paragraphs(3, true));
-            $p->setIsPublished(true);
-            $set($p, 'setMetaTitle', $pTitle);
-            $set($p, 'setMetaDescription', $faker->sentence(12));
-            $em->persist($p);
         }
 
         // ---------------- Partner links ----------------

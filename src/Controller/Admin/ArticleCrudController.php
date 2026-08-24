@@ -61,8 +61,9 @@ final class ArticleCrudController extends AbstractCrudController
                 'choice_label' => fn($img) => $img->getTitle() ?: $img->getFileName(),
                 'placeholder' => 'Aucune image sélectionnée',
                 'required' => false,
+                'expanded' => true,
+                'multiple' => false,
             ])
-            ->setTemplatePath('admin/fields/cover_image_preview.html.twig')
             ->hideOnIndex();
 
 
@@ -72,7 +73,11 @@ final class ArticleCrudController extends AbstractCrudController
         yield BooleanField::new('pinned', 'Épinglé');
 
         yield DateTimeField::new('publishedAt', 'Publié le')->hideOnForm();
-        yield AssociationField::new('author', 'Auteur');
+        yield AssociationField::new('author', 'Auteur')
+            ->setFormTypeOptions([
+                'expanded' => true,
+                'multiple' => false,
+            ]);
 
         yield DateTimeField::new('createdAt', 'Créé le')->hideOnForm();
         yield DateTimeField::new('updatedAt', 'Modifié le')->hideOnForm();

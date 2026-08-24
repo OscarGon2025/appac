@@ -19,5 +19,17 @@ class ArchiveImageController extends AbstractController
             'title' => $image->getTitle(),
         ]);
     }
+
+    #[Route('/admin/archive-image-list.json', name: 'admin_archive_image_list', methods: ['GET'])]
+    public function list(EntityManagerInterface $em): JsonResponse
+    {
+        $images = $em->getRepository(ArchiveImage::class)->findBy([], ['uploadedAt' => 'DESC']);
+
+        return $this->json(array_map(fn(ArchiveImage $img) => [
+            'id' => $img->getId(),
+            'fileName' => $img->getFileName(),
+            'title' => $img->getTitle(),
+        ], $images));
+    }
 }
 

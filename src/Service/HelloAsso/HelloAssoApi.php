@@ -1,11 +1,12 @@
 <?php
 namespace App\Service\HelloAsso;
 
-use GuzzleHttp\Client;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class HelloAssoApi
 {
     public function __construct(
+        private HttpClientInterface $httpClient,
         private string $clientId,
         private string $clientSecret,
         private string $organizationSlug
@@ -19,25 +20,29 @@ final class HelloAssoApi
             return $this->accessToken;
         }
 
-        $http = new Client(['base_uri' => 'https://api.helloasso.com/']);
-        $res = $http->post('oauth2/token', [
-            'form_params' => [
+        $res = $this->httpClient->request('POST', 'https://api.helloasso.com/oauth2/token', [
+            'body' => [
                 'grant_type' => 'client_credentials',
                 'client_id' => $this->clientId,
                 'client_secret' => $this->clientSecret,
             ],
         ]);
-        $data = json_decode((string) $res->getBody(), true);
+        $data = $res->toArray();
+
         return $this->accessToken = $data['access_token'];
     }
 
     public function searchPayments(string $email): array
     {
-        $http = new Client(['base_uri' => 'https://api.helloasso.com/v5/']);
-        $res = $http->get(sprintf('organizations/%s/payments/search', $this->organizationSlug), [
-            'headers' => ['Authorization' => 'Bearer '.$this->getAccessToken()],
-            'query' => ['query' => $email, 'pageSize' => 10],
-        ]);
-        return json_decode((string) $res->getBody(), true);
+        $res = $this->httpClient->request(
+            'GET',
+            sprintf('https://api.helloasso.com/v5/organizations/%s/payments/search', $this->organizationSlug),
+            [
+                'auth_bearer' => $this->getAccessToken(),
+                'query' => ['query' => $email, 'pageSize' => 10],
+            ]
+        );
+
+        return $res->toArray();
     }
 }

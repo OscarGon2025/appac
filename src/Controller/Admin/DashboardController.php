@@ -13,7 +13,6 @@ use App\Entity\Event;
 use App\Entity\Membership;
 use App\Entity\MembershipApplication;
 use App\Entity\OutingRequest;
-use App\Entity\Page;
 use App\Entity\PartnerLink;
 use App\Entity\Photo;
 use App\Entity\User;
@@ -52,7 +51,8 @@ final class DashboardController extends AbstractDashboardController
     public function configureAssets(): Assets
     {
         return Assets::new()
-            ->addCssFile('styles/admin-theme.css');
+            ->addCssFile('styles/admin-theme.css')
+            ->addJsFile('scripts/admin-picker.js');
     }
 
     public function configureMenuItems(): iterable
@@ -62,7 +62,6 @@ final class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Contenus');
         yield MenuItem::linkToCrud('Articles', 'fas fa-newspaper', Article::class);
         yield MenuItem::linkToCrud('Événements', 'fas fa-calendar', Event::class);
-        yield MenuItem::linkToCrud('Pages', 'fas fa-file-alt', Page::class);
 
         yield MenuItem::section('Médiathèque');
         yield MenuItem::linkToCrud('Albums', 'fas fa-images', Album::class);
