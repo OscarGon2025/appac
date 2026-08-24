@@ -17,31 +17,28 @@ use App\Entity\Page;
 use App\Entity\PartnerLink;
 use App\Entity\Photo;
 use App\Entity\User;
+use App\Service\Admin\DashboardStatsProvider;
 
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
-
-use App\Controller\Admin\ArticleCrudController;
-use App\Controller\Admin\ClassifiedAdCrudController;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 final class DashboardController extends AbstractDashboardController
 {
-    public function __construct(private AdminUrlGenerator $adminUrlGenerator)
-    {
+    public function __construct(
+        private readonly DashboardStatsProvider $stats,
+    ) {
     }
 
     public function index(): Response
     {
-        $url = $this->adminUrlGenerator
-            ->setController(ArticleCrudController::class)
-            ->generateUrl();
-
-        return $this->redirect($url);
+        return $this->render('admin/dashboard.html.twig', [
+            'stats' => $this->stats->getStats(),
+        ]);
     }
 
     public function configureDashboard(): Dashboard
@@ -50,6 +47,12 @@ final class DashboardController extends AbstractDashboardController
             ->setTitle('APPAC Back-Office')
             ->renderContentMaximized()
             ->setFaviconPath('favicon.ico');
+    }
+
+    public function configureAssets(): Assets
+    {
+        return Assets::new()
+            ->addCssFile('styles/admin-theme.css');
     }
 
     public function configureMenuItems(): iterable

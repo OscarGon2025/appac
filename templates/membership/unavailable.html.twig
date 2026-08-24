@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Adhésion en ligne{% endblock %}
+
+{% block body %}
+    <section class="container px-4 py-5 pt-lg-5 mt-5 text-center">
+        <h1 class="mb-4">Adhésion en ligne</h1>
+        <p class="text-muted">
+            Le paiement en ligne des adhésions est momentanément indisponible.<br>
+            Merci de nous contacter directement pour régler votre cotisation.
+        </p>
+        <a class="btn custom-btn mt-3" href="{{ path('app_home') }}#contact">Nous contacter</a>
+    </section>
+{% endblock %}

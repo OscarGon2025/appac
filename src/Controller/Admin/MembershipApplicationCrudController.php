@@ -22,6 +22,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -31,6 +32,7 @@ final class MembershipApplicationCrudController extends AbstractCrudController
     public function __construct(
         private readonly MembershipApprover $approver,
         private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly EntityManagerInterface $em,
     ) {}
 
     public static function getEntityFqcn(): string
@@ -119,7 +121,11 @@ final class MembershipApplicationCrudController extends AbstractCrudController
     #[IsGranted('ROLE_ADMIN')]
     public function approveAdhesion(AdminContext $context): Response
     {
-        $entity = $context->getEntity()->getInstance();
+        // NB: on ne peut pas utiliser $context->getEntity() ici : pour cette action
+        // personnalisée sans route "jolie" dédiée, EasyAdmin construit l'AdminContext
+        // avant d'avoir résolu l'action/l'entité réelles, ce qui le laisse vide.
+        $entityId = $context->getRequest()->query->get('entityId');
+        $entity = $this->em->getRepository(MembershipApplication::class)->find($entityId);
 
         if (!$entity instanceof MembershipApplication) {
             $this->addFlash('danger', 'Type d’entité inattendu.');

@@ -381,7 +381,7 @@
 
 /* LOGO */
 
-:root { --brand-h: 100px; }
+:root { --brand-h: 62px; }
 .navbar .brand-logo { height: var(--brand-h); width: auto; display: block; transition: opacity .15s ease; }
 
 
@@ -711,3 +711,9 @@ body:not(.has-transparent-nav) #main-content {
 .nav-login .nav-link:focus {
     color: #ffd966 !important; /* couleur au hover */
 }
+
+/* oppacite photo/video */
+.custom-video {
+    filter: brightness(70%);
+}
+

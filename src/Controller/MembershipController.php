@@ -11,9 +11,16 @@ final class MembershipController extends AbstractController
     #[Route('/adhesion', name: 'app_adhesion')]
     public function adhesion(): Response
     {
+        $organizationSlug = $this->getParameter('helloasso.organization_slug');
+        $formSlug = $this->getParameter('helloasso.form_slug');
+
+        if (!$organizationSlug || !$formSlug) {
+            return $this->render('membership/unavailable.html.twig');
+        }
+
         return $this->render('membership/adhesion.html.twig', [
-            'organizationSlug' => $this->getParameter('helloasso.organization_slug'),
-            'formSlug' => $this->getParameter('helloasso.form_slug'),
+            'organizationSlug' => $organizationSlug,
+            'formSlug' => $formSlug,
         ]);
     }
 

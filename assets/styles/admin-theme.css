@@ -1,0 +1,225 @@
+/* ----------------------------------------------------------------------------
+   Thème personnalisé du back-office UPAC (EasyAdmin).
+   On surcharge uniquement les variables CSS du thème par défaut d'EasyAdmin
+   (voir vendor/easycorp/easyadmin-bundle/assets/css/easyadmin-theme/variables-theme.css)
+   pour rester compatible avec les futures mises à jour du bundle.
+
+   IMPORTANT : le mode sombre est activé en ajoutant la classe .ea-dark-scheme
+   sur <body> (voir easyadmin-theme/page-color-scheme.js). Toute couleur de
+   marque doit donc être déclarée deux fois : une fois dans :root (mode clair)
+   et une fois dans .ea-dark-scheme (mode sombre) - sinon la déclaration du
+   bundle pour .ea-dark-scheme l'emporte et la personnalisation disparaît en
+   mode sombre. On ne fixe jamais une couleur "en dur" sur un sélecteur brut
+   (ex. `body { background-color: ... }`) car cela entrerait en conflit direct
+   avec la règle du bundle qui utilise déjà la variable --body-bg.
+ --------------------------------------------------------------------------- */
+
+:root {
+    /* Couleur de marque (bleu marine, cohérent avec l'identité nautique du site) */
+    --color-primary: hsl(206, 74%, 32%);
+    --link-color: hsl(206, 70%, 42%);
+    --link-hover-color: hsl(206, 70%, 55%);
+
+    --border-radius: 6px;
+    --border-radius-lg: 12px;
+
+    /* Fond de page légèrement teinté pour distinguer le contenu du fond */
+    --body-bg: hsl(210, 30%, 97%);
+
+    /* Barre latérale : bleu marine foncé, cohérente avec la navbar du site public */
+    --sidebar-bg: hsl(210, 45%, 14%);
+    --sidebar-border-color: hsl(210, 45%, 20%);
+    --sidebar-logo-color: hsl(43, 96%, 62%);
+    --sidebar-menu-color: hsl(210, 20%, 85%);
+    --sidebar-menu-header-color: hsl(210, 15%, 55%);
+    --sidebar-menu-icon-color: hsl(210, 20%, 70%);
+    --sidebar-menu-submenu-color: hsl(210, 20%, 75%);
+    --sidebar-menu-active-item-bg: hsl(43, 96%, 62%);
+    --sidebar-menu-active-item-color: hsl(210, 45%, 14%);
+    --sidebar-menu-badge-active-bg: hsl(43, 96%, 62%);
+    --sidebar-menu-badge-active-color: hsl(210, 45%, 14%);
+
+    --button-primary-bg: hsl(206, 74%, 32%);
+    --button-primary-hover-bg: hsl(206, 74%, 27%);
+    --button-primary-active-bg: hsl(206, 74%, 24%);
+
+    --pagination-active-bg: var(--color-primary);
+    --table-thead-sorted-marker-color: var(--color-primary);
+}
+
+/* Mode sombre : même identité (barre latérale bleu marine + accent doré),
+   adaptée pour rester lisible sur fond sombre. La barre latérale change peu
+   puisqu'elle est déjà foncée ; on éclaircit surtout les liens/boutons. */
+.ea-dark-scheme {
+    --color-primary: hsl(206, 85%, 62%);
+    --link-color: hsl(206, 85%, 68%);
+    --link-hover-color: hsl(206, 85%, 78%);
+
+    --sidebar-bg: hsl(210, 40%, 10%);
+    --sidebar-border-color: hsl(210, 35%, 18%);
+    --sidebar-logo-color: hsl(43, 96%, 62%);
+    --sidebar-menu-color: hsl(210, 15%, 75%);
+    --sidebar-menu-header-color: hsl(210, 10%, 50%);
+    --sidebar-menu-icon-color: hsl(210, 15%, 62%);
+    --sidebar-menu-submenu-color: hsl(210, 15%, 68%);
+    --sidebar-menu-active-item-bg: hsl(43, 96%, 62%);
+    --sidebar-menu-active-item-color: hsl(210, 45%, 10%);
+    --sidebar-menu-badge-active-bg: hsl(43, 96%, 62%);
+    --sidebar-menu-badge-active-color: hsl(210, 45%, 10%);
+
+    --button-primary-bg: hsl(206, 70%, 42%);
+    --button-primary-hover-bg: hsl(206, 70%, 48%);
+    --button-primary-active-bg: hsl(206, 70%, 52%);
+
+    --pagination-active-bg: var(--color-primary);
+    --table-thead-sorted-marker-color: var(--color-primary);
+}
+
+/* Logo/titre du dashboard dans la barre latérale */
+.main-header #header-logo a {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+/* Items de menu actifs : coins arrondis pour un rendu plus doux */
+#main-menu .menu .menu-item.active:not(.expanded) a {
+    border-radius: var(--border-radius);
+}
+
+/* En-têtes de section du menu : un peu plus d'air et une typo plus affirmée */
+#main-menu .menu .menu-header {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 6px;
+}
+
+/* Cartes / panneaux de contenu : coins arrondis, cohérent avec le reste
+   de la refonte visuelle. */
+.content-panel,
+.card {
+    border-radius: var(--border-radius-lg);
+}
+
+/* Boutons d'action un peu plus arrondis, plus faciles à repérer au survol */
+.btn {
+    border-radius: var(--border-radius);
+}
+
+/* ----------------------------------------------------------------------------
+   Tableau de bord (templates/admin/dashboard.html.twig)
+   Le thème EasyAdmin n'embarque pas les utilitaires Bootstrap complets
+   (bg-success, text-primary, bg-*-subtle, etc.), donc on définit ici nos
+   propres classes, appuyées sur les variables de badges du bundle - déjà
+   correctement adaptées au mode sombre.
+ --------------------------------------------------------------------------- */
+
+.dash-card {
+    background: var(--content-bg);
+    border: 1px solid var(--content-section-border-color);
+    border-radius: var(--border-radius-lg);
+    padding: 20px;
+}
+
+.dash-card-title {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.dash-kpi {
+    background: var(--content-bg);
+    border: 1px solid var(--content-section-border-color);
+    border-radius: var(--border-radius-lg);
+    padding: 16px;
+    height: 100%;
+}
+
+.dash-kpi-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
+.dash-kpi-icon.is-primary { background: var(--badge-primary-bg); color: var(--text-indigo-600); }
+.dash-kpi-icon.is-success { background: var(--badge-success-bg); color: var(--text-green-600); }
+.dash-kpi-icon.is-info { background: var(--badge-info-bg); color: var(--text-blue-600); }
+.dash-kpi-icon.is-warning { background: var(--badge-warning-bg); color: var(--text-yellow-600); }
+.dash-kpi-icon.is-danger { background: var(--badge-danger-bg); color: var(--text-red-600); }
+.dash-kpi-icon.is-secondary { background: var(--badge-secondary-bg); color: var(--text-secondary-color); }
+
+.dash-kpi-value {
+    font-size: var(--font-size-xxl);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.dash-kpi-label {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary-color);
+    font-weight: 600;
+}
+
+.dash-kpi-sub {
+    font-size: var(--font-size-xs);
+    color: var(--text-tertiary-color);
+    margin-top: 2px;
+}
+
+/* Graphique en barres SVG (visites) */
+.dash-chart {
+    width: 100%;
+    height: auto;
+}
+
+.dash-chart-bar {
+    fill: var(--color-primary);
+}
+
+.dash-chart-label {
+    fill: var(--text-tertiary-color);
+    font-size: 10px;
+}
+
+.dash-chart-value {
+    fill: var(--text-secondary-color);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Barres de répartition par statut (annonces, adhésions) */
+.dash-bar-row + .dash-bar-row {
+    margin-top: 12px;
+}
+
+.dash-bar-row-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    font-size: var(--font-size-sm);
+}
+
+.dash-bar-track {
+    background: var(--secondary-bg);
+    border-radius: var(--border-radius);
+    height: 8px;
+    overflow: hidden;
+}
+
+.dash-bar-fill {
+    height: 100%;
+    border-radius: var(--border-radius);
+}
+
+.dash-bar-fill.is-success { background: var(--color-success); }
+.dash-bar-fill.is-warning { background: var(--color-warning); }
+.dash-bar-fill.is-danger { background: var(--color-danger); }
+.dash-bar-fill.is-info { background: var(--color-info); }
+.dash-bar-fill.is-secondary { background: var(--text-tertiary-color); }

@@ -146,6 +146,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
@@ -153,23 +154,16 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserCrudController extends AbstractCrudController
 {
     private MailerInterface $mailer;
-    private AdminUrlGenerator $adminUrlGenerator;
 
-    public function __construct(MailerInterface $mailer, AdminUrlGenerator $adminUrlGenerator)
+    public function __construct(MailerInterface $mailer)
     {
         $this->mailer = $mailer;
-        $this->adminUrlGenerator = $adminUrlGenerator;
     }
-
- //   public function __construct(MailerInterface $mailer)
- //   {
- //       $this->mailer = $mailer;
- //   }
 
     public static function getEntityFqcn(): string
     {
@@ -193,6 +187,18 @@ class UserCrudController extends AbstractCrudController
             BooleanField::new('isApproved', 'Approuvé ?')
                 ->renderAsSwitch(true)
                 ->setSortable(true),
+            TextField::new('roleBadge', 'Rôle')
+                ->renderAsHtml()
+                ->onlyOnIndex(),
+            ChoiceField::new('roleChoice', 'Rôle')
+                ->setChoices([
+                    'Administrateur' => 'ROLE_ADMIN',
+                    'Utilisateur' => 'ROLE_USER',
+                ])
+                ->renderExpanded(false)
+                ->onlyOnForms()
+                ->setPermission('ROLE_ADMIN')
+                ->setHelp('Réservé aux administrateurs. « Administrateur » donne un accès complet au back-office.'),
             BooleanField::new('newsletterOptIn', 'Newsletter'),
         ];
     }
@@ -204,67 +210,48 @@ class UserCrudController extends AbstractCrudController
             ->displayIf(fn (User $entity) => !$entity->isApproved())
             ->addCssClass('btn btn-success');
 
+        $promoteToAdmin = Action::new('promoteToAdmin', 'Nommer administrateur')
+            ->linkToCrudAction('promoteToAdmin')
+            ->setIcon('fa fa-user-shield')
+            ->displayIf(fn (User $entity) => !\in_array('ROLE_ADMIN', $entity->getRoles(), true))
+            ->setCssClass('btn btn-outline-dark');
+
+        $revokeAdmin = Action::new('revokeAdmin', 'Retirer les droits admin')
+            ->linkToCrudAction('revokeAdmin')
+            ->setIcon('fa fa-user-minus')
+            ->displayIf(fn (User $entity) => \in_array('ROLE_ADMIN', $entity->getRoles(), true))
+            ->setCssClass('btn btn-outline-danger');
+
         return $actions
             ->add(Crud::PAGE_INDEX, $approveUser)
-            ->add(Crud::PAGE_DETAIL, $approveUser);
+            ->add(Crud::PAGE_DETAIL, $approveUser)
+            ->add(Crud::PAGE_INDEX, $promoteToAdmin)
+            ->add(Crud::PAGE_DETAIL, $promoteToAdmin)
+            ->add(Crud::PAGE_INDEX, $revokeAdmin)
+            ->add(Crud::PAGE_DETAIL, $revokeAdmin)
+            ->setPermission('promoteToAdmin', 'ROLE_ADMIN')
+            ->setPermission('revokeAdmin', 'ROLE_ADMIN');
     }
 
-//    public function approveUser(AdminContext $context, EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator)
-//    {
-//        /** @var User $user */
-//        $user = $context->getEntity()->getInstance();
-//
-//        if (!$user->isApproved()) {
-//            $user->setIsApproved(true);
-//            $em->flush();
-//
-//            $this->addFlash('success', 'Utilisateur approuvé avec succès ✅');
-//
-//            // Pour envoyer un email à l'utilisateur quand il a été approuvé par l'admin
-//            $email = (new TemplatedEmail())
-//                ->from('no-reply@appac.fr')
-//                ->to($user->getEmail())
-//                ->subject('Votre compte a été approuvé')
-//                ->htmlTemplate('emails/user_approved.html.twig')
-//                ->context([
-//                    'user' => $user,
-//                    'login_url' => $this->generateUrl('app_login', [], UrlGeneratorInterface::ABSOLUTE_URL),
-//                ]);
-//
-//            $this->mailer->send($email);
-//        } else {
-//            $this->addFlash('info', 'Cet utilisateur est déjà approuvé.');
-//        }
-//
-////        return $this->redirect($context->getReferrer());
-//        $referrer = $context->getReferrer();
-//
-////        return $referrer
-////            ? $this->redirect($referrer)
-////            : $this->redirectToRoute('admin');
-//
-//        return $this->redirect(
-//            $adminUrlGenerator
-//                ->setController(self::class)
-//                ->setAction(Crud::PAGE_INDEX)
-//                ->generateUrl()
-//        );
-//
-//    }
-
-
-    public function approveUser(AdminContext $context, EntityManagerInterface $em): Response
+    public function approveUser(AdminContext $context, EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator)
     {
-        /** @var User $user */
-        $user = $context->getEntity()->getInstance();
+        // NB: on ne peut pas utiliser $context->getEntity() ici : pour cette action
+        // personnalisée sans route "jolie" dédiée, EasyAdmin construit l'AdminContext
+        // avant d'avoir résolu l'action/l'entité réelles, ce qui le laisse vide.
+        $entityId = $context->getRequest()->query->get('entityId');
+        $user = $em->getRepository(User::class)->find($entityId);
+
+        if (!$user instanceof User) {
+            throw $this->createNotFoundException('Utilisateur introuvable.');
+        }
 
         if (!$user->isApproved()) {
             $user->setIsApproved(true);
             $em->flush();
 
-            $this->addFlash('success', 'Utilisateur approuvé avec succès');
+            $this->addFlash('success', 'Utilisateur approuvé avec succès ✅');
 
-            // Envoi de l'email
+            // Pour envoyer un email à l'utilisateur quand il a été approuvé par l'admin
             $email = (new TemplatedEmail())
                 ->from('no-reply@appac.fr')
                 ->to($user->getEmail())
@@ -280,15 +267,82 @@ class UserCrudController extends AbstractCrudController
             $this->addFlash('info', 'Cet utilisateur est déjà approuvé.');
         }
 
+//        return $this->redirect($context->getReferrer());
+        $referrer = $context->getReferrer();
 
-        // Redirection vers la liste des utilisateurs
+//        return $referrer
+//            ? $this->redirect($referrer)
+//            : $this->redirectToRoute('admin');
+
         return $this->redirect(
-            $this->adminUrlGenerator
+            $adminUrlGenerator
                 ->setController(self::class)
                 ->setAction(Crud::PAGE_INDEX)
                 ->generateUrl()
         );
 
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    public function promoteToAdmin(AdminContext $context, EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator)
+    {
+        // NB: on ne peut pas utiliser $context->getEntity() ici : pour cette action
+        // personnalisée sans route "jolie" dédiée, EasyAdmin construit l'AdminContext
+        // avant d'avoir résolu l'action/l'entité réelles, ce qui le laisse vide.
+        $entityId = $context->getRequest()->query->get('entityId');
+        $user = $em->getRepository(User::class)->find($entityId);
+
+        if (!$user instanceof User) {
+            throw $this->createNotFoundException('Utilisateur introuvable.');
+        }
+
+        if (\in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+            $this->addFlash('info', 'Cet utilisateur est déjà administrateur.');
+        } else {
+            $user->setRoles(array_unique([...$user->getRoles(), 'ROLE_ADMIN']));
+            $em->flush();
+
+            $this->addFlash('success', sprintf('%s a été nommé administrateur.', $user->getEmail()));
+        }
+
+        return $this->redirect(
+            $adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Crud::PAGE_INDEX)
+                ->generateUrl()
+        );
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    public function revokeAdmin(AdminContext $context, EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator)
+    {
+        // NB: on ne peut pas utiliser $context->getEntity() ici : pour cette action
+        // personnalisée sans route "jolie" dédiée, EasyAdmin construit l'AdminContext
+        // avant d'avoir résolu l'action/l'entité réelles, ce qui le laisse vide.
+        $entityId = $context->getRequest()->query->get('entityId');
+        $user = $em->getRepository(User::class)->find($entityId);
+
+        if (!$user instanceof User) {
+            throw $this->createNotFoundException('Utilisateur introuvable.');
+        }
+
+        if ($user === $this->getUser()) {
+            $this->addFlash('danger', 'Vous ne pouvez pas retirer vos propres droits administrateur.');
+        } elseif (!\in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+            $this->addFlash('info', 'Cet utilisateur n’est pas administrateur.');
+        } else {
+            $user->setRoles(array_values(array_filter($user->getRoles(), fn (string $r) => 'ROLE_ADMIN' !== $r)));
+            $em->flush();
+
+            $this->addFlash('success', sprintf('Les droits administrateur de %s ont été retirés.', $user->getEmail()));
+        }
+
+        return $this->redirect(
+            $adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Crud::PAGE_INDEX)
+                ->generateUrl()
+        );
     }
 
     public function configureFilters(Filters $filters): Filters
@@ -299,6 +353,14 @@ class UserCrudController extends AbstractCrudController
 
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
+        if ($entityInstance instanceof User
+            && $entityInstance === $this->getUser()
+            && !\in_array('ROLE_ADMIN', $entityInstance->getRoles(), true)
+        ) {
+            $this->addFlash('danger', 'Vous ne pouvez pas retirer vos propres droits administrateur.');
+            $entityInstance->setRoleChoice('ROLE_ADMIN');
+        }
+
 //        if ($entityInstance instanceof User && $entityInstance->isApproved()) {
 //            // Envoi d'email lors de l'approbation via formulaire Edit
 //            $email = new TemplatedEmail()

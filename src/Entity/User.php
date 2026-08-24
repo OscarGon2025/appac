@@ -121,6 +121,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_values(array_unique($roles));
     }
 
+    /** FR: Badge HTML lisible pour l'UI du backoffice (rôle le plus élevé). */
+    public function getRoleBadge(): string
+    {
+        $roles = $this->getRoles();
+
+        [$label, $class] = match (true) {
+            \in_array('ROLE_ADMIN', $roles, true) => ['Administrateur', 'danger'],
+            \in_array('ROLE_EDITOR', $roles, true) => ['Éditeur', 'warning'],
+            \in_array('ROLE_MEMBER', $roles, true) => ['Membre', 'success'],
+            default => ['Utilisateur', 'secondary'],
+        };
+
+        return sprintf('<span class="badge text-bg-%s">%s</span>', $class, $label);
+    }
+
+    /** FR: Pour le formulaire du backoffice (choix simple Admin / Utilisateur). */
+    public function getRoleChoice(): string
+    {
+        return \in_array('ROLE_ADMIN', $this->getRoles(), true) ? 'ROLE_ADMIN' : 'ROLE_USER';
+    }
+
+    /** FR: Ajoute ou retire ROLE_ADMIN sans toucher aux autres rôles éventuels. */
+    public function setRoleChoice(string $roleChoice): self
+    {
+        $roles = array_values(array_filter($this->roles ?? [], fn (string $r) => 'ROLE_ADMIN' !== $r));
+
+        if ('ROLE_ADMIN' === $roleChoice) {
+            $roles[] = 'ROLE_ADMIN';
+        }
+
+        $this->roles = $roles;
+
+        return $this;
+    }
+
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;

@@ -29,7 +29,7 @@ final class PageCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('title', 'Titre');
-        yield SlugField::new('slug')->setFormTypeOption('disabled', true)->hideOnIndex();
+        yield SlugField::new('slug')->setTargetFieldName('title')->setFormTypeOption('disabled', true)->hideOnIndex();
         yield TextEditorField::new('body', 'Contenu');
         yield BooleanField::new('isPublished', 'Publié');
         yield BooleanField::new('isMembersOnly', 'Réservé aux membres')->hideOnIndex();

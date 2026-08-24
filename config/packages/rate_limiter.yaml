@@ -15,13 +15,13 @@ framework:
             policy: 'fixed_window'
             limit: 5              # max 5 requêtes
             interval: '1 minute'  # par minute
-            storage_service: 'cache.app'
+            cache_pool: 'cache.app'
 
         registration_form:
             policy: 'fixed_window'
             limit: 3              # max 3 inscriptions
             interval: '10 minutes' # par IP
-            storage_service: 'cache.app'
+            cache_pool: 'cache.app'
 
         register:
             policy: 'fixed_window'

@@ -19,6 +19,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Vich\UploaderBundle\Form\Type\VichImageType;
@@ -104,7 +106,7 @@ class PhotoCrudController extends AbstractCrudController
 
     // Route pour restaurer une photo supprimée
     #[Route('/admin/photo/{id}/restore', name: 'admin_photo_restore', methods: ['GET', 'POST'])]
-    public function restorePhotoById(int $id, EntityManagerInterface $em): RedirectResponse
+    public function restorePhotoById(int $id, EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator): RedirectResponse
     {
         $filters = $em->getFilters();
         if ($filters->isEnabled('softdeleteable')) {
@@ -116,7 +118,12 @@ class PhotoCrudController extends AbstractCrudController
         if (!$photo) {
             $this->addFlash('danger', 'Photo introuvable.');
 
-            return $this->redirectToRoute('admin');
+            return $this->redirect(
+                $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction(Crud::PAGE_INDEX)
+                    ->generateUrl()
+            );
         }
 
         if ($photo->isDeleted()) {
@@ -127,8 +134,11 @@ class PhotoCrudController extends AbstractCrudController
             $this->addFlash('info', 'La photo n’était pas supprimée.');
         }
 
-        return $this->redirectToRoute('admin', [
-            'crudControllerFqcn' => self::class,
-        ]);
+        return $this->redirect(
+            $adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Crud::PAGE_INDEX)
+                ->generateUrl()
+        );
     }
 }

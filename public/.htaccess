@@ -14,12 +14,12 @@ DirectoryIndex index.php
     RewriteEngine On
 
     # Détecte automatiquement la base (utile si projet en sous-dossier)
-    RewriteCond %{REQUEST_URI}::$0 ^(/.+)/(.*)::\2$
+    RewriteCond %{HTTPS} !=on
     RewriteRule .* - [E=BASE:%1]
 
     # Préserve l’en-tête Authorization pour Symfony
     RewriteCond %{HTTP:Authorization} .+
-    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%0]
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
     # Évite le contenu dupliqué /index.php
     RewriteCond %{ENV:REDIRECT_STATUS} =""
@@ -36,3 +36,28 @@ DirectoryIndex index.php
     RedirectMatch 307 ^/$ /index.php/
   </IfModule>
 </IfModule>
+RewriteEngine On
+
+# Force HTTPS (OVH peut utiliser X-Forwarded-Proto)
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Detecte automatiquement la base (utile si projet en sous-dossier)
+RewriteCond %{REQUEST_URI}::$0 ^(/.+)/(.*)::\2$
+RewriteRule .* - [E=BASE:%1]
+
+# Préserve l’en-tête Authorization pour Symfony
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# Évite le contenu dupliqué /index.php
+RewriteCond %{ENV:REDIRECT_STATUS} =""
+RewriteRule ^index\.php(?:/(.*)|$) %{ENV:BASE}/$1 [R=308,L]
+
+# Si le fichier demandé existe, on le sert. Sinon, on passe à index.php
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteRule ^ %{ENV:BASE}/index.php [L]
+
