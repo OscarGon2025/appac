@@ -44,7 +44,7 @@ final class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('APPAC Back-Office')
+            ->setTitle('UPAC Back-Office')
             ->renderContentMaximized()
             ->setFaviconPath('favicon.ico');
     }
