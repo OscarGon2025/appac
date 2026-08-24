@@ -381,8 +381,25 @@
 
 /* LOGO */
 
-:root { --brand-h: 62px; }
+:root { --brand-h: 70px; }
 .navbar .brand-logo { height: var(--brand-h); width: auto; display: block; transition: opacity .15s ease; }
+
+/* Fond semi-transparent derrière le logo pour qu'il reste lisible
+   même quand la navbar est totalement transparente (page d'accueil) */
+.festava-navbar .navbar-brand {
+    background: rgba(255, 255, 255, .4);
+    padding: 8px !important;
+    border-radius: 10px;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    transition: background-color .2s ease;
+}
+.festava-navbar.nav-solid .navbar-brand {
+    background: transparent;
+    padding: 0 !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
 
 
 /* ==========================
