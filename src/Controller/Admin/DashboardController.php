@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Album;
+use App\Entity\Announcement;
 use App\Entity\ArchiveImage;
 use App\Entity\Article;
 use App\Entity\ArticleAttachment;
@@ -62,6 +63,9 @@ final class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Contenus');
         yield MenuItem::linkToCrud('Articles', 'fas fa-newspaper', Article::class);
         yield MenuItem::linkToCrud('Événements', 'fas fa-calendar', Event::class);
+
+        yield MenuItem::section('Popup d\'accueil');
+        yield MenuItem::linkToCrud('Annonce popup', 'fas fa-bullhorn', Announcement::class);
 
         yield MenuItem::section('Médiathèque');
         yield MenuItem::linkToCrud('Albums', 'fas fa-images', Album::class);

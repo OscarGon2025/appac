@@ -2,6 +2,67 @@
    APPAC – Surcharges sur Festava
    ============================= */
 
+/* ---------- Popup d'annonce (accueil) ---------- */
+.announcement-modal .modal-content {
+    border: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+}
+.announcement-modal .modal-dialog {
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+}
+@media (min-width: 992px) {
+    .announcement-modal .modal-dialog { max-width: 640px; }
+}
+
+/* L'image garde toujours ses proportions d'origine (jamais déformée),
+   quel que soit l'écran : elle se limite juste en largeur et en hauteur. */
+.announcement-modal-img,
+.announcement-modal-img-link .announcement-modal-img {
+    display: block;
+    max-width: 100%;
+    max-height: 80vh;
+    width: auto;
+    height: auto;
+    margin: 0 auto;
+    background: #f4f4f4;
+}
+.announcement-modal-img-link {
+    display: block;
+    line-height: 0;
+}
+
+.announcement-modal-close {
+    position: absolute;
+    top: .6rem;
+    right: .6rem;
+    z-index: 2;
+    background-color: #fff;
+    border-radius: 50%;
+    padding: .5rem;
+    opacity: .9;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .3);
+}
+
+.announcement-modal-text {
+    padding: 1.25rem 1.5rem .5rem;
+}
+.announcement-modal-title {
+    font-size: 1.25rem;
+    margin-bottom: .5rem;
+}
+.announcement-modal-body {
+    margin-bottom: 0;
+    color: #444;
+}
+.announcement-modal-cta {
+    padding: 1rem 1.5rem 1.5rem;
+    text-align: center;
+}
+
 /* ---------- Connexion (mode sombre / effet verre) ---------- */
 .page-login .login-hero {
     position: relative;

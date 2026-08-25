@@ -27,10 +27,6 @@
         :root { --navbar-h: 0px; }
     </style>
 
-    {# reCAPTCHA v3 (optionnel) #}
-    {% if recaptcha_site is defined %}
-        <script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site }}"></script>
-    {% endif %}
 </head>
 
 {# Défauts sûrs #}
@@ -45,6 +41,10 @@
 
 <body class="with-fixed-navbar {{ body_class }} {% if app.request.attributes.get('_route') == 'app_login' %}login-page{% endif %}">
 
+
+{# Popup d'annonce (voir AnnouncementPopupController) — ne s'affiche que s'il y a
+   une annonce active, et une seule fois par visite selon sa fréquence configurée #}
+{{ render(path('site_announcement_popup')) }}
 
 {# Bandeau (météo / marées) — IMPORTANT: vía subrequest al contrôleur #}
 <header id="siteHeader">
@@ -69,86 +69,30 @@
 
 {% block javascripts %}{% endblock %}
 
-{# Init reCAPTCHA (fonction définie dans custom.js) #}
-{% if recaptcha_site is defined %}
-    <script>
-        window.addEventListener('load', function () {
-            if (window.AppacRecaptchaInit) {
-                AppacRecaptchaInit('{{ recaptcha_site }}');
-            }
-        });
-    </script>
-{% endif %}
-
-
-
-{#Pour que le clic sur la navbar fonctionne sur mobile#}
-{#<script>#}
-{#    document.addEventListener("DOMContentLoaded", function() {#}
-{#        if (window.innerWidth < 992) { // sur mobile#}
-{#            document.querySelectorAll('.navbar .dropdown').forEach(function(dropdown) {#}
-{#                dropdown.addEventListener('click', function (e) {#}
-{#                    const menu = this.querySelector('.dropdown-menu');#}
-{#                    menu.classList.toggle('show');#}
-{#                });#}
-{#            });#}
-{#        }#}
-{#    });#}
-{#</script>#}
-
-{#TODO AJOUTER AU custom.js #}
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous">
-</script>
-
 <script>
+    // Ouverture au survol des menus déroulants de la navbar (ordinateur uniquement) ;
+    // le clic (mobile et desktop) est déjà géré nativement par Bootstrap via
+    // data-bs-toggle="dropdown", donc on ne le réimplémente pas ici pour éviter
+    // tout désync entre notre logique et l'état interne de Bootstrap.
     document.addEventListener("DOMContentLoaded", function() {
-        // Sélectionne tous les dropdowns de la navbar
-        const dropdowns = document.querySelectorAll('.navbar .dropdown');
+        const isDesktop = () => window.innerWidth >= 992;
 
-        // Fonction utilitaire : détecter si on est sur mobile (fenêtre < 992px)
-        const isMobile = () => window.innerWidth < 992;
-
-        dropdowns.forEach(function(dropdown) {
+        document.querySelectorAll('.navbar .dropdown').forEach(function (dropdown) {
             const toggle = dropdown.querySelector('.dropdown-toggle');
-            const menu = dropdown.querySelector('.dropdown-menu');
+            if (!toggle || typeof window.bootstrap === "undefined" || !window.bootstrap.Dropdown) return;
 
-            if (!toggle || !menu) return;
-
-            // Survol (ordinateur uniquement)
-            dropdown.addEventListener('mouseenter', function() {
-                if (isMobile()) return;
-                menu.classList.add('show');
-                toggle.setAttribute('aria-expanded', 'true');
+            dropdown.addEventListener('mouseenter', function () {
+                if (!isDesktop()) return;
+                window.bootstrap.Dropdown.getOrCreateInstance(toggle).show();
             });
 
-            dropdown.addEventListener('mouseleave', function() {
-                if (isMobile()) return;
-                menu.classList.remove('show');
-                toggle.setAttribute('aria-expanded', 'false');
+            dropdown.addEventListener('mouseleave', function () {
+                if (!isDesktop()) return;
+                window.bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
             });
-
-            //  Clic (mobile uniquement)
-            toggle.addEventListener('click', function(e) {
-                if (!isMobile()) return; // Desktop → on laisse le hover gérer
-                e.preventDefault();
-                const isOpen = menu.classList.contains('show');
-                // Ferme tous les autres dropdowns
-                document.querySelectorAll('.navbar .dropdown-menu.show').forEach(m => m.classList.remove('show'));
-                // Ouvre ou ferme
-                menu.classList.toggle('show', !isOpen);
-            });
-        });
-
-        // Ferme les menus au redimensionnement
-        window.addEventListener('resize', () => {
-            document.querySelectorAll('.navbar .dropdown-menu.show').forEach(m => m.classList.remove('show'));
         });
     });
 </script>
-
 
 </body>
 </html>
