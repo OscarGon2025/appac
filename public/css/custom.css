@@ -35,6 +35,19 @@
 .hero-section { background-color: #0b0b0b; } /* si la vidéo tarde/échoue */
 .hero-section .section-overlay { background: rgba(0, 0, 0, .35); }
 
+/* Sur mobile, la hauteur fixe (100vh - 51px) + le padding-top ajouté par le
+   thème peuvent couper le contenu (bouton, date de l'événement) puisque le
+   héros a overflow:hidden. On le laisse grandir librement au lieu de couper. */
+@media (max-width: 991.98px) {
+    .hero-section {
+        height: auto;
+        min-height: calc(100svh - 51px);
+        padding-bottom: 40px;
+        overflow: visible;
+    }
+    .hero-section .container .row { height: auto; }
+}
+
 /* ---------- À propos (dégradé + image et texte clair) ---------- */
 .about-section {
     background:
@@ -382,23 +395,44 @@
 /* LOGO */
 
 :root { --brand-h: 70px; }
-.navbar .brand-logo { height: var(--brand-h); width: auto; display: block; transition: opacity .15s ease; }
+.navbar .brand-logo {
+    height: var(--brand-h);
+    width: auto;
+    display: block;
+    position: relative;
+    transition: opacity .15s ease;
+    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, .35));
+}
 
-/* Fond semi-transparent derrière le logo pour qu'il reste lisible
-   même quand la navbar est totalement transparente (page d'accueil) */
+/* Halo flou derrière le logo pour qu'il reste lisible même quand la navbar
+   est totalement transparente (page d'accueil) — bords dégradés, pas de
+   rectangle plat : un pseudo-élément radial flouté fait office de "glow". */
 .festava-navbar .navbar-brand {
-    background: rgba(255, 255, 255, .4);
+    position: relative;
+    z-index: 1;
     padding: 8px !important;
+    transition: opacity .2s ease;
+}
+.festava-navbar .navbar-brand::before {
+    content: "";
+    position: absolute;
+    inset: -1px -4px -4px -4px;
+    z-index: -1;
+    /* Pas de backdrop-filter ici : combiné à un masque, Chrome applique quand
+       même le flou sur tout le rectangle d'origine (d'où le carré visible).
+       Un rectangle plein + "filter: blur" donne un halo qui suit la forme
+       du logo (plutôt qu'un rond) tout en gardant des bords adoucis. */
+    background: rgba(255, 255, 255, .48);
     border-radius: 10px;
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
-    transition: background-color .2s ease;
+    filter: blur(6px);
+    pointer-events: none;
+    transition: opacity .25s ease;
 }
 .festava-navbar.nav-solid .navbar-brand {
-    background: transparent;
     padding: 0 !important;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+}
+.festava-navbar.nav-solid .navbar-brand::before {
+    opacity: 0;
 }
 
 
@@ -459,6 +493,17 @@
 /* Suppression de l'icône Bootstrap par défaut */
 .navbar .nav-link.dropdown-toggle::after {
     content: none !important;
+}
+
+/* Retire le contour (focus/active) du navigateur sur les liens du menu */
+.navbar .nav-link,
+.navbar .nav-link:focus,
+.navbar .nav-link:focus-visible,
+.navbar .nav-link.dropdown-toggle,
+.navbar .nav-link.dropdown-toggle:focus,
+.navbar .nav-link.dropdown-toggle:focus-visible {
+    outline: none;
+    box-shadow: none;
 }
 
 /* Ajout flèche */
